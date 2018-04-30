@@ -1,0 +1,2 @@
+psql -U postgres stories < server/sql/list.sql
+yarn run build
