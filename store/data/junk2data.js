@@ -58,7 +58,12 @@ function getSqlBatchStories(records) {
   records.forEach(function(rec) {
 
     //console.log('processing rec: ', rec.name, rec.submitter)
-    attributes = {url: rec.cobj.url}
+    attributes = {
+      url: rec.cobj.url,
+      title: rec.cobj.title,
+      image: rec.cobj.image,
+      excerpt: rec.cobj.excerpt
+    }
     if (attributes.url == null) { 
       throw ('could not find url for story: ', rec.name) 
     }

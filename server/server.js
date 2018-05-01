@@ -5,6 +5,7 @@ var bodyParser = require('body-parser')
 var server = express();
 server.use(bodyParser.json());
 server.use('/static', express.static(path.join(__dirname, '../dist/static')))
+server.use('/assets', express.static(path.join(__dirname, '../src/assets')))
 
 // static
 server.get('/', function(req, res){

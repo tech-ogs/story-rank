@@ -2,7 +2,8 @@ import Vue from 'vue'
 // initial state
 const state = {
   items: [],
-  byId: {}
+  byId: {},
+  byStoryId: {}
 }
 
 // helpers
@@ -10,6 +11,12 @@ const state = {
 const getters = {
   commentsGetItems: (state, params) => {
     return state.items
+  },
+  commentsGetIdMap: (state) => {
+    return state.byId
+  },
+  commentsGetStoryIdMap: (state) => {
+    return state.byStoryId
   }
 }
 
@@ -24,6 +31,12 @@ const mutations = {
       state.items = params
       params.forEach( x => {
         state.byId[x.id] = x
+        if (state.byStoryId[x.story_id] == null) {
+          state.byStoryId[x.story_id] = [x]
+        }
+        else {
+          state.byStoryId[x.story_id].push.apply(state.byStoryId[x.story_id], [x])
+        }
       })
   }
 }
