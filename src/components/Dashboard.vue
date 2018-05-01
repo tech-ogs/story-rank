@@ -15,7 +15,7 @@
           <b-container small>
             <b-row>
               <b-col cols="4"> 
-                <img :src="data.item.attributes.image" class="story-image">
+                <b-img-lazy thumbnail rounded fluid-grow :src="data.item.attributes.image" class="story-image" >
               </b-col>
               <b-col class="story-title-container">
                 <span class="story-title">
@@ -98,8 +98,10 @@ export default {
   justify-content: center;
 }
 .story-image {
+/*
   height: 100px;
   width: 100px;
+*/
   float: left;
 }
 .story-title-container {

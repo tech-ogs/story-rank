@@ -1,6 +1,13 @@
 var fs = fs || require('fs')
 var users = require('./users.js')
 
+var quote = function () {
+  var rex = new RegExp(/'/, 'g')
+  return function (str) { 
+    return str.replace(rex, '\'\'')
+  }
+}()
+
 var getFilenames = function(dir, filelist) {
   var files = fs.readdirSync(dir);
   filelist = filelist || [];
@@ -60,9 +67,9 @@ function getSqlBatchStories(records) {
     //console.log('processing rec: ', rec.name, rec.submitter)
     attributes = {
       url: rec.cobj.url,
-      title: rec.cobj.title,
-      image: rec.cobj.image,
-      excerpt: rec.cobj.excerpt
+      title: quote(rec.cobj.title),
+      image: quote(rec.cobj.image),
+      excerpt: quote(rec.cobj.excerpt)
     }
     if (attributes.url == null) { 
       throw ('could not find url for story: ', rec.name) 
@@ -92,7 +99,7 @@ function getSqlBatchComments(records) {
       }
       story = rec.name
       attributes = {user: user, story: story}
-      comment = rec.cobj.comment.replace(new RegExp(/'/, 'g'), '\'\'')
+      comment = quote(rec.cobj.comment)
       stmt = 'insert into application.comments (comment, attributes) values ( \'' + (comment || '') + '\', \'' + JSON.stringify(attributes) + '\'::jsonb )'
       result.push(stmt)
     }
