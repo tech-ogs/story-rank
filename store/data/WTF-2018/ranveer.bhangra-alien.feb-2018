@@ -1,4 +1,6 @@
 {
-  "url": "/static/media/bhangra-alien.mp4",
-  "comment": "alien does bhangra :)"
+  "url": "static/media/bhangra-alien.mp4",
+  "title": "alien does bhangra :)",
+  "excerpt": "pls check video",
+  "image": "static/media/bhangra-alien.mp4"
 }
