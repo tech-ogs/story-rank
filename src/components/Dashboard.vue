@@ -1,39 +1,37 @@
 <template>
   <b-container class="app-container">
     <b-row class="app-header">
-      <b-navbar toggleable="sm" type="light" variant="faded">
+      <b-navbar toggleable="sm" type="light" variant="faded" style="width: 100%">
 
-        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-navbar-brand href="#">
           <span class="title-brand">
           <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
-          WTF stories 
+          WTF stories &nbsp; &nbsp;
+          <b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
           </span>
         </b-navbar-brand>
 
-        <b-collapse is-nav id="nav_collapse">
+        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
+        <b-collapse is-nav id="nav_collapse">
+          <b-navbar-nav>
+          </b-navbar-nav>
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-
-            <b-nav-form>
+            <b-nav-item>
+              <div>
+              <div style="float:left; width: 80%;">
               <b-form-select v-model="submitterId"  @change="filterSubmitter($event)" class="mb-3">
                 <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
               </b-form-select>
-            </b-nav-form>
-            <b-button @click="submitterId=null;resetSubmitterFilter(null)">x</b-button>
-            <b-nav-text> {{ items.length }} </b-nav-text>
-
-            <b-nav-item-dropdown right>
-              <!-- Using button-content slot -->
-              <template slot="button-content">
-                <em>User</em>
-              </template>
-              <b-dropdown-item href="#">Profile</b-dropdown-item>
-              <b-dropdown-item href="#">Signout</b-dropdown-item>
-            </b-nav-item-dropdown>
-            
+              </div>
+              <div style="float:left;">
+              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">&nbsp;x</b-nav-item>
+              </div>
+              </div>
+            </b-nav-item>
+            <b-button variant="outline" size="sm"> Sign out </b-button>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -204,5 +202,9 @@ body,
   font-size: x-small;
 }
 
-
+.flex-perfect-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
