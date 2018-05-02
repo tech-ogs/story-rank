@@ -103,7 +103,10 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      fields: fields
+      fields: fields,
+      filterSubmitter: (sid) => {
+        this.$store.commit('stories.setFilter', {submitter_id : sid })
+      }
     }
   },
   computed: {
@@ -116,9 +119,6 @@ export default {
   methods: {
     makeArr: (x) => { 
       return  x instanceof Array ? x : [x] 
-    },
-    filterSubmitter: (params) => {
-      console.log('i am here', params)
     }
   },
   mounted () { 
