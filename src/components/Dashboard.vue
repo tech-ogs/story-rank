@@ -1,6 +1,7 @@
 <template>
   <b-container class="bv-example-row app-container">
     <b-row class="app-header">
+
       <b-col>
         <img src="assets/logo.png" class="tag-icon avatar">
       </b-col>
@@ -78,6 +79,11 @@ export default {
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     name () { return (row) => { return row != null ? row.name : 'x' }}
   },
+  methods: {
+    makeArr: (x) => { 
+      return  x instanceof Array ? x : [x] 
+    }
+  },
   mounted () { 
     this.$store.dispatch('initData')
     .then(() => {
@@ -129,8 +135,10 @@ body,
   justify-content: center;
 }
 .story-image {
+/*
   height: 100px;
   width: 100px;
+*/
   float: left;
 }
 .story-title-container {
