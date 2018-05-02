@@ -1,16 +1,16 @@
 <template>
-  <div class="app-container">
-    <div class="app-header">
+  <b-container class="app-container">
+    <b-row class="app-header">
 
-      <div>
+      <b-col>
         <img src="assets/logo.png" class="tag-icon avatar">
-      </div>
-      <div class="title" cols="8"> 
+      </b-col>
+      <b-col class="title" cols="8"> 
         <span> WTF stories </span>
-      </div>
-    </div>
-    <div class="app-content">
-      <div>
+      </b-col>
+    </b-row>
+    <b-row class="app-content">
+      <b-col>
         <b-table striped small :items="items" :fields="fields">
           <template slot="content" slot-scope="data">
             <b-container small>
@@ -48,11 +48,11 @@
             </div>
           </template>
         </b-table>
-      </div>
-    </div>
-    <div class="app-footer">
-    </div>
-  </div>
+      </b-col>
+    </b-row>
+    <b-row class="app-footer">
+    </b-row>
+  </b-container>
 </template>
 
 <script>
