@@ -1,14 +1,41 @@
 <template>
   <b-container class="app-container">
     <b-row class="app-header">
+      <b-navbar toggleable="sm" type="light" variant="faded">
 
-      <b-col>
-        <img src="assets/logo.png" class="tag-icon avatar">
-      </b-col>
-      <b-col class="title" cols="8"> 
-        <span> WTF stories </span>
-      </b-col>
+        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+
+        <b-navbar-brand href="#">
+          <span class="title-brand">
+          <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
+          WTF stories 
+          </span>
+        </b-navbar-brand>
+
+        <b-collapse is-nav id="nav_collapse">
+
+          <!-- Right aligned nav items -->
+          <b-navbar-nav class="ml-auto">
+
+
+            <b-nav-item-dropdown text="Submitter" right>
+              <b-dropdown-item v-for="user in usersList" href="#">{{user.login}}</b-dropdown-item>
+            </b-nav-item-dropdown>
+
+            <b-nav-item-dropdown right>
+              <!-- Using button-content slot -->
+              <template slot="button-content">
+                <em>User</em>
+              </template>
+              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <b-dropdown-item href="#">Signout</b-dropdown-item>
+            </b-nav-item-dropdown>
+
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
     </b-row>
+
     <b-row class="app-content">
       <b-col>
         <b-table striped small :items="items" :fields="fields">
@@ -68,12 +95,11 @@ export default {
   name: 'HelloWorld',
   data () {
     return {
-      submitters: this.users,
       fields: fields
     }
   },
   computed: {
-    users() { return this.$store.getters.usersGetItems },
+    usersList() { return this.$store.getters.usersGetItems },
     items() { return this.$store.getters.storiesGetItems },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
@@ -125,11 +151,10 @@ body,
   height: 50px;
   width: 50px;
 }
-.title {
-  font-size: xx-large;
+.title-brand {
   display: flex;
   align-items: center;
-  justify-content: center;
+  /*justify-content: center;*/
 }
 .story-image {
 /*
