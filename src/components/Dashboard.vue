@@ -17,10 +17,18 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
 
-
-            <b-nav-item-dropdown text="Submitter" right>
+<!--
+            <b-nav-item-dropdown text="Submitter" right @change="filterSubmitter">
               <b-dropdown-item v-for="user in usersList" href="#">{{user.login}}</b-dropdown-item>
             </b-nav-item-dropdown>
+-->
+            <b-nav-form>
+              <b-form-select :value="submitterId"  @change="filterSubmitter($event)" class="mb-3">
+                <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
+              </b-form-select>
+          
+            </b-nav-form>
+
 
             <b-nav-item-dropdown right>
               <!-- Using button-content slot -->
@@ -108,6 +116,9 @@ export default {
   methods: {
     makeArr: (x) => { 
       return  x instanceof Array ? x : [x] 
+    },
+    filterSubmitter: (params) => {
+      console.log('i am here', params)
     }
   },
   mounted () { 
