@@ -3,7 +3,9 @@ import Vue from 'vue'
 const state = {
   items: [],
   byId: {},
-  filters: {}
+  filters: {
+    submitter_id: null
+  }
 }
 
 // helpers
@@ -13,10 +15,11 @@ const getters = {
     return state.items
   },
   storiesGetItemsF: (state, params) => {
+    console.log('i am here')
     return state.items.filter( (story) => {
       var result = true
-      Object.keys(filters).forEach((f) => {
-          result = result && story[f] === filters[f]
+      Object.keys(state.filters).forEach((f) => {
+          result = result && (state.filters[f] == null || ( story[f] === state.filters[f]) )
       })
       return result
     })
@@ -39,6 +42,7 @@ const mutations = {
   },
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)
+    console.log('filters:', state.filters)
   }
 }
 

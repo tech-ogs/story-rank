@@ -17,18 +17,13 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
 
-<!--
-            <b-nav-item-dropdown text="Submitter" right @change="filterSubmitter">
-              <b-dropdown-item v-for="user in usersList" href="#">{{user.login}}</b-dropdown-item>
-            </b-nav-item-dropdown>
--->
             <b-nav-form>
-              <b-form-select :value="submitterId"  @change="filterSubmitter($event)" class="mb-3">
+              <b-form-select v-model="submitterId"  @change="filterSubmitter($event)" class="mb-3">
                 <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
               </b-form-select>
-          
             </b-nav-form>
-
+            <b-button @click="submitterId=null;resetSubmitterFilter(null)">x</b-button>
+            <b-nav-text> {{ items.length }} </b-nav-text>
 
             <b-nav-item-dropdown right>
               <!-- Using button-content slot -->
@@ -38,7 +33,7 @@
               <b-dropdown-item href="#">Profile</b-dropdown-item>
               <b-dropdown-item href="#">Signout</b-dropdown-item>
             </b-nav-item-dropdown>
-
+            
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -104,14 +99,18 @@ export default {
   data () {
     return {
       fields: fields,
+      submitterId: null,
       filterSubmitter: (sid) => {
-        this.$store.commit('stories.setFilter', {submitter_id : sid })
+        this.$store.commit('storiesSetFilter', {submitter_id : sid })
+      },
+      resetSubmitterFilter: () => {
+        this.$store.commit('storiesSetFilter', {submitter_id : null })
       }
     }
   },
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
-    items() { return this.$store.getters.storiesGetItems },
+    items() { return this.$store.getters.storiesGetItemsF },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     name () { return (row) => { return row != null ? row.name : 'x' }}
