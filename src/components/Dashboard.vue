@@ -1,54 +1,57 @@
 <template>
-<b-container class="bv-example-row">
-<!--
-  <b-row>
-    <b-col>
-      <img src="assets/logo.png" class="tag-icon avatar">
-    </b-col>
-    <b-col cols="10" class="title"> <span> WTF stories </span> </b-col>
-  </b-row>
--->
-  <b-row>
-    <b-col>
-      <b-table striped small :items="items" :fields="fields">
-        <template slot="content" slot-scope="data">
-          <b-container small>
-            <b-row>
-              <b-col cols="4"> 
-                <img :src="data.item.attributes.image" class="story-image">
-              </b-col>
-              <b-col class="story-title-container">
-                <span class="story-title">
-                  {{ data.item.attributes.title || data.item.name}}
-                </span>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col class="story-excerpt-container">
-                <span class="story-excerpt">
-                  {{ data.item.attributes.excerpt }}
-                </span>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col class="story-data-container">
-                <span class="story-data">
-                  {{data.item.id}} 
-                </span>
-              </b-col>
-              <b-col class="story-submitter-container">
-                <span class="story-submitter">
-                  {{ users[data.item.submitter_id] != null ? users[data.item.submitter_id].name : 'xxx' }}
-                </span>
-              </b-col>
-            </b-row>
+  <b-container class="bv-example-row app-container">
+    <b-row class="app-header">
+      <b-col>
+        <img src="assets/logo.png" class="tag-icon avatar">
+      </b-col>
+      <b-col class="title" cols="8"> 
+        <span> WTF stories </span>
+      </b-col>
+    </b-row>
+    <b-row class="app-content">
+      <b-col>
+        <b-table striped small :items="items" :fields="fields">
+          <template slot="content" slot-scope="data">
+            <b-container small>
+              <b-row>
+                <b-col cols="4"> 
+                  <b-img-lazy thumbnail rounded fluid-grow :src="data.item.attributes.image" class="story-image" >
+                </b-col>
+                <b-col class="story-title-container">
+                  <span class="story-title">
+                    {{ data.item.attributes.title || data.item.name}}
+                  </span>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col class="story-excerpt-container">
+                  <span class="story-excerpt">
+                    {{ data.item.attributes.excerpt }}
+                  </span>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col class="story-data-container">
+                  <span class="story-data">
+                    {{data.item.id}} 
+                    <b-link v-for="(url,idx) in makeArr(data.item.attributes.url)" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
+                  </span>
+                </b-col>
+                <b-col class="story-submitter-container">
+                  <span class="story-submitter">
+                    {{ users[data.item.submitter_id] != null ? users[data.item.submitter_id].name : 'xxx' }}
+                  </span>
+                </b-col>
+              </b-row>
 
-          </b-container>
-        </template>
-      </btable>
-    </b-col>
-  </b-row>
-</b-container>
+            </b-container>
+          </template>
+        </b-table>
+      </b-col>
+    </b-row>
+    <b-row class="app-footer">
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -87,6 +90,34 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+html,
+body,
+.app-container {
+  height: 100%; /* needed for proper layout */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.app-content {
+  flex: 1 1 auto;
+  position: relative;/* need this to position inner content */
+  overflow-y: auto;
+  display: block;
+}
+
+.app-footer {
+  flex: 0 0 auto;
+  display: block;
+}
+
 .tag-icon {
   height: 50px;
   width: 50px;
