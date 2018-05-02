@@ -1,16 +1,16 @@
 <template>
-  <b-container class="bv-example-row app-container">
-    <b-row class="app-header">
+  <div class="app-container">
+    <div class="app-header">
 
-      <b-col>
+      <div>
         <img src="assets/logo.png" class="tag-icon avatar">
-      </b-col>
-      <b-col class="title" cols="8"> 
+      </div>
+      <div class="title" cols="8"> 
         <span> WTF stories </span>
-      </b-col>
-    </b-row>
-    <b-row class="app-content">
-      <b-col>
+      </div>
+    </div>
+    <div class="app-content">
+      <div>
         <b-table striped small :items="items" :fields="fields">
           <template slot="content" slot-scope="data">
             <b-container small>
@@ -45,14 +45,14 @@
                 </b-col>
               </b-row>
 
-            </b-container>
+            </div>
           </template>
         </b-table>
-      </b-col>
-    </b-row>
-    <b-row class="app-footer">
-    </b-row>
-  </b-container>
+      </div>
+    </div>
+    <div class="app-footer">
+    </div>
+  </div>
 </template>
 
 <script>
@@ -109,19 +109,16 @@ body,
 
 .app-header {
   flex: 0 0 auto;
-  display: block;
 }
 
 .app-content {
   flex: 1 1 auto;
   position: relative;/* need this to position inner content */
   overflow-y: auto;
-  display: block;
 }
 
 .app-footer {
   flex: 0 0 auto;
-  display: block;
 }
 
 .tag-icon {
