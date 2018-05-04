@@ -121,7 +121,7 @@ server.get('/list', function(req, res) {
 */
 
 var port = 80;
-server.listen(port, function() {
+server.listen(port, '192.168.1.2', function() {
   console.log('server listening on port ' + port);
 });
 

@@ -25,7 +25,7 @@ export default new Vuex.Store({
       var promise = new Promise( (resolve, reject) => {
         var headers = new Headers();
         headers.append('Content-Type', 'application/json');
-        window.fetch('http://localhost/list', {
+        window.fetch('/list', {
           method: 'post',
           credentials: 'same-origin',
           headers: headers,

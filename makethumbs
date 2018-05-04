@@ -1,0 +1,5 @@
+rm -f src/assets/thumbs/*
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path src/assets/thumbs src/assets/*.jpg
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path src/assets/thumbs src/assets/*.png
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path src/assets/thumbs src/assets/media/*.jpg
+# mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path src/assets/thumbs src/assets/media/*.png

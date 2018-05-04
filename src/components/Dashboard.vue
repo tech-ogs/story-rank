@@ -44,7 +44,7 @@
             <b-container small>
               <b-row>
                 <b-col cols="4"> 
-                  <b-img-lazy thumbnail rounded fluid-grow :src="data.item.attributes.image" class="story-image" >
+                  <b-img thumbnail rounded fluid-grow :src="data.item.attributes.image" class="story-image" >
                 </b-col>
                 <b-col class="story-title-container">
                   <span class="story-title">
@@ -171,7 +171,8 @@ body,
 .app-content {
   flex: 1 1 auto;
   position: relative;/* need this to position inner content */
-  overflow-y: auto;
+  overflow-y: scroll; 
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-footer {
