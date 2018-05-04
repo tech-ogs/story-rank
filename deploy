@@ -1,2 +1,3 @@
 psql -U postgres stories < server/sql/list.sql
+psql -U postgres stories < server/modules/sessions/sql/sessions.sql
 yarn run build

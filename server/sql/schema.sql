@@ -13,7 +13,8 @@ create table application.sessions (
   id bigserial primary key,
   user_id bigint,
   logged_in boolean,
-  last_touched timestamp
+  last_touched timestamp default now(),
+  attributes jsonb
 );
 
 alter table application.sessions add constraint user_id_fkey foreign key (user_id) references application.users;
