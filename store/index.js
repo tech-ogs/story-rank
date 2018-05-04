@@ -27,6 +27,7 @@ export default new Vuex.Store({
         headers.append('Content-Type', 'application/json');
         window.fetch('http://localhost/list', {
           method: 'post',
+          credentials: 'same-origin',
           headers: headers,
           body: JSON.stringify({schema: params.schema, table: params.table})
         })

@@ -8,6 +8,8 @@ create table application.users (
   password varchar,
   attributes jsonb
 );
+alter table application.users add constraint users_login_unique unique (login);
+create index users_login_idx on application.users(login);
 
 create table application.sessions (
   id bigserial primary key,

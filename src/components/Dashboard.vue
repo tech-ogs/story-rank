@@ -31,7 +31,7 @@
               </div>
               </div>
             </b-nav-item>
-            <b-button variant="outline" size="sm"> Sign out </b-button>
+            <b-button variant="outline" size="sm" @click="doLogout"> Sign out </b-button>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -116,6 +116,29 @@ export default {
   methods: {
     makeArr: (x) => { 
       return  x instanceof Array ? x : [x] 
+    },
+    doLogout: () => {
+      var headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      window.fetch('/logout', {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: headers,
+        body: JSON.stringify({})
+      })
+      .then( res => {
+        if (!res.ok ) { 
+          throw Error (res.json())
+        }
+        console.log('i am here', res)
+        return res.json()
+      })
+      .then( response => {
+        window.location.href = '/'
+      })
+      .catch( err => {
+        alert (err.message)
+      })
     }
   },
   mounted () { 
