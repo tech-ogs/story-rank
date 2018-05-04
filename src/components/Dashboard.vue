@@ -27,7 +27,7 @@
               </b-form-select>
               </div>
               <div style="float:left;">
-              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">&nbsp;x</b-nav-item>
+              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">&nbsp;X</b-nav-item>
               </div>
               </div>
             </b-nav-item>
