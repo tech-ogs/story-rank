@@ -1,4 +1,5 @@
 psql -U postgres stories < server/sql/list.sql
 psql -U postgres stories < server/modules/sessions/sql/sessions.sql
 psql -U postgres stories < server/modules/auth/sql/auth.sql
+./makethumbs
 yarn run build

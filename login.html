@@ -82,6 +82,7 @@
       .login-form .input {
         border: 0;
         width: 200px;
+        font-size: large;
       }
       .login-form .input:focus {
           outline: none;
@@ -113,7 +114,7 @@
           border: 0;
           color: #FFFFFF;
           padding: 10px;
-          font-size: x-large;
+          font-size: large;
         cursor: pointer;
         transition: background .3s;
       }
@@ -129,7 +130,7 @@
           border: 0;
           color: #676464;
           padding: 9px;
-          font-size: x-large;
+          font-size: large;
           display: block;
           text-align: center;
       }
@@ -168,45 +169,9 @@
           background: #FFFFFF;
         color: #8a8a8a;
       }
-
-      /* SOCIAL MEDIA LOGIN */
-      .socmed-login .socmed-btn {
-          padding: 10px 25px;
-          color: #FFFFFF;
-          display: block;
-          margin-top: 5px;
-          text-align: center;
-      }
-      .socmed-login .socmed-btn i {
-        text-align: left;
-          border-right: 1px solid #FFFFFF;
-          margin-right: 15px;
-          width: 25px;
-        font-size: 16x;
-        vertical-align: middle;
-      }
-      .socmed-login .socmed-btn span {
-        display: inline-block;
-          margin-top: 8px;
-          line-height: 0;
-      }
-      .socmed-login .facebook-btn {
-        background: #3b5998;
-      }
-      .socmed-login .facebook-btn:hover {
-        background: #324b80;
-      }
-      .socmed-login .google-btn {
-        background: #ef0a0a;
-      }
-      .socmed-login .google-btn:hover {
-        background: #d40909;
-      }
-      .socmed-login .yahoo-btn {
-        background: #940b94;
-      }
-      .socmed-login .yahoo-btn:hover {
-        background: #790a79;
+      .message-box{
+        font-size: medium;
+        color: darkred;
       }
 
       /* RESPONSIVE */
@@ -228,14 +193,11 @@
         .login-form .input {
           width: 140px;
         }
-        .socmed-login .socmed-btn i {
-          margin-right: 5px;
-          width: 19px;
-        }
       }
     </style>
     <script>
       function doLogin() {
+        var msgbox = document.getElementById('msgbox')
         var login = document.getElementById('login-name').value
         var password = document.getElementById('login-password').value
         var headers = new Headers();
@@ -248,17 +210,45 @@
         })
         .then( res => {
           if (!res.ok ) {
-            throw Error (res.json())
+            throw Error ('Login failed')
           }
-          return res.json()
+          return res
         })
         .then( response => {
           window.location.href = '/'
         })
         .catch( err => {
-          alert (err.message)
+          msgbox.innerHTML = err.message
         })
       }
+
+      function doReset() {
+        var msgbox = document.getElementById('msgbox')
+        var login = document.getElementById('login-name').value
+        var password = document.getElementById('login-password').value
+        var headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        window.fetch('/reset', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: headers,
+          body: JSON.stringify({login: login, password: password})
+        })
+        .then( res => {
+          if (!res.ok ) {
+            throw Error ('Reset failed')
+          }
+          return res.json()
+        })
+        .then( response => {
+          var code = response.code
+          msgbox.innerHTML = '"' + login + ':' + code + '" < send this string to admin'
+        })
+        .catch( err => {
+          msgbox.innerHTML =  err.message
+        })
+      }
+
     </script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 	</head>
@@ -284,7 +274,11 @@
 					<i id="show-password" class="fa fa-eye"></i>
 				</div>
 				<input type="button" name="login" value="Login" class="button" onclick="doLogin()"/>
-				<a href="#" class="register">Register</a>
+        <div>
+				<a href="#" class="register" onclick="doReset()">Register/Reset</a>
+        </div>
+        <div id="msgbox" class="message-box">
+        </div>
 			</form>
 		</div>
 	</div>

@@ -52,6 +52,17 @@ server.post('/login', function(req, res) {
   })
 })
 
+server.post('/reset', function(req, res) {
+  auth.reset(req, res)
+  .then (function(ret) {
+    res.status(200).json(ret)
+  })
+  .catch(function(err) {
+    res.status(500).json({message: 'reset failure'})
+  })
+})
+
+
 //login
 server.get('/', function(req, res){
   //console.log ('get /', session)

@@ -31,3 +31,53 @@ CREATE OR REPLACE FUNCTION logout (params json) returns jsonb AS $$
   return ret[0]
    
 $$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION reset (params json) returns jsonb AS $$
+
+  plv8.elog(LOG, 'plv8 reset', JSON.stringify(params))
+
+  var result = null;
+  var code = Math.round(Math.random()*10000)
+
+  if (params.login == null) {
+    throw new Error ('null login name')
+  }
+  if (params.password == null) { 
+    throw new Error ('null password')
+  }
+  var ret = plv8.execute('update application.users set reset_password = crypt($1, gen_salt(\'md5\')), reset_code = $2 where login = $3 returning *', [params.password, code, params.login])
+  if (ret == null || ret.length === 0) {
+    ret = plv8.execute('insert into application.users (login, reset_code, reset_password) values ($1, $2, crypt($3, gen_salt(\'md5\'))) returning *', [params.login, code, params.password])
+    if (ret == null || ret.length === 0) {
+      throw new Error ('reset failed')
+    }
+  }
+
+  if (params.session != null && params.session.id != null) { 
+    plv8.execute('update application.sessions set last_touched = now() where id = $1', [params.session.id])
+  }
+
+  result = {
+    code: code,
+    login: params.login
+  }
+  return result
+   
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION approve_reset (login varchar) returns jsonb AS $$
+  plv8.elog(LOG, 'plv8 approve reset', JSON.stringify(login))
+  var result = null;
+  if (login == null) {
+    throw new Error ('null login name')
+  }
+  
+  var ret = plv8.execute('update application.users set password = reset_password where login = $1 returning *', [login])
+
+  if (ret == null || ret.length === 0) {
+    throw new Error ('reset approval failed')
+  }
+  return null
+   
+$$ LANGUAGE plv8;
+

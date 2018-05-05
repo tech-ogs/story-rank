@@ -6,6 +6,8 @@ create table application.users (
   login varchar,
   name  varchar,
   password varchar,
+  reset_password varchar,
+  reset_code varchar,
   attributes jsonb
 );
 alter table application.users add constraint users_login_unique unique (login);
