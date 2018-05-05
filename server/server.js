@@ -28,7 +28,7 @@ server.use(function (req, res, next) {
   .then( function (retval) {
     req.session = retval
     res.cookie(cookieName, req.session.id, { maxAge: 900000, httpOnly: true });
-    console.log('cookie created successfully from session', session);
+    console.log('cookie created successfully from session', req.session);
     next(); // <-- important!
   })
   .catch( function (err) {
