@@ -7,8 +7,9 @@
   "scripts": {
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
-    "pdn": "NODE_ENV=production node build/story-server.js",
-    "dev": "node build/story-server.js"
+    "pdn": "NODE_ENV=production node build/story-server.js &> log &",
+    "dev": "node build/story-server.js &> log &",
+    "stop": "pkill --signal SIGINT story-server"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
