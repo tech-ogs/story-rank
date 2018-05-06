@@ -1,14 +1,20 @@
+require('./check-versions')()
+
+var config = require('../config')
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
+}
+var path = require('path');
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
-var query = require(__dirname + '/common/query.js')
-var sessions = require(__dirname + '/modules/sessions/sessions.js')
-var auth = require(__dirname + '/modules/auth/auth.js')
+var query = require(path.join(__dirname , '../server/common/query.js'))
+var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
+var auth = require(path.join(__dirname , '../server/modules/auth/auth.js'))
 
 var server = express();
 var cookieName = 'SRSESSION';
-var session = null;
 
 server.use(bodyParser.json());
 
@@ -131,9 +137,28 @@ server.get('/list', function(req, res) {
 })
 */
 
-var port = 80;
-server.listen(port, '192.168.1.2', function() {
-  console.log('server listening on port ' + port);
-});
+function getIP() { 
+  const interfaces = require('os').networkInterfaces();
+    
+  const addresses = Object.keys(interfaces)
+    .reduce((results, name) => results.concat(interfaces[name]), [])
+    .filter((iface) => iface.family === 'IPv4' && !iface.internal)
+    .map((iface) => iface.address);
+    
+  return addresses[0]
+}
+
+var port = process.env.NODE_ENV === 'production' ? 80 : 8080
+var IP = getIP()
+if ( process.env.NODE_ENV === 'production') {
+  server.listen(port, function() {
+    console.log('server listening on port ' + port);
+  });
+}
+else {
+  server.listen(port, IP, function() {
+    console.log('server listening on IP:port ' + IP + ':'+ port);
+  });
+}
 
 
