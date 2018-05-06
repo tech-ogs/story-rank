@@ -7,8 +7,8 @@
   "scripts": {
     "start": "node build/dev-server.js",
     "build": "node build/build.js",
-    "pdn": "NODE_ENV=production node build/story-server.js &> log &",
-    "dev": "node build/story-server.js &> log &",
+    "pdn": "NODE_ENV=production node build/story-server.js 2>&1 > log &",
+    "dev": "node build/story-server.js 2>&1 > log &",
     "stop": "pkill --signal SIGINT story-server"
   },
   "dependencies": {
