@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   }
   else {
     if (params.session != null && params.session.id != null) { 
-      ret = plv8.execute('update application.sessions set logged_in = true, last_touched = now() where id = $1 returning *', [params.session.id])
+      plv8.execute('update application.sessions set logged_in = true, last_touched = now(), user_id = $1 where id = $2 returning *', [ret[0].id, params.session.id])
     }
   }
   return ret[0]
@@ -62,7 +62,7 @@ CREATE OR REPLACE FUNCTION reset (params json) returns jsonb AS $$
   }
 
   if (params.session != null && params.session.id != null) { 
-    plv8.execute('update application.sessions set last_touched = now() where id = $1', [params.session.id])
+    plv8.execute('update application.sessions set last_touched = now(), logged_in = false, user_id = null where id = $1', [params.session.id])
   }
 
   result = {
