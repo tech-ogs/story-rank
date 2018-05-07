@@ -20,7 +20,7 @@ create table application.sessions (
   last_touched timestamp default now(),
   attributes jsonb
 );
-
+create index sessions_user_id_idx on application.sessions(user_id);
 alter table application.sessions add constraint user_id_fkey foreign key (user_id) references application.users;
 
 create table application.stories (

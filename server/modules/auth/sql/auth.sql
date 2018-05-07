@@ -62,7 +62,7 @@ CREATE OR REPLACE FUNCTION reset (params json) returns jsonb AS $$
   }
 
   if (params.session != null && params.session.id != null) { 
-    plv8.execute('update application.sessions set last_touched = now(), logged_in = false, user_id = null where id = $1', [params.session.id])
+    plv8.execute('update application.sessions set last_touched = now(), logged_in = false  where id = $1', [params.session.id])
   }
 
   result = {
@@ -85,6 +85,10 @@ CREATE OR REPLACE FUNCTION approve_reset (login varchar) returns jsonb AS $$
   if (ret == null || ret.length === 0) {
     throw new Error ('reset approval failed')
   }
+  else {
+    plv8.execute('update application.sessions set last_touched = now(), logged_in = false, user_id = null  where user_id = (select id from application.users where login = $1)', [login])
+  }
+
   return null
    
 $$ LANGUAGE plv8;
