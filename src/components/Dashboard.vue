@@ -1,5 +1,24 @@
 <template>
   <b-container class="app-container">
+    <b-row>
+      <b-col>
+        <modal name="story-view"
+          adaptive="true"
+          width="90%"
+          height="90%"
+          @before-open="beforeStoryViewOpen"
+        >
+          <div>
+            <b-embed type="embed"
+                     aspect="16by9"
+                     :src="storyUrl"
+                     allowfullscreen
+            ></b-embed>
+          </div>     
+        </modal>
+      </b-col>
+    </b-row>
+
     <b-row class="app-header">
       <b-navbar toggleable="sm" type="light" variant="faded" style="width: 100%">
 
@@ -63,7 +82,13 @@
                 <b-col class="story-data-container">
                   <span class="story-data">
                     {{data.item.id}} 
+<!--
                     <b-link v-for="(url,idx) in makeArr(data.item.attributes.url)" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
+-->
+                    <span v-for="(url,idx) in makeArr(data.item.attributes.url)">
+                      <b-btn @click="storyShow(url)">link{{idx}} &nbsp;&nbsp;</b-btn>
+
+                    </span>
                   </span>
                 </b-col>
                 <b-col class="story-submitter-container">
@@ -72,7 +97,6 @@
                   </span>
                 </b-col>
               </b-row>
-
             </div>
           </template>
         </b-table>
@@ -103,7 +127,8 @@ export default {
       },
       resetSubmitterFilter: () => {
         this.$store.commit('storiesSetFilter', {submitter_id : null })
-      }
+      },
+      storyUrl: null
     }
   },
   computed: {
@@ -111,7 +136,8 @@ export default {
     items() { return this.$store.getters.storiesGetItemsF },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
-    name () { return (row) => { return row != null ? row.name : 'x' }}
+    name () { return (row) => { return row != null ? row.name : 'x' }},
+    svid() { return (id, idx) => 'story-viewer-' + id + '-' + idx }
   },
   methods: {
     makeArr: (x) => { 
@@ -130,7 +156,6 @@ export default {
         if (!res.ok ) { 
           throw Error (res.json())
         }
-        console.log('i am here', res)
         return res.json()
       })
       .then( response => {
@@ -139,6 +164,15 @@ export default {
       .catch( err => {
         alert (err.message)
       })
+    },
+    storyShow (url) {
+      this.$modal.show('story-view', {url: url});
+    },
+    storyHide () {
+      this.$modal.hide('story-view');
+    },
+    beforeStoryViewOpen(event) {
+      this.storyUrl = event.params.url
     }
   },
   mounted () { 
@@ -231,4 +265,5 @@ body,
   align-items: center;
   justify-content: center;
 }
+
 </style>
