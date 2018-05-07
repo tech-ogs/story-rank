@@ -1,16 +1,7 @@
-const { Client } = require('pg')
-
-function getClient() {
-  const client = new Client({
-    user: 'postgres',
-    database: 'stories'
-  })
-  client.connect()
-  return client
-}
-
+var path = require('path')
+var db = require(path.join(__dirname, '../../common/db'))
 function getSession (cookie) {
-  var client = getClient()
+  var client = db.getClient()
   var promise = new Promise(function(resolve, reject) {
     console.log('getSession:', cookie)
     client.query('select get_session($1)', [cookie || null], function (err, ret) {

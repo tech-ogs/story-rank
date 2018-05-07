@@ -1,16 +1,8 @@
-const { Client } = require('pg')
-
-function getClient() {
-  const client = new Client({
-    user: 'postgres',
-    database: 'stories'
-  })
-  client.connect()
-  return client
-}
+var path = require('path')
+var db = require(path.join(__dirname, '../../common/db'))
 
 function login (req, res) {
-  var client = getClient()
+  var client = db.getClient()
   var params = req.body
   params.session = req.session
   var promise = new Promise(function(resolve, reject) {
@@ -39,7 +31,7 @@ function login (req, res) {
 }
  
 function logout (req, res) {
-  var client = getClient()
+  var client = db.getClient()
   var params = req.body
   params.session = req.session
   var promise = new Promise(function(resolve, reject) {
@@ -68,7 +60,7 @@ function logout (req, res) {
 }
 
 function reset (req, res) {
-  var client = getClient()
+  var client = db.getClient()
   var params = req.body
   params.session = req.session
   var promise = new Promise(function(resolve, reject) {
