@@ -11,19 +11,16 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
-var query = require(path.join(__dirname , '../server/common/query.js'))
+
+var routes = require(path.join(__dirname , '../server/routes.js'))
 var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
-var auth = require(path.join(__dirname , '../server/modules/auth/auth.js'))
 
 var server = express();
 var cookieName = 'SRSESSION';
 
+// body
 server.use(bodyParser.json());
 
-/*
-server.use('/static', express.static(path.join(__dirname, '../dist/static')))
-server.use('/assets', express.static(path.join(__dirname, '../src/assets')))
-*/
 
 // cookies
 server.use(cookieParser());
@@ -45,99 +42,9 @@ server.use(function (req, res, next) {
   })
 });
 
-// public
-server.get('/assets/logo.png', function(req, res) {
-  res.sendFile(path.join(__dirname, '../src/assets/logo.png'))
-})
+// routes
 
-server.post('/login', function(req, res) {
-  auth.login(req, res)
-  .then (function(ret) {
-    res.status(200).json({message: 'login ok'})
-  })
-  .catch(function(err) {
-    res.status(403).json({message: 'login failure'})
-  })
-})
-
-server.post('/reset', function(req, res) {
-  auth.reset(req, res)
-  .then (function(ret) {
-    res.status(200).json(ret)
-  })
-  .catch(function(err) {
-    res.status(500).json({message: 'reset failure'})
-  })
-})
-
-
-//login
-server.get('/', function(req, res){
-  //console.log ('get /', session)
-  if (req.session.logged_in) {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-  }
-  else {
-    res.sendFile(path.join(__dirname, '../dist/login.html'));
-  } 
-});
-
-server.use('/static', function(req,res,next){
-  //console.log ('static /', session)
-  if (req.session.logged_in) {
-    express.static(path.join(__dirname, '../dist/static'))(req, res, next);
-  }
-  else {
-    res.status(403).json({message:'Not logged in'});
-  }
-})
-
-server.use('/assets', function(req,res,next){
-  if (req.session.logged_in) {
-    express.static(path.join(__dirname, '../src/assets'))(req, res, next);
-  }
-  else {
-    res.status(403).json({message:'Not logged in'});
-  }
-})
-
-
-// queries
-
-var handler = function(fn, req, res) {
-  if (req.session.logged_in) {
-    fn(req, res)
-    .then(
-      function(result) {
-        res.json(result)
-      }
-    )
-    .catch(
-      function(err) {
-        res.status(420).json({message: err.message})
-      }
-    )
-  }
-  else {
-    res.status(403).json({message:'Not logged in'});
-  } 
-}
-
-server.post('/list', function(req, res) {
-  console.log('post:', req.body, req.session)
-  handler (query.list, req, res)
-})
- 
-server.post('/logout', function(req, res) {
-  console.log('logout:', req.body, req.session)
-  handler (auth.logout, req, res)
-})
-
-/*   
-server.get('/list', function(req, res) {
-  handler (query.list, req, res)
-})
-*/
+server.use('/', routes)
 
 function getIP() { 
   const interfaces = require('os').networkInterfaces();
