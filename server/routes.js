@@ -57,7 +57,7 @@ router.post('/login', function(req, res) {
     res.status(200).json({message: 'login ok'})
   })
   .catch(function(err) {
-    res.status(403).json({message: 'login failure'})
+    res.status(403).json({message: err.message})
   })
 })
 
@@ -67,7 +67,7 @@ router.post('/reset', function(req, res) {
     res.status(200).json(ret)
   })
   .catch(function(err) {
-    res.status(500).json({message: 'reset failure'})
+    res.status(500).json({message: err.message})
   })
 })
 

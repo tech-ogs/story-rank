@@ -210,7 +210,7 @@
         })
         .then( res => {
           if (!res.ok ) {
-            throw Error ('Login failed')
+            throw res
           }
           return res
         })
@@ -218,7 +218,9 @@
           window.location.href = '/'
         })
         .catch( err => {
-          msgbox.innerHTML = err.message
+          err.json().then( obj => {
+            msgbox.innerHTML = obj.message
+          })
         })
       }
 
@@ -236,7 +238,7 @@
         })
         .then( res => {
           if (!res.ok ) {
-            throw Error ('Reset failed')
+            throw res
           }
           return res.json()
         })
@@ -245,7 +247,9 @@
           msgbox.innerHTML = '"' + login + ':' + code + '" < send this string to admin'
         })
         .catch( err => {
-          msgbox.innerHTML =  err.message
+          err.json().then( obj => {
+            msgbox.innerHTML =  obj.message
+          })
         })
       }
 

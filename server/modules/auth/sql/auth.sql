@@ -1,12 +1,13 @@
 CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   plv8.elog(LOG, 'plv8 login', JSON.stringify(params))
-  if (params.login == null) {
-    throw new Error ('null login name')
-  }
-  if (params.password == null) { 
-    throw new Error ('null password')
-  }
   
+  if (params.login === '' || params.login == null) {
+    throw new Error ('Login name is required')
+  }
+  if (params.password === '' || params.password == null) { 
+    throw new Error ('Password is required')
+  }
+
   var ret = plv8.execute('select * from application.users where login = $1 and (password = crypt($2, password))', [params.login, params.password])
   plv8.elog(LOG, 'plv8 login ret', JSON.stringify(ret))
 
@@ -35,6 +36,13 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION reset (params json) returns jsonb AS $$
 
   plv8.elog(LOG, 'plv8 reset', JSON.stringify(params))
+
+  if (params.login === '' || params.login == null) {
+    throw new Error ('Login name is required')
+  }
+  if (params.password === '' || params.password == null) { 
+    throw new Error ('Password is required')
+  }
 
   var result = null;
   var code = Math.round(Math.random()*10000)
