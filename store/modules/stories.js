@@ -5,7 +5,9 @@ const state = {
   byId: {},
   filters: {
     submitter_id: null
-  }
+  },
+  showRankUI: false,
+  selected: null
 }
 
 // helpers
@@ -13,6 +15,9 @@ const state = {
 const getters = {
   storiesGetItems: (state, params) => {
     return state.items
+  },
+  storiesGetIdMap: (state) => {
+    return state.byId
   },
   storiesGetItemsF: (state, params) => {
     console.log('i am here')
@@ -23,7 +28,9 @@ const getters = {
       })
       return result
     })
-  }
+  },
+  storiesSelectedRow: (state) => state.selected,
+  storiesShowRankUI: (state) => state.showRankUI
 
 }
 
@@ -43,6 +50,18 @@ const mutations = {
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)
     console.log('filters:', state.filters)
+  },
+  storiesShowRankUI: (state, params) => {
+    state.showRankUI = true
+  },
+  storiesHideRankUI: (state, params) => {
+    state.showRankUI = false
+  },
+  storiesSetSelected: (state, index) => {
+    state.selected = index
+  },
+  storiesClearSelection: (state, index) => {
+    state.selected = null
   }
 }
 
