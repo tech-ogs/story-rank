@@ -7,7 +7,7 @@ var express = require('express');
 var path = require('path');
 var query = require(path.join(__dirname , 'common/query.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
-
+var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
 // middleware
 
 var checkAuth = function (req, res, next) {
@@ -83,6 +83,7 @@ router.use('/assets', checkAuth, function(req,res,next){
 
 router.post('/list', checkAuth, handler(query.list)) 
 router.post('/logout', checkAuth, handler(auth.logout))
+router.post('/myranks', checkAuth, handler(ranks.myranks))
 
 module.exports = router
 

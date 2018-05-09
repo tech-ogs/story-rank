@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import stories from './modules/stories'
 import users from './modules/users'
 import comments from './modules/comments'
+import ranks from './modules/ranks'
 
 Vue.use(Vuex)
 
@@ -25,24 +26,35 @@ export default new Vuex.Store({
       var promise = new Promise( (resolve, reject) => {
         var headers = new Headers();
         headers.append('Content-Type', 'application/json');
-        window.fetch('/list', {
+        window.fetch(params.url, {
           method: 'post',
           credentials: 'same-origin',
           headers: headers,
-          body: JSON.stringify({schema: params.schema, table: params.table})
+          body: JSON.stringify(params.payload || {})
         })
         .then( response => {
           return response.json()
         })
         .then(function(jsonData) { 
-          var mutation = params.table + 'SetData'
-          console.log('mutation', mutation)
-          context.commit(mutation, jsonData)
-          resolve()
+          if (params.payload.mutation != null) {
+            console.log('mutation', params.payload.mutation)
+            context.commit(params.payload.mutation, jsonData)
+            resolve()
+          }
+          else if (params.payload.action != null) {
+            console.log('mutation', params.payload.mutation)
+            context.dispatch(params.payload.action, jsonData)
+            .then( ret => { 
+              resolve(ret)
+            })
+            .catch( err => { 
+              reject(err)
+            })
+          }
         })
       })
       .catch(function(err) { 
-        reject(err.message)
+        reject(err)
       })
       return promise
     },
@@ -50,26 +62,59 @@ export default new Vuex.Store({
 
       var promise = new Promise((resolve, reject) => {
         context.dispatch('fetchData',{ 
-          schema: 'application',
-          table: 'users'
+          url: '/list',
+          payload: {
+            schema: 'application',
+            table: 'users',
+            mutation: 'usersSetData'
+          }
         })
         .then ( () => {
           return context.dispatch('fetchData', { 
-            schema: 'application',
-            table: 'comments'
+            url: '/list',
+            payload: {
+              schema: 'application',
+              table: 'comments',
+              mutation: 'commentsSetData'
+            }
           })
         })
         .then ( () => {
           return context.dispatch('fetchData', { 
-            schema: 'application',
-            table: 'ranks',
-            filters: {user_id: context.getters.usersMyLogin(context.state.users) }
+            url: '/list',
+            payload: {
+              schema: 'application',
+              table: 'ranks',
+              mutation: 'ranksSetData'
+            }
           })
         })
         .then( () => {
           return context.dispatch('fetchData', { 
-            schema: 'application',
-            table: 'stories'
+            url: '/myranks',
+            payload: {
+              mutation: 'ranksSetData'
+            }
+          })
+        })
+/*
+        .then( () => {
+          return context.dispatch('fetchData', { 
+            url: '/sumranks',
+            payload: {
+              mutation: 'sumranksSetData'
+            }
+          })
+        })
+*/
+        .then( () => {
+          return context.dispatch('fetchData', { 
+            url: '/list',
+            payload: {
+              schema: 'application',
+              table: 'stories',
+              mutation: 'storiesSetData'
+            }
           })
         })
         .then( () => resolve())
