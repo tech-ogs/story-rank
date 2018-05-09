@@ -41,14 +41,11 @@
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :item="data.item" showDetail="true">
+            <story-row :item="data.item">
             </story-row>
           </template>
         </b-table>
       </b-col>
-    </b-row>
-    <b-row class="rank-ui">
-      <rank-ui> </rank-ui>
     </b-row>
     <b-row class="app-footer">
     </b-row>
@@ -76,9 +73,8 @@ export default {
         this.$store.commit('storiesSetFilter', {submitter_id : null })
       },
       rowclick: (item, index, event) => {
-        console.log('rowclick')
+        //console.log('rowclick')
         this.$store.commit('storiesSetSelected', item.id)
-        this.$store.commit('storiesShowRankUI', item)
       }
     }
   },

@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import ranking from './stories_ranking.js'
+
 // initial state
 const state = {
   items: [],
@@ -6,7 +8,6 @@ const state = {
   filters: {
     submitter_id: null
   },
-  showRankUI: false,
   selected: null
 }
 
@@ -29,8 +30,17 @@ const getters = {
       return result
     })
   },
+  storiesFilterIsClear: (state) => {
+    var result = true
+    for (var f in state.filters) {
+      if (state.filters[f] != null) {
+        result = false
+        break;
+      }
+    }
+    return result
+  },
   storiesSelectedRow: (state) => state.selected,
-  storiesShowRankUI: (state) => state.showRankUI
 
 }
 
@@ -51,18 +61,19 @@ const mutations = {
     Object.assign(state.filters, params)
     console.log('filters:', state.filters)
   },
-  storiesShowRankUI: (state, params) => {
-    state.showRankUI = true
-  },
-  storiesHideRankUI: (state, params) => {
-    state.showRankUI = false
-  },
   storiesSetSelected: (state, index) => {
     state.selected = index
   },
   storiesClearSelection: (state, index) => {
     state.selected = null
-  }
+  },
+  // ranking moves
+  storiesMoveUp: ranking.moveUp,
+  storiesMoveDown: ranking.moveDown,
+  storiesFilterTop: ranking.moveFilterTop,
+  storiesFilterBottom: ranking.moveFilterBottom,
+  storiesMoveTop: ranking.moveTop,
+  storiesMoveDown: ranking.moveDown
 }
 
 export default {

@@ -1,64 +1,45 @@
 <template>
   <div class="rank-dialog-wrapper">
-    <b-modal id="rank-dialog" 
-      ref="rank-dialog"  
-      :title="title" 
-      v-model="showRankUI" 
-      @hidden="hidden"
-      centered
-      no-fade="true"
-      modal-class="rank-modal"
-    >
-      <story-row :item="row()" showDetails="false">
-      </story-row>
-
-      <div slot="modal-footer" class="ranking-bar">
-        <b-container>
-          <b-row>
-            <b-col>
-              <icon name="angle-double-down"></icon>
-            </b-col>
-            <b-col>
-              <icon name="angle-down"></icon>
-            </b-col>
-            <b-col>
-              <div> -1 </div>
-            </b-col>
-            <b-col>
-              <div> +1 </div>
-            </b-col>
-            <b-col>
-              <icon name="angle-up"></icon>
-            </b-col>
-            <b-col>
-              <icon name="angle-double-up"></icon>
-            </b-col>
-          </b-row>
-        <b-container>
-      </div>
-    </b-modal>
+    <b-button-group class="ranking-bar">
+       <b-button sm class="ranking-button" @click="goBottom">
+          <icon name="angle-double-down"></icon>
+        </b-button>
+        <b-button sm class="ranking-button" @click="goFilterBottom" :disabled="filterClear">
+          <icon name="angle-down"></icon>
+        </b-button>
+        <b-button sm class="ranking-button" @click="goDown">
+          <div> -1 </div>
+        </b-button>
+        <b-button sm class="ranking-button" @click="goUp">
+          <div> +1 </div>
+        </b-button>
+        <b-button sm class="ranking-button" @click="goFilterTop" :disabled="filterClear">
+          <icon name="angle-up"></icon>
+        </b-button>
+        <b-button sm class="ranking-button" @click="goTop">
+          <icon name="angle-double-up"></icon>
+        </b-button>
+    </b-button-group>
   </div>
 </template>
 
 <script>
 
 export default {
+  props: ['item'],
   data () {
     return {
       title: "Rank This Story",
-      hidden: () => {
-        this.$store.commit('storiesHideRankUI')
-        this.$store.commit('storiesClearSelection')
-      },
-      row : () => {
-        return this.stories != null && this.selIndex != null ? this.stories[this.selIndex] : { attributes: {}} 
-      } 
+      goUp: () => this.$store.commit('storiesMoveUp', item),
+      goDown: () => this.$store.commit('storiesMoveDown', item),
+      goFilterTop: () => this.$store.commit('storiesMoveFilterTop', item),
+      goFilterBottom: () => this.$store.commit('storiesMoveFilterBottom', item),
+      goTop: () => this.$store.commit('storiesMoveTop', item),
+      goBottom: () => this.$store.commit('storiesMoveBottom', item),
     }
   },
   computed: {
-    showRankUI() { return this.$store.getters.storiesShowRankUI },
-    stories() { return this.$store.getters.storiesGetIdMap },
-    selIndex() { return this.$store.getters.storiesSelectedRow },
+    filterClear() { return this.$store.getters.storiesFilterIsClear},
   },
   methods: {
   },
@@ -70,9 +51,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .rank-dialog-wrapper {
-    background-color: yellow;
+    width: 100%;
   }
   .ranking-bar {
     width: 100%;
   }
+  .ranking-button {
+    width: 100%;
+    border-thickness: 1px;
+    border-color: white;
+    border-style: solid;
+  }
+
 </style>

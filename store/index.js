@@ -59,6 +59,13 @@ export default new Vuex.Store({
             table: 'comments'
           })
         })
+        .then ( () => {
+          return context.dispatch('fetchData', { 
+            schema: 'application',
+            table: 'ranks',
+            filters: {user_id: context.getters.usersMyLogin(context.state.users) }
+          })
+        })
         .then( () => {
           return context.dispatch('fetchData', { 
             schema: 'application',

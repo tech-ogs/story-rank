@@ -11,14 +11,20 @@
         </span>
       </b-col>
     </b-row>
-    <b-row v-if="showDetail">
+    <b-row>
       <b-col class="story-excerpt-container">
         <span class="story-excerpt">
           {{ item.attributes.excerpt }}
         </span>
       </b-col>
     </b-row>
-    <b-row v-if="showDetail">
+
+    <b-row>
+      <b-col>
+        <rank-ui :item="item"> </rank-ui>
+      </b-col>
+    </b-row>
+    <b-row>
       <b-col class="story-data-container">
         <span class="story-data">
           {{item.id}} 
@@ -37,12 +43,12 @@
 <script>
 
 export default {
-  props: ['item', 'showDetail'],
+  props: ['item'],
   data () {
     return {
       rowClass: (item) => {
         var result = ''
-        if (this.showDetail && this.selectedRow === item.id) {
+        if (this.selectedRow === item.id) {
           result = 'story-selected'
         }
         return result
@@ -102,6 +108,5 @@ export default {
     font-size: x-small;
   }
   .story-selected {
-    background-color: yellow;
   }
 </style>
