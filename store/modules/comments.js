@@ -27,7 +27,7 @@ const actions = {
 // mutations
 const mutations = {
   commentsSetData: (state, params) => {
-      console.log('commentsSetData', params instanceof Array, params.length,  params)
+      //console.log('commentsSetData', params instanceof Array, params.length,  params)
       state.items = params
       params.forEach( x => {
         state.byId[x.id] = x

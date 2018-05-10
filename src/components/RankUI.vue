@@ -1,5 +1,6 @@
 <template>
   <div class="rank-dialog-wrapper">
+<!--
     <b-button-group class="ranking-bar">
        <b-button sm class="ranking-button" @click="moveBottom">
           <icon name="angle-double-down"></icon>
@@ -14,6 +15,8 @@
           <icon name="angle-double-up"></icon>
         </b-button>
     </b-button-group>
+-->
+  <icon name="star" :class="starClass"> </star>
   </div>
 </template>
 
@@ -32,6 +35,7 @@ export default {
   },
   computed: {
     filterClear() { return this.$store.getters.storiesFilterIsClear},
+    starClass() { return this.row.favorite ? 'star star-bright' : 'star star-dim' }
   },
   methods: {
   },
@@ -42,6 +46,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/*
   .rank-dialog-wrapper {
     width: 100%;
   }
@@ -54,5 +59,15 @@ export default {
     border-color: white;
     border-style: solid;
   }
-
+*/
+  .star {
+    width: 25px;
+    height: 25px;
+  }
+  .star-dim {
+    color: khaki;
+  }
+  .star-bright {
+    color: gold;
+  }
 </style>

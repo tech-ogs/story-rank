@@ -5,13 +5,39 @@
 
 
         <b-navbar-brand href="#">
-          <span class="title-brand">
-          <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
-          WTF stories &nbsp; &nbsp;
-          <b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
-          </span>
+            <b-container style="width: 100%;">
+            <b-row class="flex-perfect-center">
+            <b-col>
+            <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="star" class="star star-faded star-layer-1"/>
+              <div class="star-layer-2 star-text"> {{ items.length }} </div>
+            </div>
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="star" class="star star-bright star-layer-1"/>
+              <div class="star-layer-2 star-text"> 28 </div>
+            </div>
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="user" class="star star-layer-1"/>
+            </div>
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="globe" class="star star-layer-1"/>
+            </div>
+            </b-col>
+            <b-col>
+            </b-row>
+            </b-container>
         </b-navbar-brand>
 
+        
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-collapse is-nav id="nav_collapse">
@@ -162,6 +188,36 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.filter-bar {
+
+}
+.star {
+  width: 30px;
+  height: 30px;
+}
+.star-dim {
+  color: khaki;
+}
+.star-bright {
+  color: gold;
+}
+.star-faded {
+  color: lightgray;
+}
+
+.star-layer-1 {
+  position: absolute;
+  z-index: 1;
+}
+.star-layer-2 {
+  position: absolute;
+  z-index: 2;
+}
+.star-text {
+  font-size: small;
+  margin-top: .2em;
 }
 
 </style>
