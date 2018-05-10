@@ -14,21 +14,29 @@ const state = {
 // helpers
 // getters
 const getters = {
-  storiesGetItems: (state, params) => {
+  storiesGetItems: (state) => {
     return state.items
   },
   storiesGetIdMap: (state) => {
     return state.byId
   },
-  storiesGetItemsF: (state, params) => {
-    console.log('i am here')
-    return state.items.filter( (story) => {
+  storiesGetItemsF: (state, getters) => {
+    console.log('storiesGetItemsF', getters)
+    var ranksIndex = getters.ranksByStoryId
+    var filtered = state.items.filter( (story) => {
       var result = true
       Object.keys(state.filters).forEach((f) => {
           result = result && (state.filters[f] == null || ( story[f] === state.filters[f]) )
       })
       return result
     })
+    console.log('filtered', filtered)
+    console.log('ranksIndex', ranksIndex)
+    var sorted = filtered.sort ( (a ,b) => {
+      return ranksIndex[a.id] - ranksIndex[b.id]
+    })
+
+    return sorted
   },
   storiesFilterIsClear: (state) => {
     var result = true
@@ -40,7 +48,7 @@ const getters = {
     }
     return result
   },
-  storiesSelectedRow: (state) => state.selected,
+  storiesSelectedRow: (state) => state.selected
 
 }
 

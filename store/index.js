@@ -38,7 +38,10 @@ export default new Vuex.Store({
         .then(function(jsonData) { 
           if (params.payload.mutation != null) {
             console.log('mutation', params.payload.mutation)
-            context.commit(params.payload.mutation, jsonData)
+            var mlist = typeof params.payload.mutation === 'string' ? [params.payload.mutation] : params.payload.mutation
+            mlist.forEach(mut => { 
+              context.commit(mut, jsonData)
+            })
             resolve()
           }
           else if (params.payload.action != null) {
@@ -113,7 +116,7 @@ export default new Vuex.Store({
             payload: {
               schema: 'application',
               table: 'stories',
-              mutation: 'storiesSetData'
+              mutation: ['ranksInitData', 'storiesSetData']
             }
           })
         })
@@ -127,7 +130,8 @@ export default new Vuex.Store({
   modules: {
     stories,
     users,
-    comments
+    comments,
+    ranks
   },
   strict: debug,
   plugins: debug ? [/*createLogger()*/] : []
