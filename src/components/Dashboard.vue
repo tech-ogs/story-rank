@@ -41,7 +41,7 @@
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :item="data.item">
+            <story-row :row="data.item" :items="items">
             </story-row>
           </template>
         </b-table>
@@ -99,7 +99,7 @@ export default {
         if (!res.ok ) { 
           throw Error (res.json())
         }
-        console.log('i am here', res)
+        //console.log('i am here', res)
         return res.json()
       })
       .then( response => {
@@ -113,9 +113,9 @@ export default {
   mounted () { 
     this.$store.dispatch('initData')
     .then(() => {
-      console.log('checking state stories', this.items)
-      console.log('checking state users', this.users)
-      console.log('checking state stories Id Map', this.stories)
+      //console.log('checking state stories', this.items)
+      //console.log('checking state users', this.users)
+      //console.log('checking state stories Id Map', this.stories)
     })
   }
 }

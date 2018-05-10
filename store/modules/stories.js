@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import ranking from './stories_ranking.js'
 
 // initial state
 const state = {
@@ -21,8 +20,8 @@ const getters = {
     return state.byId
   },
   storiesGetItemsF: (state, getters) => {
-    console.log('storiesGetItemsF', getters)
-    var ranksIndex = getters.ranksByStoryId
+    //console.log('storiesGetItemsF', getters)
+    var ranks = getters.ranks
     var filtered = state.items.filter( (story) => {
       var result = true
       Object.keys(state.filters).forEach((f) => {
@@ -30,10 +29,10 @@ const getters = {
       })
       return result
     })
-    console.log('filtered', filtered)
-    console.log('ranksIndex', ranksIndex)
+    //console.log('filtered', filtered)
+    //console.log('ranks', ranks)
     var sorted = filtered.sort ( (a ,b) => {
-      return ranksIndex[a.id] - ranksIndex[b.id]
+      return ranks[a.id] - ranks[b.id]
     })
 
     return sorted
@@ -67,7 +66,7 @@ const mutations = {
   },
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)
-    console.log('filters:', state.filters)
+    //console.log('filters:', state.filters)
   },
   storiesSetSelected: (state, index) => {
     state.selected = index
@@ -75,13 +74,6 @@ const mutations = {
   storiesClearSelection: (state, index) => {
     state.selected = null
   },
-  // ranking moves
-  storiesMoveUp: ranking.moveUp,
-  storiesMoveDown: ranking.moveDown,
-  storiesFilterTop: ranking.moveFilterTop,
-  storiesFilterBottom: ranking.moveFilterBottom,
-  storiesMoveTop: ranking.moveTop,
-  storiesMoveDown: ranking.moveDown
 }
 
 export default {

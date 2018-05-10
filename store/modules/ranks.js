@@ -1,15 +1,16 @@
 import Vue from 'vue'
+import moveRanks from './moveRanks.js'
 // initial state
 const state = {
-  items: [],
-  byStoryId: {}
+  ranks: {},
+  byRank: {}
 }
 
 // helpers
 // getters
 const getters = {
-  ranksByStoryId: (state) => {
-    return state.byStoryId
+  ranks: (state) => {
+    return state.ranks
   }
 }
 
@@ -20,42 +21,42 @@ const actions = {
 // mutations
 const mutations = {
   ranksSetData: (state, params) => {
-      console.log('ranksSetData', params)
-      state.items = params || []
-      state.items.forEach( x => {
-        state.byStoryId[x.story_id] = x
-      })
+      //console.log('ranksSetData', params)
+      state.ranks = params
   },
   ranksInitData: (state, stories) => {
     //console.log('ranksInitData', stories)
-    var ranks = []
-    var byStoryId = {}
-    if (state.items.length === 0) {
+    var ranks = {}
+    var byRank = {}
+    if (Object.keys(state.ranks).length === 0) {
       stories.sort( (a,b) => { return a.id - b.id } )
       .forEach( (s,idx) => {
-        ranks.push({id: null, story_id: s.id, rank: idx+1})
+        ranks[s.id] = idx+1
       })
-      state.items = ranks
     }
     else {
-      stories.sort( (a,b) => { return a.id > b.id } )
+      stories.sort( (a,b) => { return a.id - b.id } )
       .forEach( (s,idx) => {
-        if (state.byStoryId[s.id] == null) {
-          ranks.push({id: null, story_id: s.id, rank: idx+1})
-        }
-        else {
-          ranks.push(state.items[idx])
+        if (state.ranks[s.id] == null) {
+          ranks[s.id] = idx+1
         }
       })
     }
-    ranks.forEach( x => {
-      byStoryId[x.story_id] = x
+    Object.keys(ranks).forEach( storyId => {
+      byRank[ranks[storyId]] = storyId
     })
-    console.log('ranksInitData items', JSON.stringify(ranks, null,2))
-    console.log('ranksInitData byStoryId', JSON.stringify(byStoryId,null,2))
-    state.items = ranks
-    state.byStoryId = byStoryId
-  }
+    //console.log('ranksInitData ranks', JSON.stringify(ranks, null,2))
+    //console.log('ranksInitData byRank', JSON.stringify(byRank, null,2))
+    
+    state.ranks = ranks
+    state.byRank = byRank
+  },
+  // ranking moves
+  ranksMoveUp: moveRanks.moveUp,
+  ranksMoveDown: moveRanks.moveDown,
+  ranksMoveTop: moveRanks.moveTop,
+  ranksMoveBottom: moveRanks.moveBottom
+
 }
 
 export default {

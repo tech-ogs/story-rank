@@ -1,22 +1,16 @@
 <template>
   <div class="rank-dialog-wrapper">
     <b-button-group class="ranking-bar">
-       <b-button sm class="ranking-button" @click="goBottom">
+       <b-button sm class="ranking-button" @click="moveBottom">
           <icon name="angle-double-down"></icon>
         </b-button>
-        <b-button sm class="ranking-button" @click="goFilterBottom" :disabled="filterClear">
-          <icon name="angle-down"></icon>
-        </b-button>
-        <b-button sm class="ranking-button" @click="goDown">
+        <b-button sm class="ranking-button" @click="moveDown">
           <div> -1 </div>
         </b-button>
-        <b-button sm class="ranking-button" @click="goUp">
+        <b-button sm class="ranking-button" @click="moveUp">
           <div> +1 </div>
         </b-button>
-        <b-button sm class="ranking-button" @click="goFilterTop" :disabled="filterClear">
-          <icon name="angle-up"></icon>
-        </b-button>
-        <b-button sm class="ranking-button" @click="goTop">
+        <b-button sm class="ranking-button" @click="moveTop">
           <icon name="angle-double-up"></icon>
         </b-button>
     </b-button-group>
@@ -26,16 +20,14 @@
 <script>
 
 export default {
-  props: ['item'],
+  props: ['row', 'items'],
   data () {
     return {
       title: "Rank This Story",
-      goUp: () => this.$store.commit('storiesMoveUp', item),
-      goDown: () => this.$store.commit('storiesMoveDown', item),
-      goFilterTop: () => this.$store.commit('storiesMoveFilterTop', item),
-      goFilterBottom: () => this.$store.commit('storiesMoveFilterBottom', item),
-      goTop: () => this.$store.commit('storiesMoveTop', item),
-      goBottom: () => this.$store.commit('storiesMoveBottom', item),
+      moveUp: () => this.$store.commit('ranksMoveUp', {items: this.items, storyId: this.row.id}),
+      moveDown: () => this.$store.commit('ranksMoveDown', {items: this.items, storyId: this.row.id}),
+      moveTop: () => this.$store.commit('ranksMoveTop', {items: this.items, storyId: this.row.id}),
+      moveBottom: () => this.$store.commit('ranksMoveBottom', {items: this.items, storyId: this.row.id}),
     }
   },
   computed: {

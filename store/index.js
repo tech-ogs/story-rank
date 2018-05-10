@@ -17,7 +17,7 @@ export default new Vuex.Store({
     rowById: (state, getters, rootState) => (module, id) => {
       //console.log('rowById:', module, id, rootState[module].byId)
       var result =  rootState[module].byId[id]
-      console.log('rowById return: ', result)
+      //console.log('rowById return: ', result)
       return result;
     }
   },
@@ -37,7 +37,7 @@ export default new Vuex.Store({
         })
         .then(function(jsonData) { 
           if (params.payload.mutation != null) {
-            console.log('mutation', params.payload.mutation)
+            //console.log('mutation', params.payload.mutation)
             var mlist = typeof params.payload.mutation === 'string' ? [params.payload.mutation] : params.payload.mutation
             mlist.forEach(mut => { 
               context.commit(mut, jsonData)
@@ -45,7 +45,7 @@ export default new Vuex.Store({
             resolve()
           }
           else if (params.payload.action != null) {
-            console.log('mutation', params.payload.mutation)
+            //console.log('mutation', params.payload.mutation)
             context.dispatch(params.payload.action, jsonData)
             .then( ret => { 
               resolve(ret)
