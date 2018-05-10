@@ -33,7 +33,7 @@ const moveDown = (state, {storyId, items}) => {
 const moveTop = (state, {storyId, items}) => {
   if (state.ranks[storyId] > 1) {
     var pos = items.findIndex( x => { return x.id === storyId } )
-    for (var i = pos ; i >= 0; i-- ) {
+    for (var i = pos ; i > 0; i-- ) {
       swapRanks(state,  storyId, items[i-1].id)
     }
   }
@@ -41,11 +41,10 @@ const moveTop = (state, {storyId, items}) => {
 }
 
 const moveBottom = (state, {storyId, items}) => {
-
   //console.log('moveBottom', storyId, state.ranks[storyId], Object.keys(state.ranks).length)
   if (state.ranks[storyId] < Object.keys(state.ranks).length) {
     var pos = items.findIndex( x => { return x.id === storyId } )
-    for (var i = pos ; i < items.length; i++ ) {
+    for (var i = pos ; i < items.length - 1; i++ ) {
       swapRanks(state, storyId, items[i+1].id)
     }
   }
