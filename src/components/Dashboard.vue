@@ -44,25 +44,26 @@
           <b-nav-form  class="width100">
             <b-form-row  class="width100 flex-left-right">
               <b-form-col>
-              <b-form-radio-group id="btnradios2"
+              <b-form-radio-group id="btnradios1"
                   buttons
                   button-variant="outline"
                   size="md"
                   class="height100"
-                  name="radioBtnOutline" >
-                <b-form-radio value="1" class="inline-flex-perfect-center" style="border: 0px;">
+                  v-model="settings.list"
+                  name="radioBtnOutline1" >
+                <b-form-radio value="full" class="inline-flex-perfect-center">                  
                   &nbsp;
                   <div class="inline-flex-perfect-center">
                     <icon name="circle" class="square30 star-faded stack-layer-1"/>
-                    <div class="stack-layer-2 icon-text"> {{ items.length }} </div>
+                    <div class="stack-layer-2 icon-text"> {{ stories.length - favlength }} </div>
                   </div>
                   &nbsp;
                 </b-form-radio>
-                <b-form-radio value="2" class="inline-flex-perfect-center" style="border: 0px;">
+                <b-form-radio value="fav" class="inline-flex-perfect-center">
                   &nbsp;
                   <div class="inline-flex-perfect-center">
                     <icon name="star" class="square30 star-bright stack-layer-1"/>
-                    <div class="stack-layer-2 icon-text"> 28 </div>
+                    <div class="stack-layer-2 icon-text"> {{ favlength }} </div>
                   </div>
                   &nbsp;
                 </b-form-radio>
@@ -73,11 +74,12 @@
                   buttons
                   button-variant="outline-primary"
                   size="md"
-                  name="radioBtnOutline" >
-                <b-form-radio value="3" class="flex-perfect-center">
+                  v-model="settings.domain"
+                  name="radioBtnOutline2" >
+                <b-form-radio value="me" class="flex-perfect-center">
                   Me
                 </b-form-radio>
-                <b-form-radio value="4" class="flex-perfect-center">
+                <b-form-radio value="all" class="flex-perfect-center" disabled>
                   All
                 </b-form-radio>
               </b-form-radio-group>
@@ -87,40 +89,12 @@
         </b-navbar-nav>
       </b-navbar>
 
-<!--
-        <b-container>
-          <b-row>
-            <b-col class="flex-perfect-center">
-            <div class="flex-perfect-center">
-              <icon name="circle" class="square50 star-faded stack-layer-1"/>
-              <div class="stack-layer-2 icon-text"> {{ items.length }} </div>
-            </div>
-            </b-col>
-            <b-col class="flex-perfect-center">
-            <div class="flex-perfect-center">
-              <icon name="star" class="square50 star-bright stack-layer-1"/>
-              <div class="stack-layer-2 icon-text"> 28 </div>
-            </div>
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="user" class="square30"/>
-            </div>
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="globe" class="square30"/>
-            </div>
-            </b-col>
-          </b-row>
-        </b-container>
--->
     </b-row>
     <b-row class="app-content">
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :row="data.item" :items="items">
+            <story-row :row="data.item" :items="itemsS" :settings="settings">
             </story-row>
           </template>
         </b-table>
@@ -143,6 +117,10 @@ const fields = [
 export default {
   data () {
     return {
+      settings : {
+        list: 'full', 
+        domain : 'me'
+      },
       fields: fields,
       submitterId: null,
       filterSubmitter: (sid) => {
@@ -159,12 +137,20 @@ export default {
   },
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
-    items() { return this.$store.getters.storiesGetItemsF },
+    items() { return this.settings.list === 'full' ? this.$store.getters.storiesGetItemsF : this.$store.getters.storiesGetFavs },
+    itemsS() { return this.settings.list === 'full' ? this.$store.getters.storiesGetItemsS : this.$store.getters.storiesGetFavs },
     users () { return this.$store.getters.usersGetIdMap },
     stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
+    stories () { return this.$store.getters.storiesGetItems },
     ranks() { return this.$store.getters.ranks},
-    favorites() { return this.$store.getters.favorites}
+    favorites() { return this.$store.getters.favorites},
+    favlength() { return this.$store.getters.numFavorites},
+  },
+  watch: {
+    favlength: function(newValue) {
+      console.log('animate here')
+    }
   },
   methods: {
     doLogout: () => {
@@ -261,4 +247,7 @@ body,
   margin-top: .2em;
 }
 
+.flip-list-move {
+  transition: transform 1s;
+}
 </style>

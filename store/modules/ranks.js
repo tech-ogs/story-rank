@@ -16,6 +16,15 @@ const getters = {
   },
   favorites: (state) => {
     return state.favorites
+  },
+  numFavorites: (state) => { 
+    var result = 0
+    if (state.favorites != null) { 
+      result = Object.keys(state.favorites)
+      .filter( x => { return state.favorites[x] } )
+      .length
+    }
+    return result
   }
 }
 
@@ -48,6 +57,9 @@ const mutations = {
       .forEach( (s,idx) => {
         if (state.ranks[s.id] == null) {
           ranks[s.id] = idx+1
+        }
+        else {
+          ranks[s.id] = state.ranks[s.id]
         }
       })
     }

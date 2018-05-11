@@ -32,11 +32,49 @@ const getters = {
     //console.log('filtered', filtered)
     //console.log('ranks', ranks)
     var sorted = filtered.sort ( (a ,b) => {
+      //default display order is id desc (latest is greatest)
+      return b.id - a.id
+    })
+
+    return sorted
+  },
+  // strictly ranked list to support all moves via swaps, use this when calling mutations in moveRanks
+  storiesGetItemsS: (state, getters) => {
+    //console.log('storiesGetItemsS', getters)
+    var ranks = getters.ranks
+/*
+    var filtered = state.items.filter( (story) => {
+      var result = true
+      Object.keys(state.filters).forEach((f) => {
+          result = result && (state.filters[f] == null || ( story[f] === state.filters[f]) )
+      })
+      return result
+    })
+*/
+    //console.log('filtered', filtered)
+    //console.log('ranks', ranks)
+    var sorted = state.items.sort ( (a ,b) => {
       return ranks[a.id] - ranks[b.id]
     })
 
     return sorted
   },
+  storiesGetFavs: (state, getters) => {
+    //console.log('storiesGetItemsF', getters)
+    var ranks = getters.ranks
+    var favorites = getters.favorites
+    var filtered = state.items.filter( (story) => {
+      return favorites[story.id] 
+    })
+    //console.log('filtered', filtered)
+    //console.log('ranks', ranks)
+    var sorted = filtered.sort ( (a ,b) => {
+      return ranks[a.id] - ranks[b.id]
+    })
+
+    return sorted
+  },
+
   storiesFilterIsClear: (state) => {
     var result = true
     for (var f in state.filters) {

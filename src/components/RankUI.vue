@@ -1,29 +1,19 @@
 <template>
   <div class="rank-dialog-wrapper">
-<!--
-    <b-button-group class="ranking-bar">
-       <b-button sm class="ranking-button" @click="moveBottom">
-          <icon name="angle-double-down"></icon>
-        </b-button>
-        <b-button sm class="ranking-button" @click="moveDown">
-          <div> -1 </div>
-        </b-button>
-        <b-button sm class="ranking-button" @click="moveUp">
-          <div> +1 </div>
-        </b-button>
-        <b-button sm class="ranking-button" @click="moveTop">
-          <icon name="angle-double-up"></icon>
-        </b-button>
-    </b-button-group>
--->
-  <icon name="star" :class="starClass"> </star>
+  <b-container class="width100">
+
+  <span :class="rankingBarClass">
+        <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveDown"> <icon name="arrow-down" /> </b-link> 
+        <b-link href="#" @click="toggleFavorite"> <icon name="star" :class="starClass"/> </b-link> 
+        <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveUp"> <icon name="arrow-up" /> </b-link> 
+  </span>
   </div>
 </template>
 
 <script>
 
 export default {
-  props: ['row', 'items'],
+  props: ['row', 'items', 'settings'],
   data () {
     return {
       title: "Rank This Story",
@@ -35,9 +25,12 @@ export default {
   },
   computed: {
     filterClear() { return this.$store.getters.storiesFilterIsClear},
-    starClass() { return this.row.favorite ? 'star star-bright' : 'star star-dim' }
+    starClass() { return this.favorites[this.row.id] ? 'star star-bright' : 'star star-dim' },
+    rankingBarClass() { return this.settings.list === 'fav' && this.favorites[this.row.id] ? 'ranking-bar' : 'star-bar' },
+    favorites() { return this.$store.getters.favorites}
   },
   methods: {
+      toggleFavorite: function() { this.favorites[this.row.id] ? this.moveBottom() : this.moveTop() }
   },
   mounted () { 
   }
@@ -46,26 +39,19 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/*
-  .rank-dialog-wrapper {
-    width: 100%;
-  }
   .ranking-bar {
+    display: flex;
     width: 100%;
+    justify-content: space-between;
   }
-  .ranking-button {
-    width: 100%;
-    border-thickness: 1px;
-    border-color: white;
-    border-style: solid;
+  .star-bar {
   }
-*/
   .star {
     width: 25px;
     height: 25px;
   }
   .star-dim {
-    color: khaki;
+    color: gray;
   }
   .star-bright {
     color: gold;

@@ -26,8 +26,8 @@
           <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
         </span>
       </b-col>
-      <b-col>
-        <rank-ui :row="row" :items="items"> </rank-ui>
+      <b-col cols="6">
+        <rank-ui :row="row" :items="items" :settings="settings"> </rank-ui>
       </b-col>
       <b-col class="story-submitter-container">
         <span class="story-submitter">
@@ -41,7 +41,7 @@
 <script>
 
 export default {
-  props: ['row', 'items'],
+  props: ['row', 'items', 'settings'],
   data () {
     return {
       rowClass: (row) => {
