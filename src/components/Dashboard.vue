@@ -5,36 +5,13 @@
 
 
         <b-navbar-brand href="#">
-            <b-container style="width: 100%;">
-            <b-row class="flex-perfect-center">
-            <b-col>
-            <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="star" class="star star-faded star-layer-1"/>
-              <div class="star-layer-2 star-text"> {{ items.length }} </div>
-            </div>
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="star" class="star star-bright star-layer-1"/>
-              <div class="star-layer-2 star-text"> 28 </div>
-            </div>
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="user" class="star star-layer-1"/>
-            </div>
-            </b-col>
-            <b-col>
-            <div class="flex-perfect-center">
-              <icon name="globe" class="star star-layer-1"/>
-            </div>
-            </b-col>
-            <b-col>
-            </b-row>
-            </b-container>
+          <span class="title-brand">
+          <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
+          WTF stories &nbsp; &nbsp;
+<!--
+          <b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
+-->
+          </span>
         </b-navbar-brand>
 
         
@@ -61,8 +38,84 @@
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
-    </b-row>
 
+      <b-navbar class="width100">
+        <b-navbar-nav class="width100">
+          <b-nav-form  class="width100">
+            <b-form-row  class="width100 flex-left-right">
+              <b-form-col>
+              <b-form-radio-group id="btnradios2"
+                  buttons
+                  button-variant="outline"
+                  size="md"
+                  class="height100"
+                  name="radioBtnOutline" >
+                <b-form-radio value="1" class="inline-flex-perfect-center" style="border: 0px;">
+                  &nbsp;
+                  <div class="inline-flex-perfect-center">
+                    <icon name="circle" class="square30 star-faded stack-layer-1"/>
+                    <div class="stack-layer-2 icon-text"> {{ items.length }} </div>
+                  </div>
+                  &nbsp;
+                </b-form-radio>
+                <b-form-radio value="2" class="inline-flex-perfect-center" style="border: 0px;">
+                  &nbsp;
+                  <div class="inline-flex-perfect-center">
+                    <icon name="star" class="square30 star-bright stack-layer-1"/>
+                    <div class="stack-layer-2 icon-text"> 28 </div>
+                  </div>
+                  &nbsp;
+                </b-form-radio>
+              </b-form-radio-group>
+              </b-form-col>
+              <b-form-col>
+              <b-form-radio-group id="btnradios2"
+                  buttons
+                  button-variant="outline-primary"
+                  size="md"
+                  name="radioBtnOutline" >
+                <b-form-radio value="3" class="flex-perfect-center">
+                  Me
+                </b-form-radio>
+                <b-form-radio value="4" class="flex-perfect-center">
+                  All
+                </b-form-radio>
+              </b-form-radio-group>
+              </b-form-col>
+            </b-form-row>
+          </b-nav-form>
+        </b-navbar-nav>
+      </b-navbar>
+
+<!--
+        <b-container>
+          <b-row>
+            <b-col class="flex-perfect-center">
+            <div class="flex-perfect-center">
+              <icon name="circle" class="square50 star-faded stack-layer-1"/>
+              <div class="stack-layer-2 icon-text"> {{ items.length }} </div>
+            </div>
+            </b-col>
+            <b-col class="flex-perfect-center">
+            <div class="flex-perfect-center">
+              <icon name="star" class="square50 star-bright stack-layer-1"/>
+              <div class="stack-layer-2 icon-text"> 28 </div>
+            </div>
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="user" class="square30"/>
+            </div>
+            </b-col>
+            <b-col>
+            <div class="flex-perfect-center">
+              <icon name="globe" class="square30"/>
+            </div>
+            </b-col>
+          </b-row>
+        </b-container>
+-->
+    </b-row>
     <b-row class="app-content">
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
@@ -184,18 +237,9 @@ body,
   align-items: center;
   /*justify-content: center;*/
 }
-.flex-perfect-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .filter-bar {
 
-}
-.star {
-  width: 30px;
-  height: 30px;
 }
 .star-dim {
   color: khaki;
@@ -207,16 +251,9 @@ body,
   color: lightgray;
 }
 
-.star-layer-1 {
-  position: absolute;
-  z-index: 1;
-}
-.star-layer-2 {
-  position: absolute;
-  z-index: 2;
-}
-.star-text {
+.icon-text {
   font-size: small;
+  font-weight: bold;
   margin-top: .2em;
 }
 
