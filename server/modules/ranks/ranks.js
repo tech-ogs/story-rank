@@ -20,5 +20,5 @@ function myranks (req, res) {
 }
  
 exports = module.exports = {
-  myranks: myranks
+  myranks: myranks,
 }

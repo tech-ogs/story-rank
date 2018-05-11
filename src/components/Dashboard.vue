@@ -163,6 +163,8 @@ export default {
     users () { return this.$store.getters.usersGetIdMap },
     stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
+    ranks() { return this.$store.getters.ranks},
+    favorites() { return this.$store.getters.favorites}
   },
   methods: {
     doLogout: () => {
@@ -195,6 +197,8 @@ export default {
       //console.log('checking state stories', this.items)
       //console.log('checking state users', this.users)
       //console.log('checking state stories Id Map', this.stories)
+      console.log('checking state ranks', this.ranks)
+      console.log('checking state favorites', this.favorites)
     })
   }
 }

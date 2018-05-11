@@ -50,6 +50,7 @@ create table application.ranks (
   user_id bigint,
   story_id bigint,
   rank integer,
+  favorite boolean default false,
   rank_date timestamp
 );
 

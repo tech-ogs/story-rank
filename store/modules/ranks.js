@@ -3,7 +3,9 @@ import moveRanks from './moveRanks.js'
 // initial state
 const state = {
   ranks: {},
-  byRank: {}
+  byRank: {},
+  favorites: {},
+  favoritesByRank: {}
 }
 
 // helpers
@@ -11,6 +13,9 @@ const state = {
 const getters = {
   ranks: (state) => {
     return state.ranks
+  },
+  favorites: (state) => {
+    return state.favorites
   }
 }
 
@@ -22,12 +27,16 @@ const actions = {
 const mutations = {
   ranksSetData: (state, params) => {
       //console.log('ranksSetData', params)
-      state.ranks = params
+      state.ranks = params.ranks
+      state.favorites = params.favorites
   },
+
   ranksInitData: (state, stories) => {
     //console.log('ranksInitData', stories)
     var ranks = {}
     var byRank = {}
+    var favoritesByRank = {}
+
     if (Object.keys(state.ranks).length === 0) {
       stories.sort( (a,b) => { return a.id - b.id } )
       .forEach( (s,idx) => {
@@ -45,11 +54,16 @@ const mutations = {
     Object.keys(ranks).forEach( storyId => {
       byRank[ranks[storyId]] = storyId
     })
+    Object.keys(state.favorites).forEach( storyId => {
+      favoritesByRank[state.favorites[storyId]] = storyId
+    })
+
     //console.log('ranksInitData ranks', JSON.stringify(ranks, null,2))
     //console.log('ranksInitData byRank', JSON.stringify(byRank, null,2))
     
     state.ranks = ranks
     state.byRank = byRank
+    state.favoritesByRank = favoritesByRank
   },
   // ranking moves
   ranksMoveUp: moveRanks.moveUp,
