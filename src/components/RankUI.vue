@@ -30,7 +30,16 @@ export default {
     favorites() { return this.$store.getters.favorites}
   },
   methods: {
-      toggleFavorite: function() { this.favorites[this.row.id] ? this.moveBottom() : this.moveTop() }
+      toggleFavorite: function() {
+        if (this.favorites[this.row.id]) { 
+          this.$store.commit('storiesAnimateCircle')
+          this.moveBottom() 
+        }
+        else {
+          this.$store.commit('storiesAnimateStar')
+          this.moveTop() 
+        }
+      }
   },
   mounted () { 
   }

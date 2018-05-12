@@ -7,7 +7,9 @@ const state = {
   filters: {
     submitter_id: null
   },
-  selected: null
+  selected: null,
+  animateStar: false,
+  animateCircle: false
 }
 
 // helpers
@@ -85,8 +87,9 @@ const getters = {
     }
     return result
   },
-  storiesSelectedRow: (state) => state.selected
-
+  storiesSelectedRow: (state) => state.selected,
+  storiesGetAnimateStar: state => state.animateStar,
+  storiesGetAnimateCircle: state => state.animateCircle
 }
 
 // actions
@@ -112,6 +115,26 @@ const mutations = {
   storiesClearSelection: (state, index) => {
     state.selected = null
   },
+  storiesAnimateStar: (state) => {
+    if (!state.animateStar) {
+      console.log('start star animation')
+      state.animateStar = true
+      setTimeout( () => {
+        console.log('end star animation')
+        state.animateStar = false
+      }, 1500)
+    }
+  },
+  storiesAnimateCircle: (state) => {
+    if (!state.animateCircle) {
+      console.log('start circle animation')
+      state.animateCircle = true
+      setTimeout( () => {
+        console.log('end circle animation')
+        state.animateCircle = false
+      }, 1500)
+    }
+  }
 }
 
 export default {

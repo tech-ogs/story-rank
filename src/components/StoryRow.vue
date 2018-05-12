@@ -2,7 +2,7 @@
   <b-container small :class="rowClass(row)">
     <b-row>
       <b-col cols="4"> 
-        <b-img thumbnail rounded fluid-grow :src="row.attributes.image" class="story-image" >
+        <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" >
       </b-col>
       <b-col class="story-title-container">
         <span class="story-title">
@@ -50,7 +50,8 @@ export default {
           result = 'story-selected'
         }
         return result
-      }
+      },
+      getImg: (url) => { return require('@/'+url) } 
     }
   },
   computed: {

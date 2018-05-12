@@ -48,7 +48,7 @@ router.get('/', function(req, res){
 });
 
 router.get('/assets/logo.png', function(req, res) {
-  res.sendFile(path.join(__dirname, '../src/assets/logo.png'))
+  res.sendFile(path.join(__dirname, '../dist/static/logo.png'))
 })
 
 router.post('/login', function(req, res) {
@@ -78,7 +78,7 @@ router.use('/static', checkAuth, function(req,res,next){
 })
 
 router.use('/assets', checkAuth, function(req,res,next){
-  express.static(path.join(__dirname, '../src/assets'))(req, res, next);
+  express.static(path.join(__dirname, '../dist/static'))(req, res, next);
 })
 
 router.post('/list', checkAuth, handler(query.list)) 

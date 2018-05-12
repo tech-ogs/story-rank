@@ -39,12 +39,22 @@ module.exports = {
         options: { presets : [ 'env' ] },
         include: [resolve('src'), resolve('store'),resolve('test')]
       },
+/*
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
+          name: utils.assetsPath('/[name].[hash:7].[ext]')
+        }
+      },
+*/
+      {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: utils.assetsPath('thumbs/[name].[hash:7].[ext]')
         }
       },
       {

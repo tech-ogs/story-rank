@@ -8,9 +8,6 @@
           <span class="title-brand">
           <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
           WTF stories &nbsp; &nbsp;
-<!--
-          <b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
--->
           </span>
         </b-navbar-brand>
 
@@ -30,7 +27,10 @@
               </b-form-select>
               </div>
               <div style="float:left;">
-              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">&nbsp;X</b-nav-item>
+              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">
+              &nbsp;&nbsp;X
+              &nbsp;&nbsp;<b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
+              </b-nav-item>
               </div>
               </div>
             </b-nav-item>
@@ -46,23 +46,24 @@
               <b-form-col>
               <b-form-radio-group id="btnradios1"
                   buttons
-                  button-variant="outline"
+                  button-variant="link"
                   size="md"
                   class="height100"
                   v-model="settings.list"
+                  @change="handleListChange"
                   name="radioBtnOutline1" >
-                <b-form-radio value="full" class="inline-flex-perfect-center">                  
+                <b-form-radio value="full" class="inline-flex-perfect-center icon-button">                  
                   &nbsp;
                   <div class="inline-flex-perfect-center">
-                    <icon name="circle" class="square30 star-faded stack-layer-1"/>
+                    <icon name="circle" :class="circleClass()"/>
                     <div class="stack-layer-2 icon-text"> {{ stories.length - favlength }} </div>
                   </div>
                   &nbsp;
                 </b-form-radio>
-                <b-form-radio value="fav" class="inline-flex-perfect-center">
+                <b-form-radio value="fav" class="inline-flex-perfect-center icon-button">
                   &nbsp;
                   <div class="inline-flex-perfect-center">
-                    <icon name="star" class="square30 star-bright stack-layer-1"/>
+                    <icon name="star" :class="starClass()"/>
                     <div class="stack-layer-2 icon-text"> {{ favlength }} </div>
                   </div>
                   &nbsp;
@@ -132,6 +133,20 @@ export default {
       rowclick: (item, index, event) => {
         //console.log('rowclick')
         this.$store.commit('storiesSetSelected', item.id)
+      },
+      starClass: () => {
+        console.log('animateStar: ', this.animateStar)
+        var ret = 'star-bright stack-layer-1'
+        ret += this.animateStar ? ' star-animation' : ' square30'
+        console.log('starClass: ', ret)
+        return ret
+      },
+      circleClass: () => {
+        console.log('animateCircle: ', this.animateCircle)
+        var ret = 'circle-faded stack-layer-1'
+        ret += this.animateCircle ? ' circle-animation' : ' square30'
+        console.log('circleClass: ', ret)
+        return ret
       }
     }
   },
@@ -146,11 +161,9 @@ export default {
     ranks() { return this.$store.getters.ranks},
     favorites() { return this.$store.getters.favorites},
     favlength() { return this.$store.getters.numFavorites},
-  },
-  watch: {
-    favlength: function(newValue) {
-      console.log('animate here')
-    }
+    animateStar() { return this.$store.getters.storiesGetAnimateStar},
+    animateCircle() { return this.$store.getters.storiesGetAnimateCircle}
+
   },
   methods: {
     doLogout: () => {
@@ -175,6 +188,9 @@ export default {
       .catch( err => {
         alert (err.message)
       })
+    },
+    handleListChange: (event) => {
+      console.log('list: ', event)
     }
   },
   mounted () { 
@@ -228,17 +244,44 @@ body,
   /*justify-content: center;*/
 }
 
-.filter-bar {
-
+.icon-button {
+  color:black;
 }
+
+.icon-button.active {
+  color:black;
+}
+
+.icon-button.active .stack-layer-1{
+  border-bottom: 2px outset red;
+}
+
+
 .star-dim {
   color: khaki;
 }
 .star-bright {
   color: gold;
 }
-.star-faded {
+.star-animation {
+  animation-name: pulse;
+  animation-duration: .5s;
+}
+
+.circle-faded {
   color: lightgray;
+}
+
+.circle-animation {
+  animation-name: pulse;
+  animation-duration: .5s;
+}
+
+@keyframes pulse {
+    0%   {height: 35px; width: 35px}
+    25%   {height: 37px; width: 37px}
+    50%   {height: 40px; width: 40px}
+    100%   {height: 40px; width: 40px}
 }
 
 .icon-text {
