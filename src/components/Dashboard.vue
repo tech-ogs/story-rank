@@ -194,6 +194,8 @@ export default {
     }
   },
   mounted () { 
+    var socket = window.io.connect('http://192.168.1.6:8080');
+    console.log('Dashboard socket:', socket)
     this.$store.dispatch('initData')
     .then(() => {
       //console.log('checking state stories', this.items)
@@ -202,6 +204,8 @@ export default {
       console.log('checking state ranks', this.ranks)
       console.log('checking state favorites', this.favorites)
     })
+
+    this.$store.dispatch('initSockets', {socket: socket})
   }
 }
 </script>

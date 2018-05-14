@@ -125,6 +125,14 @@ export default new Vuex.Store({
       })
 
       return promise
+    },
+    initSockets(context, params) {
+      console.log('init socket:', params)
+      var socket = params.socket
+      socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'datax' });
+      });
     }
   },
   modules: {

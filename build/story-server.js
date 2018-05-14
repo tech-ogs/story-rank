@@ -7,25 +7,27 @@ if (!process.env.NODE_ENV) {
 process.title = 'story-server'
 
 var path = require('path');
-var express = require('express');
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 var path = require('path');
 var bodyParser = require('body-parser')
 var cookieParser = require('cookie-parser')
 
-var routes = require(path.join(__dirname , '../server/routes.js'))
+
+var routes = require(path.join(__dirname , '../server/routes.js'))(io)
 var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
 
-var server = express();
 var cookieName = 'SRSESSION';
 
 // body
-server.use(bodyParser.json());
+app.use(bodyParser.json());
 
 
 // cookies
-server.use(cookieParser());
+app.use(cookieParser());
 
-server.use(function (req, res, next) {
+app.use(function (req, res, next) {
   // check if client sent cookie
   var cookie = req.cookies[cookieName]
   console.log('cookie:', cookie)
@@ -44,7 +46,7 @@ server.use(function (req, res, next) {
 
 // routes
 
-server.use('/', routes)
+app.use('/', routes)
 
 function getIP() { 
   const interfaces = require('os').networkInterfaces();
@@ -69,5 +71,23 @@ else {
     console.log('server listening on IP:port ' + IP + ':'+ port);
   });
 }
+
+function onError(err) {
+  console.log('socket error', err)
+}
+
+
+function onListening(evt) {
+  console.log('socket listening', evt)
+}
+io.on('error', onError);
+io.on('listening', onListening);
+io.on('connection', function (socket) {
+  console.log('socket connection')
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', function (data) {
+    console.log('socket data', data);
+  });
+});
 
 

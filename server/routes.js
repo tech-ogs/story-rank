@@ -86,5 +86,19 @@ router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
 
-module.exports = router
+module.exports = function (io) {
+    //Socket.IO
+    io.on('connection', function (socket) {
+        console.log('User has connected to Index');
+        //ON Events
+        socket.on('admin', function () {
+            console.log('Successful Socket Test');
+        });
+
+        //End ON Events
+    });
+    return router;
+};
+
+//module.exports = router
 
