@@ -4,6 +4,7 @@ import stories from './modules/stories'
 import users from './modules/users'
 import comments from './modules/comments'
 import ranks from './modules/ranks'
+import socketEvents from './socketEvents'
 
 Vue.use(Vuex)
 
@@ -12,8 +13,12 @@ Vue.use(Vuex)
 const debug = false // process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
+  state: {
+    socket: null
+  },
   namespaced: true,
   getters: {
+    getSocket: (state) => state.socket,
     rowById: (state, getters, rootState) => (module, id) => {
       //console.log('rowById:', module, id, rootState[module].byId)
       var result =  rootState[module].byId[id]
@@ -22,6 +27,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    initSockets(context, params) {
+      console.log('init socket:', params)
+      var socket = params.socket
+      context.commit('setSocket', {socket: socket})
+      socketEvents.registerHandlers(socket)     
+    },
+
     fetchData(context, params) { 
       var promise = new Promise( (resolve, reject) => {
         var headers = new Headers();
@@ -61,16 +73,19 @@ export default new Vuex.Store({
       })
       return promise
     },
-    initData(context) {
+    initStore(context, params) {
 
       var promise = new Promise((resolve, reject) => {
-        context.dispatch('fetchData',{ 
-          url: '/list',
-          payload: {
-            schema: 'application',
-            table: 'users',
-            mutation: 'usersSetData'
-          }
+        context.dispatch('initSockets', params)
+        .then( () => {
+          context.dispatch('fetchData',{ 
+            url: '/list',
+            payload: {
+              schema: 'application',
+              table: 'users',
+              mutation: 'usersSetData'
+            }
+          })
         })
         .then ( () => {
           return context.dispatch('fetchData', { 
@@ -125,14 +140,11 @@ export default new Vuex.Store({
       })
 
       return promise
-    },
-    initSockets(context, params) {
-      console.log('init socket:', params)
-      var socket = params.socket
-      socket.on('news', function (data) {
-        console.log(data);
-        socket.emit('my other event', { my: 'datax' });
-      });
+    }
+  },
+  mutations: {
+    setSocket: (state, params) => {
+      state.socket = params.socket
     }
   },
   modules: {

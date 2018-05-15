@@ -17,10 +17,10 @@ export default {
   data () {
     return {
       title: "Rank This Story",
-      moveUp: () => this.$store.commit('ranksMoveUp', {items: this.items, storyId: this.row.id}),
-      moveDown: () => this.$store.commit('ranksMoveDown', {items: this.items, storyId: this.row.id}),
-      moveTop: () => this.$store.commit('ranksMoveTop', {items: this.items, storyId: this.row.id}),
-      moveBottom: () => this.$store.commit('ranksMoveBottom', {items: this.items, storyId: this.row.id}),
+      moveUp: () => this.$store.dispatch('ranksMoveUpAction', {items: this.items, storyId: this.row.id}),
+      moveDown: () => this.$store.dispatch('ranksMoveDownAction', {items: this.items, storyId: this.row.id}),
+      moveTop: () => this.$store.dispatch('ranksMoveTopAction', {items: this.items, storyId: this.row.id}),
+      moveBottom: () => this.$store.dispatch('ranksMoveBottomAction', {items: this.items, storyId: this.row.id}),
     }
   },
   computed: {

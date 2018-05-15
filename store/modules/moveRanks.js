@@ -64,7 +64,40 @@ const moveBottom = (state, {storyId, items}) => {
   //rebuildByRank(state)
 }
 
+/* the entry points for rank manipulations are actions since they need to work with socket (in rootstate) as well as ranks module state */
+const postData = (context) => {
+  return {
+    ranks : JSON.parse(JSON.stringify(context.state.ranks)),
+    favorites: JSON.parse(JSON.stringify(context.state.favorites))
+  }
+}
+
+const  moveUpAction = (context, params) => {
+  context.commit('ranksMoveUp', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+}
+
+const moveDownAction = (context, params) => {
+  context.commit('ranksMoveDown', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+  console.log('i am here')
+}
+const  moveTopAction = (context, params) => {
+  context.commit('ranksMoveTop', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+
+}
+const  moveBottomAction = (context, params) => {
+  context.commit('ranksMoveBottom', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+
+}
+
 export default {
+  moveUpAction,
+  moveDownAction,
+  moveTopAction,
+  moveBottomAction,
   moveUp,
   moveDown,
   moveTop,

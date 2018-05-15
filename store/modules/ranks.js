@@ -30,6 +30,11 @@ const getters = {
 
 // actions
 const actions = {
+  ranksMoveUpAction: moveRanks.moveUpAction,
+  ranksMoveDownAction: moveRanks.moveDownAction,
+  ranksMoveTopAction: moveRanks.moveTopAction,
+  ranksMoveBottomAction: moveRanks.moveBottomAction
+
 }
 
 // mutations
