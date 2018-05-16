@@ -12,6 +12,8 @@ const state = {
 // getters
 const getters = {
   ranks: (state) => {
+
+    //console.log( 'ranks getter', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
     return state.ranks
   },
   favorites: (state) => {
@@ -43,6 +45,8 @@ const mutations = {
       //console.log('ranksSetData', params)
       state.ranks = params.ranks
       state.favorites = params.favorites
+
+      //console.log( 'ranks setdata', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
   },
 
   ranksInitData: (state, stories) => {
@@ -81,6 +85,7 @@ const mutations = {
     state.ranks = ranks
     state.byRank = byRank
     state.favoritesByRank = favoritesByRank
+    //console.log( 'ranks initData', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
   },
   // ranking moves
   ranksMoveUp: moveRanks.moveUp,

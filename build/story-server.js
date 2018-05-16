@@ -1,5 +1,4 @@
 require('./check-versions')()
-
 var config = require('../config')
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
@@ -17,6 +16,7 @@ var cookieParser = require('cookie-parser')
 
 var routes = require(path.join(__dirname , '../server/routes.js'))(io)
 var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
+var socketEvents = require(path.join(__dirname , '../server/common/socketEvents.js'))
 
 var cookieName = 'SRSESSION';
 
@@ -83,15 +83,9 @@ function onListening(evt) {
 io.on('error', onError);
 io.on('listening', onListening);
 io.on('connection', function (socket) {
-  console.log('socket connection')
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', function (data) {
-    console.log('socket data', this.id,  data);
-  });
-  socket.on('rank_update', function (data) {
-    console.log('rank update:', this.id,  data);
-  });
-
+  console.log('socket event connection')
+  socket.emit('handshake', { hello: 'world' });
+  socketEvents.setHandlers (socket)
 });
 
 

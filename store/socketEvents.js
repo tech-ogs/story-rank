@@ -1,7 +1,7 @@
 const registerHandlers = (socket) => {
-    socket.on('news', function (data) {
-      console.log('socket news event: ', this.id, data);
-      socket.emit('my other event', { my: 'datax' });
+    socket.on('handshake', function (data) {
+      console.log('socket handshake: ', this.id, data);
+      socket.emit('handshake', { stories : 'wtf' });
     });
 }
 

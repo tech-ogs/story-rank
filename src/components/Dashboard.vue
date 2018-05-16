@@ -194,7 +194,8 @@ export default {
     }
   },
   mounted () { 
-    var socket = window.io.connect('http://192.168.3.117:8080');
+    //var socket = window.io('http://192.168.1.2:8080', {forceNew: true});
+    var socket = window.io();
     console.log('Dashboard socket:', socket)
     this.$store.dispatch('initStore', {socket: socket})
     .then(() => {
