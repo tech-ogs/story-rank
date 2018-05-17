@@ -57,6 +57,11 @@ create table application.ranks (
 alter table application.ranks add constraint user_id_fkey foreign key (user_id) references application.users;
 alter table application.ranks add constraint story_id_fkey foreign key (story_id) references application.stories;
 
+create table application.results (
+  story_id bigint,
+  rank integer,
+);
+
 drop schema timeline cascade;
 create schema timeline;
 
@@ -72,8 +77,17 @@ create table timeline.ranks (
 
 create table timeline.stories (
   id bigserial primary key,
+  record_date timestamp,
+  row_id bigint
   name varchar,
   submitter_id bigint,
   submission_date timestamp,
   attributes jsonb
+);
+
+create table timeline.results (
+  id bigserial primary key,
+  record_date timestamp,
+  story_id bigint,
+  rank integer,
 );
