@@ -297,7 +297,7 @@ var ballots = Array.apply(null, {length: 100}).map(Number.call, Number).map(func
   ]
 */
 
-
+/*
 
 candidates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48]
 ballots =  [
@@ -307,7 +307,8 @@ ballots =  [
   [1,7,9,20,44,30,45,43,2,3,4,5,6,8,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,31,32,33,34,35,36,37,38,39,40,41,42,46,47,48]
 ]
 
-/*
+*/
+
   var candidates = plv8.execute('select id from application.stories')
   .map(function(x) { return x.id })
 
@@ -315,7 +316,6 @@ ballots =  [
   .map(function(x) {
     return x.ballot
   })
-*/
 
   plv8.execute('select xlog($1, $2, $3)', [candidates.length, JSON.stringify(candidates), JSON.stringify(ballots)])
 
