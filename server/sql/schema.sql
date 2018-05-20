@@ -59,11 +59,13 @@ alter table application.ranks add constraint story_id_fkey foreign key (story_id
 
 drop table application.sgraph cascade;
 create table application.sgraph (
-  path ltree
+  path ltree,
+  parr text[]
 );
 
 CREATE INDEX path_gist_idx ON application.sgraph USING GIST (path);
 CREATE INDEX path_idx ON application.sgraph USING BTREE (path);
+CREATE INDEX idx_parr on application.sgraph USING GIN (parr);
 
 create table application.results (
   story_id bigint,

@@ -2,11 +2,13 @@
 
 drop table application.sgraph cascade;
 create table application.sgraph (
-  path ltree
+  path ltree,
+  parr text[]
 );
 
 CREATE INDEX path_gist_idx ON application.sgraph USING GIST (path);
 CREATE INDEX path_idx ON application.sgraph USING BTREE (path);
+CREATE INDEX idx_parr on application.sgraph USING GIN (parr);
 
 drop table application.results cascade;
 create table application.results (
