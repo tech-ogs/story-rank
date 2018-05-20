@@ -37,91 +37,80 @@ CREATE OR REPLACE FUNCTION all_results() returns jsonb AS $$
     
 $$ LANGUAGE plv8;
 
--- TODO : move to helpers if ltree becomes a fact of life ...
 
-CREATE OR REPLACE FUNCTION reachable(in src text, in dst text) returns boolean AS $$
+CREATE OR REPLACE FUNCTION reindex() returns jsonb as $$
+
+  var stime = new Date();
+/*
+  var sources = plv8.execute('select src, dst from application.sgraph');
+  plv8.execute('select xlog($1, $2)', ['timex reindex sources:', new Date() - stime])
+  
+  var stmt=''
+  stmt +=  'with sources as (select src, dst from application.sgraph),'
+  stmt +=  ' with recursive kids (src, dst) as ('
+  stmt +=     ' select src, dst from application.sgraph where src = sources.src'
+  stmt +=     ' union'
+  stmt +=     ' select s.src, s.dst from application.sgraph s, kids k where s.src = k.dst'
+  stmt +=     ' ) update application.sgraph set kids = json_agg(distinct dst) as klist from kids where src = sources.src and dst = sources.dst'
+*/
+  var stmt = ''
+  stmt += 'with index as ('
+  stmt += '  with  recursive kidscte (src, dst) as ( '
+  stmt += '    select src, dst from application.sgraph  '
+  stmt += '    union '
+  stmt += '  select s.src, s.dst from application.sgraph s, kidscte k where s.src = k.dst ) '
+  stmt += 'select kidscte.src, array_agg(kidscte.dst) as klist from kidscte group by kidscte.src) '
+  stmt += 'update application.sgraph set kids = index.klist from index where sgraph.src = index.src '
+
+/*
+  var cmd = plv8.prepare(stmt)
+  sources.forEach(function(srec) {
+    var xtime = new Date();
+    plv8.execute('select xlog($1, $2)', ['processing src:', srec.src])
+    var kids = cmd.execute ([srec.src])
+    plv8.execute('select xlog($1, $2)', ['timex reindex recursion:', new Date() - xtime])
+    if (kids.length > 0) {
+      kids = kids[0].klist
+    }
+    plv8.execute('update application.sgraph set kids = $3 where src=$1 and dst=$2', [srec.src, srec.dst, kids])
+    plv8.execute('select xlog($1, $2)', ['timex reindex update:', new Date() - xtime])
+  })
+*/
+  plv8.execute(stmt)
+  var reindex_time = new Date() - stime
+  plv8.execute('select xlog($1, $2)', ['timex reindex:', reindex_time])
+/*
+  if (reindex_time > 500) { 
+    plv8.execute('cluster application.sgraph using src_idx')
+  }
+*/
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION reachable(in src bigint, in dst bigint) returns boolean AS $$
 
   var stime = new Date()
   //plv8.execute('select xlog($1, $2)', [JSON.stringify(src), JSON.stringify(dst)])
-  var ret = plv8.execute('select count(path) from application.sgraph where path ~ $1', ['*.' + src + '.*.' + dst + '.*'])
-
-  //plv8.execute('select xlog($1)', [JSON.stringify(ret)])
+  //var ret = plv8.execute('with x as (select unnest(kids) as kid from application.sgraph where src = $1) select count(kid) from x where kid = $2', [src, dst])
+  var ret = plv8.execute ('select array[$2::bigint] <@ kids as check from application.sgraph where src = $1 limit 1', [src, dst])
+  //plv8.execute('select xlog($1, $2, $3, $4)', ['ret', src, dst, JSON.stringify(ret)])
+  var result = false
+  if (ret.length > 0) { 
+    result = ret[0].check
+  }
   plv8.execute('select xlog($1, $2)', ['timex reachable', (new Date() - stime )])
-  return (ret[0].count > 0)
+  return result
 
 $$ LANGUAGE plv8;
 
-CREATE OR REPLACE FUNCTION check_final_cycles() returns jsonb AS $$
 
-  var stime = new Date()
-  var result = false
-  var ret
-  var count = plv8.execute('select count(path) from application.sgraph')
-  if (count[0].count > 0) {
-    
-    ret = plv8.execute('with x as ( select id from application.stories), y as (select id from application.stories)  select x.id, y.id from x,y where reachable(x.id::Text, y.id::Text) and reachable(y.id::text, x.id::Text)')
-    if (ret != null && ret.length > 0) {
-      result = true
-    }
+CREATE OR REPLACE FUNCTION graph_sources() returns jsonb AS $$
+  var sources = plv8.execute('select dst, count(dst) from application.sgraph group by dst order by count asc')
+  var ret = sources.filter(function(x) { return x.count === 0})
+  /* this is a hack, sometimes we don't get a clear source, why ? figure this out */
+  if (ret.length === 0) {
+    ret = [sources[0].dst]
   }
-  return ret;
-
-$$ LANGUAGE plv8;
-
-CREATE OR REPLACE FUNCTION cycle_check(in proposed_path text) returns boolean AS $$
-
-  var stime = new Date()
-  var result = false
-  var count = plv8.execute('select count(path) from application.sgraph')
-  if (count[0].count > 0) {
-    
-    var ret = plv8.execute('with x as ( select regexp_split_to_table($1, \'\\.\') as id ), y as (select regexp_split_to_table($1, \'\\.\') as id), proposed_sgraph as ( select path from application.sgraph union select $1::ltree ) select x.id, y.id from x,y where exists (select path from proposed_sgraph where path ~ (\'*.\' || x.id || \'.*.\' || y.id || \'.*\')::lquery) and exists (select path from proposed_sgraph where path ~  (\'*.\' || y.id || \'.*.\' || x.id || \'.*\')::lquery limit 1)', [proposed_path])
-    if (ret != null && ret.length > 0) {
-      result = true
-    }
-  }
-  plv8.execute('select xlog($1, $2)', ['timex cycle_check', (new Date() - stime )])
-  return result;
-
-$$ LANGUAGE plv8;
-
-CREATE OR REPLACE FUNCTION subpath(in path1 ltree, in path2 ltree) returns boolean AS $$
-
-  if (path1 === path2) {
-    return false
-  }
-
-  var stmt = 'select \'' + path1 + '\'::ltree ~ (\'*.\' || \'' + path2 + '\'::text || \'.*\')::lquery or \'' + path1 + '\'::ltree ~ (\'*.\' || \'' + path2 + '\'::text)::lquery or \'' + path1 + '\'::ltree ~ (\'' + path2 + '\'::text || \'.*\')::lquery as subtest'
-  //plv8.execute('select xlog($1, $2)', 'stmt:', stmt)
-  return plv8.execute(stmt)[0].subtest
-
-$$ LANGUAGE PLV8;
-
-CREATE OR REPLACE FUNCTION inpaths(in src text, in dst text) returns jsonb AS $$
-
-  var inpaths = plv8.execute('with x as (select * from application.sgraph where path ~ $1 and not (path ~ $2 or path ~ $3)), y as (select * from application.sgraph where  path ~ $1 and not (path ~ $2 or path ~ $3)), z as (select y.path from x,y where subpath (x.path, y.path)) select distinct(x.path) from x,y  where x.path not in (select path from z) and y.path not in (select path from z)', ['*.' + src, '*.'+ dst +'.*', '*.' + src + '.*{1,}']);
-
-  return inpaths
-
-$$ LANGUAGE PLV8;
-
-
-CREATE OR REPLACE FUNCTION outpaths(in src text, in dst text) returns jsonb AS $$
-
-  var outpaths = plv8.execute('with x as (select * from application.sgraph where path ~ $1 and not (path ~ $2 or path ~ $3)), y as (select * from application.sgraph where path ~ $1 and not (path ~ $2 or path ~ $3)), z as (select y.path from x,y where subpath (x.path, y.path)) select distinct(x.path) from x,y  where x.path not in (select path from z) and y.path not in (select path from z)', [dst + '.*', '*.' + src + '.*', '*{1,}.' + dst + '.*']);
-
-  return outpaths
-
-$$ LANGUAGE PLV8;
-
-CREATE OR REPLACE FUNCTION graph_sources(in candidates jsonb) returns jsonb AS $$
-  var sources = candidates.filter(function (candidate) {
-      var ret1 = plv8.execute('select count(path) from application.sgraph where path ~ $1', [candidate+'.*'])
-      var ret2 = plv8.execute('select count(path) from application.sgraph where  path ~ $1', ['*{1,}.' + candidate + '.*'])
-      plv8.execute('select xlog($1, $2, $3, $4)', ['Source candidate', candidate, ret1[0].count, ret2[0].count])
-      return (ret1[0].count > 0 && ret2[0].count === 0)
-  });
-  return sources
+  return ret
 $$ LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
@@ -171,6 +160,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
           });
           plv8.execute('select xlog($1, $2)', ['next candidate list', JSON.stringify(candidates)])
       }
+      plv8.execute('insert into application.results (rank) values ($1)', [winners])
       return winners;
   }
   
@@ -184,9 +174,6 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
    */
 
   var reachableFn = plv8.find_function('reachable')
-  var cycle_checkFn = plv8.find_function('cycle_check')
-  var inpathsFn = plv8.find_function('inpaths')
-  var outpathsFn = plv8.find_function('outpaths')
   
   function electSingle(candidates, getScore, ballots) {
 
@@ -244,90 +231,20 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
 
 
       function insert_sgraph(from, to) {
-        var sgraph = plv8.execute('select path from application.sgraph');
-        plv8.execute('select xlog($1, $2, $3)', ['sgraph-before:', from + '.' + to, JSON.stringify(sgraph)]) 
         var stime = new Date()
-        var insertStmt = plv8.prepare('insert into application.sgraph (path, parr) values ($1::ltree, regexp_split_to_array($1::text, \'\\.\'))')
-
-      // find maximal distinct inpaths to the proposed "from"
-
-        var inpaths = inpathsFn(from, to)
-        plv8.execute('select xlog($1, $2)', ['timex 1: ', (new Date() - stime )])
-      // find maximal distinct outpaths from the proposed "to"
-
-        var outpaths = outpathsFn(from, to)
-
-
-        plv8.execute('select xlog($1, $2)', ['timex 2: ', (new Date() - stime )])
-      // add all combinations of <in><from><to><out> paths to the sgraph
-
-        if (inpaths.length === 0) {
-          inpaths.push({path: ''})
-        }
-
-        if (outpaths.length === 0) {
-          outpaths.push({path: ''})
-        }
-
-        var val = '';
-        inpaths.forEach( function(inpath) {
-          outpaths.forEach( function(outpath) {
-
-            if (inpath.path !== '') { 
-              val = inpath.path
-            }
-            else {
-              val = from
-            }
-
-            if (outpath.path !== '') {
-              val += '.' + outpath.path
-            }
-            else {
-              val += '.' + to
-            }
-
-            if (!cycle_checkFn(val)) {
-              plv8.execute('select xlog($1)', [val])
-              insertStmt.execute([val])
-            }
-            else {
-              sgraph = plv8.execute('select path from application.sgraph');
-              plv8.execute('select xlog($1, $2, $3)', ['failed cycle_check:', val, JSON.stringify(sgraph)]) 
-            }
-          })
-        })
-              
-        plv8.execute('select xlog($1, $2)', ['timex 3: ', (new Date() - stime )])
-
-
-        // thin the graph by removing subpaths as well as alternate paths 
-        // given any two paths, if one of them has a subset of vertexes of the other, remove it
-  
-        var delrecs = plv8.execute('delete from application.sgraph where path in ( select distinct(x.path) from application.sgraph as x , application.sgraph as y where x.path != y.path and x.parr <@ y.parr )');
-        var insert_time = new Date() - stime
-
-        if (insert_time > 200) {
-          plv8.execute('select xlog($1)', ['clustering'])
-          plv8.execute('cluster application.sgraph using path_gist_idx')
-        }
-        plv8.execute('select xlog($1, $2, $3)', ['timex insert_sgraph', JSON.stringify(delrecs), (new Date() - stime )])
-
-        sgraph = plv8.execute('select path from application.sgraph');
-        plv8.execute('select xlog($1, $2, $3)', ['sgraph-after:', from + '.' + to, JSON.stringify(sgraph)]) 
-
+        plv8.execute('insert into application.sgraph (src, dst) values ($1, $2)', [from, to])
+        plv8.execute('select reindex()')
+        plv8.execute('select xlog($1, $2)', ['timex insert_sgraph: ', (new Date() - stime )])
+        //sgraph = plv8.execute('select src, dst, kids from application.sgraph');
+        //plv8.execute('select xlog($1, $2, $3)', ['sgraph-after:', from + '.' + to, JSON.stringify(sgraph)]) 
       }
 
-      var sgcount = 0
-      majorities.forEach(function (m) {
-        sgcount = plv8.execute('select count(path) as sgcount from application.sgraph')[0].sgcount;
-        plv8.execute('select xlog($1,$2)', 'sgcount:', sgcount)
-        //if (sgcount < 5000) {
-          if (reachableFn(m.y, m.x)) { //if x is accessible from y, then x->y would create a circle
+      majorities.forEach(function (m, counter) {
+          if (reachableFn(parseInt(m.y), parseInt(m.x))) { //if x is accessible from y, then x->y would create a circle
               return;
           }
+          plv8.execute('select xlog($1, $2, $3, $4)', ['insert_sgraph:', m.x, m.y, counter ]) 
           insert_sgraph(m.x, m.y)
-        //}
       });
       plv8.execute('select xlog($1)', ['Locked graph'])
       var sources = plv8.find_function('graph_sources')(candidates);
@@ -337,31 +254,29 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
   }
 
 
-  var candidates = plv8.execute('select id from application.stories')
-  .map(function(x) { return x.id })
-
-  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
-  .map(function(x) {
-    return x.ballot
-  })
 
 /*
-var candidates =  ["Memphis","Nashville","Chattanooga", "Knoxville"];
+// 1: Nashville, 2: Chattanooga, 3: Knoxville, 4: Memphis
+var candidates =  [1,2,3,4];
 var ballots = Array.apply(null, {length: 100}).map(Number.call, Number).map(function(i) {
     i -= 42;
     if(i<0) { //mem
-        return ["Memphis","Nashville","Chattanooga", "Knoxville"];
+        //return ["Memphis","Nashville","Chattanooga", "Knoxville"];
+        return [4,1,2,3]
     }
     i -= 26;
     if(i<0) { //nash
-        return ["Nashville","Chattanooga", "Knoxville", "Memphis"];
+        //return ["Nashville","Chattanooga", "Knoxville", "Memphis"];
+        return [1, 2, 3, 4]
     }
     i -= 15;
     if(i< 0) { //chat
-        return ["Chattanooga", "Knoxville", "Nashville", "Memphis"];
+        //return ["Chattanooga", "Knoxville", "Nashville", "Memphis"];
+        return [2, 3, 1, 4]
     }
     //kno
-    return ["Knoxville", "Chattanooga", "Nashville", "Memphis"];
+    //return ["Knoxville", "Chattanooga", "Nashville", "Memphis"];
+    return [3, 2, 1, 4]
 })
 */
 
@@ -382,6 +297,8 @@ var ballots = Array.apply(null, {length: 100}).map(Number.call, Number).map(func
   ]
 */
 
+
+
 candidates = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48]
 ballots =  [
   [20,43,6,41,39,1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,40,42,44,45,46,47,48],
@@ -389,6 +306,16 @@ ballots =  [
   [47,43,46,48,45,44,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42],
   [1,7,9,20,44,30,45,43,2,3,4,5,6,8,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,26,27,28,29,31,32,33,34,35,36,37,38,39,40,41,42,46,47,48]
 ]
+
+/*
+  var candidates = plv8.execute('select id from application.stories')
+  .map(function(x) { return x.id })
+
+  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
+  .map(function(x) {
+    return x.ballot
+  })
+*/
 
   plv8.execute('select xlog($1, $2, $3)', [candidates.length, JSON.stringify(candidates), JSON.stringify(ballots)])
 

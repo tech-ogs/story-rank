@@ -2,18 +2,20 @@
 
 drop table application.sgraph cascade;
 create table application.sgraph (
-  path ltree,
-  parr text[]
+  src bigint,
+  dst bigint,
+  kids bigint[]
 );
 
-CREATE INDEX path_gist_idx ON application.sgraph USING GIST (path);
-CREATE INDEX path_idx ON application.sgraph USING BTREE (path);
-CREATE INDEX idx_parr on application.sgraph USING GIN (parr);
+CREATE INDEX src_idx on application.sgraph (src);
+CREATE INDEX dst_idx on application.sgraph (dst);
+CREATE INDEX kids_idx on application.sgraph USING GIN (kids);
 
 drop table application.results cascade;
 create table application.results (
-  story_id bigint,
-  rank integer
+  id bigserial,
+  rank_date timestamp default now(),
+  ranks bigint[]
 );
 
 drop schema timeline cascade;
