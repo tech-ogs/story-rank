@@ -52,7 +52,7 @@
                   v-model="settings.list"
                   @change="handleListChange"
                   name="radioBtnOutline1" >
-                <b-form-radio value="full" class="inline-flex-perfect-center icon-button">                  
+                <b-form-radio value="full" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
                   &nbsp;
                   <div class="inline-flex-perfect-center">
                     <icon name="circle" :class="circleClass()"/>
@@ -60,7 +60,7 @@
                   </div>
                   &nbsp;
                 </b-form-radio>
-                <b-form-radio value="fav" class="inline-flex-perfect-center icon-button">
+                <b-form-radio value="fav" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
                   &nbsp;
                   <div class="inline-flex-perfect-center">
                     <icon name="star" :class="starClass()"/>
@@ -76,11 +76,12 @@
                   button-variant="outline-primary"
                   size="md"
                   v-model="settings.domain"
+                  @change="handleDomainChange"
                   name="radioBtnOutline2" >
                 <b-form-radio value="me" class="flex-perfect-center">
                   Me
                 </b-form-radio>
-                <b-form-radio value="all" class="flex-perfect-center" disabled>
+                <b-form-radio value="all" class="flex-perfect-center">
                   All
                 </b-form-radio>
               </b-form-radio-group>
@@ -152,14 +153,23 @@ export default {
   },
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
-    items() { return this.settings.list === 'full' ? this.$store.getters.storiesGetItemsF : this.$store.getters.storiesGetFavs },
-    itemsS() { return this.settings.list === 'full' ? this.$store.getters.storiesGetItemsS : this.$store.getters.storiesGetFavs },
+    items() { return {
+                me : {full : this.$store.getters.storiesGetItemsF, fav : this.$store.getters.storiesGetFavs },
+                all: {full : this.$store.getters.storiesGetAllResults, fav : this.$store.getters.storiesGetAllResults }
+              }[this.settings.domain][this.settings.list]
+            },
+     itemsS() { return { 
+                me : {full : this.$store.getters.storiesGetItemsS, fav : this.$store.getters.storiesGetFavs },
+                all: {full : this.$store.getters.storiesGetAllResults, fav : this.$store.getters.storiesGetAllResults }
+              }[this.settings.domain][this.settings.list]
+            },             
     users () { return this.$store.getters.usersGetIdMap },
     stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     stories () { return this.$store.getters.storiesGetItems },
     ranks() { return this.$store.getters.ranks},
     favorites() { return this.$store.getters.favorites},
+    results() { return this.$store.getters.getResults},
     favlength() { return this.$store.getters.numFavorites},
     animateStar() { return this.$store.getters.storiesGetAnimateStar},
     animateCircle() { return this.$store.getters.storiesGetAnimateCircle}
@@ -188,9 +198,6 @@ export default {
       .catch( err => {
         alert (err.message)
       })
-    },
-    handleListChange: (event) => {
-      console.log('list: ', event)
     }
   },
   mounted () { 
@@ -204,6 +211,7 @@ export default {
       //console.log('checking state stories Id Map', this.stories)
       console.log('checking state ranks', this.ranks)
       console.log('checking state favorites', this.favorites)
+      console.log('checking state results', JSON.stringify(this.results))
     })
 
   }

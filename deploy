@@ -5,3 +5,4 @@ psql -U postgres stories < server/modules/auth/sql/auth.sql
 psql -U postgres stories < server/modules/ranks/sql/ranks.sql
 ./makethumbs
 yarn run build
+cp node_modules/socket.io-client/dist/socket.io.js dist/static/

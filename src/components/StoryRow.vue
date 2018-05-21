@@ -22,7 +22,6 @@
     <b-row class="story-footer">
       <b-col class="story-data-container">
         <span class="story-data">
-          {{row.id}} 
           <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
         </span>
       </b-col>
@@ -56,7 +55,7 @@ export default {
   },
   computed: {
     selectedRow() { return this.$store.getters.storiesSelectedRow },
-    users () { return this.$store.getters.usersGetIdMap },
+    users () { return this.$store.getters.usersGetIdMap }
   },
   methods: {
     makeArr: (x) => { 

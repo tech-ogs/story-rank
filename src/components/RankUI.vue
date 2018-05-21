@@ -1,11 +1,13 @@
 <template>
   <div class="rank-dialog-wrapper">
-  <b-container class="width100">
-
-  <span :class="rankingBarClass">
+  <span :class="rankingBarClass" v-if="settings.domain === 'me'">
         <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveDown"> <icon name="arrow-down" /> </b-link> 
         <b-link href="#" @click="toggleFavorite"> <icon name="star" :class="starClass"/> </b-link> 
         <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveUp"> <icon name="arrow-up" /> </b-link> 
+  </span>
+  <br>
+  <span class="story-data">
+          id: {{row.id}} myrank: {{ranks[row.id]}} allrank: <b>{{results.indexOf(row.id)+1}}</b>
   </span>
   </div>
 </template>
@@ -27,7 +29,9 @@ export default {
     filterClear() { return this.$store.getters.storiesFilterIsClear},
     starClass() { return this.favorites[this.row.id] ? 'star star-bright' : 'star star-dim' },
     rankingBarClass() { return this.settings.list === 'fav' && this.favorites[this.row.id] ? 'ranking-bar' : 'star-bar' },
-    favorites() { return this.$store.getters.favorites}
+    favorites() { return this.$store.getters.favorites},
+    ranks () { return this.$store.getters.ranks},
+    results() { return this.$store.getters.getResults }
   },
   methods: {
       toggleFavorite: function() {
@@ -65,4 +69,8 @@ export default {
   .star-bright {
     color: gold;
   }
+  .story-data {
+    font-size: x-small;
+  }
+
 </style>

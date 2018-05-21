@@ -84,6 +84,7 @@ router.use('/assets', checkAuth, function(req,res,next){
 router.post('/list', checkAuth, handler(query.list)) 
 router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
+router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
 
 module.exports = function (io) {

@@ -19,6 +19,25 @@ function myranks (req, res) {
   return promise
 }
  
+function results (req, res) {
+  var client = db.getClient()
+  var promise = new Promise(function(resolve, reject) {
+    var session = req.session
+    console.log('results:', session.id)
+    client.query('select results()', [], function (err, ret) {
+      client.end()
+      console.log('pg callback', err)
+      if (err == null) {
+        resolve(ret.rows[0].results)
+      }
+      else {
+        reject(err)
+      }
+    })
+  })
+  return promise
+}
+ 
 
 function rankUpdate (req, data) {
   var client = db.getClient()
@@ -49,5 +68,6 @@ function rankUpdate (req, data) {
 
 exports = module.exports = {
   myranks: myranks,
+  results: results,
   rankUpdate: rankUpdate
 }

@@ -5,7 +5,8 @@ const state = {
   ranks: {},
   byRank: {},
   favorites: {},
-  favoritesByRank: {}
+  favoritesByRank: {},
+  results: []
 }
 
 // helpers
@@ -27,6 +28,9 @@ const getters = {
       .length
     }
     return result
+  },
+  getResults: (state) => {
+    return state.results
   }
 }
 
@@ -47,6 +51,11 @@ const mutations = {
       state.favorites = params.favorites
 
       //console.log( 'ranks setdata', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
+  },
+  // result (summary/aggregated ranks)
+  resultsSetData: (state, params) => {
+    //console.log('resultsSetData', JSON.stringify(params))
+    state.results = params.ranks
   },
 
   ranksInitData: (state, stories) => {
@@ -91,8 +100,8 @@ const mutations = {
   ranksMoveUp: moveRanks.moveUp,
   ranksMoveDown: moveRanks.moveDown,
   ranksMoveTop: moveRanks.moveTop,
-  ranksMoveBottom: moveRanks.moveBottom
-
+  ranksMoveBottom: moveRanks.moveBottom,
+  
 }
 
 export default {

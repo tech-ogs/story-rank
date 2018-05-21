@@ -44,22 +44,21 @@ const getters = {
   storiesGetItemsS: (state, getters) => {
     //console.log('storiesGetItemsS', getters)
     var ranks = getters.ranks
-/*
-    var filtered = state.items.filter( (story) => {
-      var result = true
-      Object.keys(state.filters).forEach((f) => {
-          result = result && (state.filters[f] == null || ( story[f] === state.filters[f]) )
-      })
-      return result
-    })
-*/
-    //console.log('filtered', filtered)
-    //console.log('ranks', ranks)
     var sorted = state.items.sort ( (a ,b) => {
       return ranks[a.id] - ranks[b.id]
     })
 
     return sorted
+  },
+
+  storiesGetAllResults: (state, getters) => {
+    var ranks = getters.getResults
+    console.log('storiesGetAllResults:', JSON.stringify(ranks))
+    var sorted = state.items.sort ( (a ,b) => {
+      return ranks.indexOf(a.id) - ranks.indexOf(b.id)
+    })
+    return sorted
+
   },
   storiesGetFavs: (state, getters) => {
     //console.log('storiesGetItemsF', getters)

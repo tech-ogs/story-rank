@@ -105,7 +105,13 @@ var webpackConfig = merge(baseWebpackConfig, {
         from: path.resolve(__dirname, '../src/assets'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
-      }
+      },
+      {
+        from: path.resolve(__dirname, '../node_modules/socket.io-client/dist/socket.io.js'),
+        to: config.build.assetsSubDirectory,
+        ignore: ['.*']
+      },
+
     ])
   ]
 })

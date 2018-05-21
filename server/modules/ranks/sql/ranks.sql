@@ -27,13 +27,13 @@ $$ LANGUAGE plv8;
 
 /* results related */
 
-CREATE OR REPLACE FUNCTION all_results() returns jsonb AS $$
+CREATE OR REPLACE FUNCTION results() returns jsonb AS $$
 
-  var ret = plv8.execute('select * from application.results order by rank asc');
-  if (ret == null) {
-    ret = []
+  var ret = plv8.execute('select ranks  from application.results order by id desc limit 1');
+  if (ret == null || ret.length === 0) {
+    ret = [{ ranks : [] }]
   }
-  return ret;
+  return { ranks : ret[0].ranks }
     
 $$ LANGUAGE plv8;
 

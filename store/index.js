@@ -115,16 +115,14 @@ export default new Vuex.Store({
             }
           })
         })
-/*
         .then( () => {
           return context.dispatch('fetchData', { 
-            url: '/sumranks',
+            url: '/results',
             payload: {
-              mutation: 'sumranksSetData'
+              mutation: 'resultsSetData'
             }
           })
         })
-*/
         .then( () => {
           return context.dispatch('fetchData', { 
             url: '/list',
