@@ -160,7 +160,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
           });
           plv8.execute('select xlog($1, $2)', ['next candidate list', JSON.stringify(candidates)])
       }
-      plv8.execute('insert into application.results (rank) values ($1)', [winners])
+      plv8.execute('insert into application.results (ranks) values ($1)', [winners])
       return winners;
   }
   
