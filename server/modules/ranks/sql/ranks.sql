@@ -38,21 +38,13 @@ CREATE OR REPLACE FUNCTION results() returns jsonb AS $$
 $$ LANGUAGE plv8;
 
 
+CREATE OR REPLACE FUNCTION initindex() returns jsonb as $$
+  plv8.execute('insert into application.sgraph_index (src) select id from application.stories')
+$$ LANGUAGE plv8;
+
 CREATE OR REPLACE FUNCTION reindex() returns jsonb as $$
 
   var stime = new Date();
-/*
-  var sources = plv8.execute('select src, dst from application.sgraph');
-  plv8.execute('select xlog($1, $2)', ['timex reindex sources:', new Date() - stime])
-  
-  var stmt=''
-  stmt +=  'with sources as (select src, dst from application.sgraph),'
-  stmt +=  ' with recursive kids (src, dst) as ('
-  stmt +=     ' select src, dst from application.sgraph where src = sources.src'
-  stmt +=     ' union'
-  stmt +=     ' select s.src, s.dst from application.sgraph s, kids k where s.src = k.dst'
-  stmt +=     ' ) update application.sgraph set kids = json_agg(distinct dst) as klist from kids where src = sources.src and dst = sources.dst'
-*/
   var stmt = ''
   stmt += 'with index as ('
   stmt += '  with  recursive kidscte (src, dst) as ( '
@@ -60,38 +52,18 @@ CREATE OR REPLACE FUNCTION reindex() returns jsonb as $$
   stmt += '    union '
   stmt += '  select s.src, s.dst from application.sgraph s, kidscte k where s.src = k.dst ) '
   stmt += 'select kidscte.src, array_agg(kidscte.dst) as klist from kidscte group by kidscte.src) '
-  stmt += 'update application.sgraph set kids = index.klist from index where sgraph.src = index.src '
+  stmt += 'update application.sgraph_index set kids = index.klist from index where sgraph_index.src = index.src '
 
-/*
-  var cmd = plv8.prepare(stmt)
-  sources.forEach(function(srec) {
-    var xtime = new Date();
-    plv8.execute('select xlog($1, $2)', ['processing src:', srec.src])
-    var kids = cmd.execute ([srec.src])
-    plv8.execute('select xlog($1, $2)', ['timex reindex recursion:', new Date() - xtime])
-    if (kids.length > 0) {
-      kids = kids[0].klist
-    }
-    plv8.execute('update application.sgraph set kids = $3 where src=$1 and dst=$2', [srec.src, srec.dst, kids])
-    plv8.execute('select xlog($1, $2)', ['timex reindex update:', new Date() - xtime])
-  })
-*/
   plv8.execute(stmt)
   var reindex_time = new Date() - stime
   plv8.execute('select xlog($1, $2)', ['timex reindex:', reindex_time])
-/*
-  if (reindex_time > 500) { 
-    plv8.execute('cluster application.sgraph using src_idx')
-  }
-*/
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION reachable(in src bigint, in dst bigint) returns boolean AS $$
 
   var stime = new Date()
   //plv8.execute('select xlog($1, $2)', [JSON.stringify(src), JSON.stringify(dst)])
-  //var ret = plv8.execute('with x as (select unnest(kids) as kid from application.sgraph where src = $1) select count(kid) from x where kid = $2', [src, dst])
-  var ret = plv8.execute ('select array[$2::bigint] <@ kids as check from application.sgraph where src = $1 limit 1', [src, dst])
+  var ret = plv8.execute ('select array[$2::bigint] <@ kids as check from application.sgraph_index where src = $1 limit 1', [src, dst])
   //plv8.execute('select xlog($1, $2, $3, $4)', ['ret', src, dst, JSON.stringify(ret)])
   var result = false
   if (ret.length > 0) { 
@@ -138,6 +110,9 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
       }
       var winners = [];
       plv8.execute('select xlog($1)', ['election starting'])
+
+      plv8.find_function('initindex')()
+
       while (winners.length < wanted) {
           var thisElection = electSingle(candidates, getScore, ballots);
           plv8.execute('select xlog($1, $2)', ['election', JSON.stringify(thisElection)])
@@ -235,7 +210,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
         plv8.execute('insert into application.sgraph (src, dst) values ($1, $2)', [from, to])
         plv8.execute('select reindex()')
         plv8.execute('select xlog($1, $2)', ['timex insert_sgraph: ', (new Date() - stime )])
-        //sgraph = plv8.execute('select src, dst, kids from application.sgraph');
+        //sgraph = plv8.execute('select src, dst  from application.sgraph');
         //plv8.execute('select xlog($1, $2, $3)', ['sgraph-after:', from + '.' + to, JSON.stringify(sgraph)]) 
       }
 
@@ -309,7 +284,7 @@ ballots =  [
 
 */
 
-  var candidates = plv8.execute('select id from application.stories')
+  var candidates = plv8.execute('select id from application.stories where id in ( select story_id from application.ranks where favorite = true)')
   .map(function(x) { return x.id })
 
   var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks where favorite = true  order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
@@ -318,6 +293,7 @@ ballots =  [
   })
 
   plv8.execute('select xlog($1, $2, $3)', [candidates.length, JSON.stringify(candidates), JSON.stringify(ballots)])
+
 
   winners = elect(candidates, function(candidate, ballot) {
       return indexOf(ballot, candidate);

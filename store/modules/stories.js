@@ -55,12 +55,15 @@ const getters = {
   storiesGetAllResults: (state, getters) => {
     var ranks = getters.getResults
     console.log('storiesGetAllResults:', JSON.stringify(ranks))
-    var sorted = state.items.sort ( (a ,b) => {
-      return ranks.indexOf(a.id) - ranks.indexOf(b.id)
+    var filtered = state.items.filter ( (x) => { return ranks.indexOf(x.id) >= 0 } )
+    console.log('res-filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
+    var sorted = filtered.sort ( (a ,b) => {
+      return  ranks.indexOf(a.id) - ranks.indexOf(b.id)
     })
+    console.log('res-sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     return sorted
-
   },
+
   storiesGetFavs: (state, getters) => {
     //console.log('storiesGetItemsF', getters)
     var ranks = getters.ranks

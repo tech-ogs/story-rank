@@ -54,8 +54,10 @@ const mutations = {
   },
   // result (summary/aggregated ranks)
   resultsSetData: (state, params) => {
-    //console.log('resultsSetData', JSON.stringify(params))
+    console.log('resultsSetData', JSON.stringify(params))
     state.results = params.ranks
+    
+    
   },
 
   ranksInitData: (state, stories) => {
