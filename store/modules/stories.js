@@ -22,7 +22,7 @@ const getters = {
     return state.byId
   },
   storiesGetItemsF: (state, getters) => {
-    //console.log('storiesGetItemsF', getters)
+    //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     var ranks = getters.ranks
     var filtered = state.items.filter( (story) => {
       var result = true
@@ -31,13 +31,14 @@ const getters = {
       })
       return result
     })
-    //console.log('filtered', filtered)
+    console.log('filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     //console.log('ranks', ranks)
     var sorted = filtered.sort ( (a ,b) => {
       //default display order is id desc (latest is greatest)
       return b.id - a.id
     })
 
+    console.log('sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     return sorted
   },
   // strictly ranked list to support all moves via swaps, use this when calling mutations in moveRanks

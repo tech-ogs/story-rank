@@ -312,7 +312,7 @@ ballots =  [
   var candidates = plv8.execute('select id from application.stories')
   .map(function(x) { return x.id })
 
-  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
+  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks where favorite = true  order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
   .map(function(x) {
     return x.ballot
   })
