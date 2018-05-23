@@ -334,7 +334,7 @@ ballots =  [
 
   winners = elect(candidates, function(candidate, ballot) {
       return indexOf(ballot, candidate) >= 0 ? indexOf(ballot, candidate) : maxBallotLength;
-  }, ballots, 2);
+  }, ballots, candidates.length);
 
 /*
   var stmt =  plv8.prepare('insert into application.results (story_id, rank) values ($1, $2)')
