@@ -39,24 +39,37 @@ $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION initindex() returns jsonb as $$
-  plv8.execute('insert into application.sgraph_index (src) select id from application.stories')
+  plv8.execute('truncate table application.sgraph_index');
+  plv8.execute('insert into application.sgraph_index (src, kids)  select id, array[]::integer[] from application.stories')
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION reindex() returns jsonb as $$
 
   var stime = new Date();
+
   var stmt = ''
-  stmt += 'with index as ('
-  stmt += '  with  recursive kidscte (src, dst) as ( '
-  stmt += '    select src, dst from application.sgraph  '
-  stmt += '    union '
-  stmt += '  select s.src, s.dst from application.sgraph s, kidscte k where s.src = k.dst ) '
-  stmt += 'select kidscte.src, array_agg(kidscte.dst) as klist from kidscte group by kidscte.src) '
-  stmt += 'update application.sgraph_index set kids = index.klist from index where sgraph_index.src = index.src '
+  stmt += ' with index as ('
+  stmt += ' with exploded_index as ('
+  stmt += ' with raw_index as ('
+  stmt += '  with  recursive kidscte (src, dst, path) as ( '
+  stmt += '    select src, dst, array[dst] from application.sgraph  '
+  stmt += '    union all '
+  stmt += '  select s.src, s.dst,  s.dst || path from application.sgraph s, kidscte k where s.dst = k.src ) '
+  stmt +=  ' select src, dst, path  from kidscte) '
+  stmt +=  ' select distinct unnest(path) as p, src from  raw_index)'
+  stmt +=  ' select array_agg(p) as path, src from exploded_index group by src)'
+  stmt += ' update application.sgraph_index set kids = index.path from index where sgraph_index.src = index.src '
 
   plv8.execute(stmt)
   var reindex_time = new Date() - stime
   plv8.execute('select xlog($1, $2)', ['timex reindex:', reindex_time])
+/*
+  var sgraph = plv8.execute('select * from application.sgraph order by src')
+  var sgraph_index = plv8.execute('select * from application.sgraph_index where array_length(kids,1) is not null order by src')
+  plv8.execute('select xlog($1, $2)', ['REINDEX GRAPH', JSON.stringify(sgraph)])
+  plv8.execute('select xlog($1, $2)', ['REINDEX INDEX', JSON.stringify(sgraph_index)])
+*/
+
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION reachable(in src bigint, in dst bigint) returns boolean AS $$
@@ -66,26 +79,34 @@ CREATE OR REPLACE FUNCTION reachable(in src bigint, in dst bigint) returns boole
   var ret = plv8.execute ('select array[$2::bigint] <@ kids as check from application.sgraph_index where src = $1 limit 1', [src, dst])
   //plv8.execute('select xlog($1, $2, $3, $4)', ['ret', src, dst, JSON.stringify(ret)])
   var result = false
-  if (ret.length > 0) { 
+  if (ret.length > 0) {
     result = ret[0].check
   }
   plv8.execute('select xlog($1, $2)', ['timex reachable', (new Date() - stime )])
   return result
 
+
 $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION graph_sources() returns jsonb AS $$
+
+/*
   var sources = plv8.execute('select dst, count(dst) from application.sgraph group by dst order by count asc')
   var ret = sources.filter(function(x) { return x.count === 0})
-  /* this is a hack, sometimes we don't get a clear source, why ? figure this out */
+  plv8.execute('select xlog($1, $2)', ['graph_sources:', JSON.stringify(ret)])
   if (ret.length === 0) {
     ret = [sources[0].dst]
+    plv8.execute('select xlog($1, $2)', ['FORCED election:', JSON.stringify(ret)])
   }
-  return ret
+*/
+  var sources = plv8.execute('select distinct src from application.sgraph where src not in (select dst from application.sgraph)');
+  return sources.map(function(x) { return x.src })
+
 $$ LANGUAGE PLV8;
 
 CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
+
   function indexOf(arr, val) {
     var ret = -1
     for (var i=0; i<arr.length; i++) {
@@ -153,7 +174,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
   function electSingle(candidates, getScore, ballots) {
 
       plv8.execute('truncate table application.sgraph');
-
+      plv8.execute('update  application.sgraph_index set kids = array[]::integer[]');
       if (!candidates.length) {
           return [];
       }
@@ -186,6 +207,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
           });
       });
 
+
       majorities.sort(function (m1, m2) {
           var x = m1.x, y = m1.y, z = m2.x, w = m2.y;
 
@@ -194,8 +216,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
               return 1;
           }
           if (diff == 0) {
-              var d = V[w][z] - V[y][x] ; // Vwz > Vyx Smaller minority opposition (now wz and yz)
-              return d 
+              return V[w][z] - V[y][x]; // Vwz > Vyx Smaller minority opposition (now wz and yz)
           }
           return -1;
       }).reverse();
@@ -205,21 +226,27 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
       //Lock in:
 
 
-      function insert_sgraph(from, to) {
+      function insert_sgraph(from, to, margin) {
         var stime = new Date()
-        plv8.execute('insert into application.sgraph (src, dst) values ($1, $2)', [from, to])
+        plv8.execute('insert into application.sgraph (src, dst, margin) values ($1, $2, $3)', [from, to, margin])
         plv8.execute('select reindex()')
         plv8.execute('select xlog($1, $2)', ['timex insert_sgraph: ', (new Date() - stime )])
         //sgraph = plv8.execute('select src, dst  from application.sgraph');
         //plv8.execute('select xlog($1, $2, $3)', ['sgraph-after:', from + '.' + to, JSON.stringify(sgraph)]) 
       }
 
+      var flag = true
       majorities.forEach(function (m, counter) {
           if (reachableFn(parseInt(m.y), parseInt(m.x))) { //if x is accessible from y, then x->y would create a circle
               return;
           }
-          plv8.execute('select xlog($1, $2, $3, $4)', ['insert_sgraph:', m.x, m.y, counter ]) 
-          insert_sgraph(m.x, m.y)
+          if (false) {
+            flag = false
+          }
+          if (flag) {
+          plv8.execute('select xlog($1, $2, $3, $4)', ['insert_sgraph:', m.x, m.y, counter ])   
+          insert_sgraph(m.x, m.y, m.Vxy)
+          }
       });
       plv8.execute('select xlog($1)', ['Locked graph'])
       var sources = plv8.find_function('graph_sources')(candidates);
@@ -284,20 +311,30 @@ ballots =  [
 
 */
 
-  var candidates = plv8.execute('select id from application.stories where id in ( select story_id from application.ranks where favorite = true)')
-  .map(function(x) { return x.id })
 
-  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks where favorite = true  order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y')
+//  var candidates = plv8.execute('select id from application.stories where id in ( select story_id from application.ranks where favorite = true)')
+//  .map(function(x) { return x.id })
+
+  var candidates = plv8.execute('with x as (select story_id, count(story_id) from application.ranks where favorite = true group by story_id order by count desc limit 15) select story_id from x')
+  .map(function(x) { return x.story_id })
+
+  var ballots = plv8.execute('with y as (with x as (select user_id, story_id, rank from application.ranks where story_id=any($1) and favorite=true  order by user_id asc, rank asc) select user_id, jsonb_agg(x.story_id) as ballot from x group by user_id) select ballot from y', [candidates])
   .map(function(x) {
     return x.ballot
   })
 
   plv8.execute('select xlog($1, $2, $3)', [candidates.length, JSON.stringify(candidates), JSON.stringify(ballots)])
 
+  var maxBallotLength = 0;
+  ballots.forEach(function(x) {
+    if (maxBallotLength < x.length) {
+      maxBallotLength = x.length
+    }
+  })
 
   winners = elect(candidates, function(candidate, ballot) {
-      return indexOf(ballot, candidate);
-  }, ballots, candidates.length);
+      return indexOf(ballot, candidate) >= 0 ? indexOf(ballot, candidate) : maxBallotLength;
+  }, ballots, 2);
 
 /*
   var stmt =  plv8.prepare('insert into application.results (story_id, rank) values ($1, $2)')
@@ -310,4 +347,5 @@ ballots =  [
   })
 */
   return winners
+
 $$ LANGUAGE plv8;
