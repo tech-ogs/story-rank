@@ -91,15 +91,6 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION graph_sources() returns jsonb AS $$
 
-/*
-  var sources = plv8.execute('select dst, count(dst) from application.sgraph group by dst order by count asc')
-  var ret = sources.filter(function(x) { return x.count === 0})
-  plv8.execute('select xlog($1, $2)', ['graph_sources:', JSON.stringify(ret)])
-  if (ret.length === 0) {
-    ret = [sources[0].dst]
-    plv8.execute('select xlog($1, $2)', ['FORCED election:', JSON.stringify(ret)])
-  }
-*/
   var sources = plv8.execute('select distinct src from application.sgraph where src not in (select dst from application.sgraph)');
   return sources.map(function(x) { return x.src })
 
@@ -117,6 +108,31 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
     }
     return ret
   }
+
+  function calculate_majorities(candidates, ballots, getScoreFn) {
+      var V = {};
+      var majorities = [];
+
+      candidates.forEach(function (xCID) {
+          var Vx = V[xCID] = {};
+          candidates.forEach(function (yCID) {
+              if (yCID == xCID) {
+                  return;
+              }
+              Vx[yCID] = ballots.reduce(function (count, ballot) {
+                  return count + (getScoreFn(xCID, ballot) < getScoreFn(yCID, ballot) ? 1 : 0);
+              },0);
+              majorities.push({x: xCID, y: yCID, Vxy: Vx[yCID]});
+          });
+      });
+    return { 
+      majorities: majorities,
+      V: V
+    }
+  }
+
+  var reachableFn = plv8.find_function('reachable')
+
   /**
    * Runs electSingle until at least *wanted* winners are elected, returns the first *wanted* winners.
    * @param candidates see electSingle
@@ -125,6 +141,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
    * @param wanted the number of wanted winners
    * @returns [candidate] Array of candidates of size *wanted* (given that there are enough candidates)
    */
+
   function elect(candidates, getScore, ballots, wanted) {
       if(typeof wanted !== "number") {
           wanted = 1;
@@ -133,9 +150,12 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
       plv8.execute('select xlog($1)', ['election starting'])
 
       plv8.find_function('initindex')()
+      var maj_ret = calculate_majorities(candidates, ballots, getScore)
+      var majorities = maj_ret.majorities
+      var Vtable = V = maj_ret.V
 
       while (winners.length < wanted) {
-          var thisElection = electSingle(candidates, getScore, ballots);
+          var thisElection  = electSingle(majorities, V)
           plv8.execute('select xlog($1, $2)', ['election', JSON.stringify(thisElection)])
           if (!thisElection.length) {
               plv8.execute('select xlog($1)', ['Could not elect enough?'])
@@ -155,9 +175,20 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
               return thisElection.indexOf(candidate) === -1;
           });
           plv8.execute('select xlog($1, $2)', ['next candidate list', JSON.stringify(candidates)])
+
+          maj_ret = calculate_majorities(candidates, ballots, getScore)
+          majorities = maj_ret.majorities
+          V = maj_ret.V
       }
-      plv8.execute('insert into application.results (ranks) values ($1)', [winners])
-      return winners;
+      var result = winners.map(function(w,idx) {
+        var ret = {id: w, lead: 0}
+        if (idx < winners.length - 1) {
+          ret.lead = Vtable[w][winners[idx+1]] - Vtable[winners[idx+1]][w]
+        }
+        return ret
+      })
+      plv8.execute('insert into application.results (ranks) values ($1)', [result])
+      return result
   }
   
   /**
@@ -169,9 +200,11 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
    * @returns [candidate] Array of candidates which are the sources of the locked-in graph.
    */
 
-  var reachableFn = plv8.find_function('reachable')
   
-  function electSingle(candidates, getScore, ballots) {
+
+
+  //function electSingle(candidates, getScore, ballots) {
+  function electSingle(majorities, V) {
 
       plv8.execute('truncate table application.sgraph');
       plv8.execute('update  application.sgraph_index set kids = array[]::integer[]');
@@ -182,30 +215,6 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
       if (candidates.length === 1) {
         return candidates
       }
-
-      //console.log(ballots.length + " Ballots:")
-      //console.log(candidates.join("\t"));
-      ballots.forEach(function (ballot) {
-          var scores = candidates.map(function (cid) {
-              return getScore(cid, ballot);
-          });
-          //console.log(scores.join("\t"));
-      });
-      var V = {};
-      var majorities = [];
-
-      candidates.forEach(function (xCID) {
-          var Vx = V[xCID] = {};
-          candidates.forEach(function (yCID) {
-              if (yCID == xCID) {
-                  return;
-              }
-              Vx[yCID] = ballots.reduce(function (count, ballot) {
-                  return count + (getScore(xCID, ballot) < getScore(yCID, ballot) ? 1 : 0);
-              },0);
-              majorities.push({x: xCID, y: yCID, Vxy: Vx[yCID]});
-          });
-      });
 
 
       majorities.sort(function (m1, m2) {
@@ -249,7 +258,7 @@ CREATE OR REPLACE FUNCTION calculate_results() returns jsonb AS $$
           }
       });
       plv8.execute('select xlog($1)', ['Locked graph'])
-      var sources = plv8.find_function('graph_sources')(candidates);
+      var sources = plv8.find_function('graph_sources')();
       plv8.execute('select xlog($1, $2)', ['Sources', JSON.stringify(sources)])
 
       return sources;

@@ -7,7 +7,8 @@
   </span>
   <br>
   <span class="story-data">
-          id: {{row.id}} myrank: {{ranks[row.id]}} allrank: <b>{{ results.indexOf(row.id) >= 0 ? results.indexOf(row.id) +1 : 'n/a' }}</b>
+          id: {{row.id}} me: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
+
   </span>
   </div>
 </template>

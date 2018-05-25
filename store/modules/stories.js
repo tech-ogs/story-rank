@@ -53,7 +53,7 @@ const getters = {
   },
 
   storiesGetAllResults: (state, getters) => {
-    var ranks = getters.getResults
+    var ranks = getters.getResults.ranks
     console.log('storiesGetAllResults:', JSON.stringify(ranks))
     var filtered = state.items.filter ( (x) => { return ranks.indexOf(x.id) >= 0 } )
     console.log('res-filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))

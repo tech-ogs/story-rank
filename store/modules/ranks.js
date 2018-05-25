@@ -30,7 +30,15 @@ const getters = {
     return result
   },
   getResults: (state) => {
-    return state.results
+    var ret = {ranks: [], leads: []}  
+    if (state.results.length > 0) { 
+      state.results.reduce( (accum, x) => {
+        accum.ranks.push(x.id)
+        accum.leads.push(x.lead)
+        return accum
+      }, ret)
+    }
+    return ret
   }
 }
 
