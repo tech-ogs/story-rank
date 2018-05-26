@@ -43,24 +43,22 @@ function rankUpdate (req, data) {
   var client = db.getClient()
   var promise = new Promise(function(resolve, reject) {
     var session = req.session
-    client.query('select rank_update($1, $2)', [session, data], function (err, ret1) {
-      console.log('pg callback', err)
-      if (err == null) {
-        client.query('commit',[], function(err, ret2) {
-          if (err == null) {
-            client.end()
-            resolve(ret1.rows[0].rank_update)
-          }
-          else {
-            client.end()
-            reject(err)
-          }
-        })
-      }
-      else {
-        client.end()
-        reject(err)
-      }
+    var result = null
+    db.query(client, {
+      cmd: 'select rank_update($1, $2)', 
+      params: [session, data]
+    })
+    .then(function(ret) {
+      result = ret
+      return db.commit(client)
+    })
+    .then(function(ret) {
+      db.endClient(client)
+      resolve(result)
+    })
+    .catch(function(err) {
+      db.endClient(client)
+      reject(err)
     })
   })
   return promise
