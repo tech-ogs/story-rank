@@ -16,6 +16,7 @@ var cookieParser = require('cookie-parser')
 
 var routes = require(path.join(__dirname , '../server/routes.js'))(io)
 var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
+var db = require(path.join(__dirname , '../server/common/db.js'))
 var socketEvents = require(path.join(__dirname , '../server/common/socketEvents.js'))
 
 var cookieName = 'SRSESSION';
@@ -72,6 +73,8 @@ else {
   });
 }
 
+// websockets init
+
 function onError(err) {
   console.log('socket error', err)
 }
@@ -86,6 +89,6 @@ io.on('connection', function (socket) {
   console.log('socket event connection')
   socket.emit('handshake', { hello: 'world' });
   socketEvents.setHandlers (socket)
+  db.setup_notify_listeners(socket)
 });
-
 

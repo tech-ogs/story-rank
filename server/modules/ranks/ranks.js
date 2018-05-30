@@ -50,7 +50,7 @@ function rankUpdate (req, data) {
     })
     .then(function(ret) {
       result = ret
-      return db.commit(client)
+      return db.commitClient(client)
     })
     .then(function(ret) {
       db.endClient(client)

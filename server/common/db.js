@@ -1,13 +1,7 @@
 const { Client } = require('pg')
+const path = require('path')
+//const socketEvents = require (path.join ( __dirname, '../../server/common/socketEvents.js'))
 
-
-function setup_notify_listeners(client) { 
-  client.on('notification', function(msg) {
-    console.log(msg);
-  });
-  client.query("LISTEN broadcast");
-  client.query("LISTEN process_events");
-});
 
 function getClient() {
   const client = new Client({
@@ -17,6 +11,22 @@ function getClient() {
   client.connect()
   return client
 }
+
+function doBroadCast(socket) {
+  return function(msg) {
+    console.log ('broadcast handler', msg)
+    socket.emit ('broadcast', msg.payload)
+    socket.broadcast.emit ('broadcast', msg.payload)
+  }
+}
+
+function setup_notify_listeners(socket) {
+  var client = getClient() 
+  client.on('notification', doBroadCast(socket));
+  socket.on('disconnect', function() { endClient(client) });
+  client.query("LISTEN broadcast");
+}
+
 function query(client, params) {
   var promise = new Promise(function(resolve, reject) {
     client.query(params.cmd,params.params, function(err, ret) {
@@ -31,10 +41,28 @@ function query(client, params) {
   return promise
 }
 
-function processEvents(client) {
+function processEvents() {
+  console.log ('processEvents 0')
   var promise = new Promise(function(resolve, reject) {
+    var client = getClient()   
+    console.log ('processEvents 1')
     query(client, {cmd: 'select process_events()', params: []})
     .then(function(ret) {
+      console.log ('processEvents 2', ret.rows)
+      if (ret.rows != null && ret.rows[0] != null && ret.rows[0].process_events != null) {
+        setTimeout(function() {
+          processEvents()
+        },0)
+      }
+      console.log ('processEvents 3')
+      return query(client, {cmd: 'commit', params: []})
+    })
+    .then(function(ret) {
+      console.log ('processEvents 4', ret)
+      return endClient(client)
+    })
+    .then(function(ret) {
+      console.log ('processEvents 5', ret)
       resolve(ret)
     })
     .catch(function(err) {
@@ -56,9 +84,6 @@ function commitClient(client) {
       return processEvents()
     })
     .then(function(ret) {
-      query(client, {cmd: 'commit', params: []})
-    })
-    .then(function(ret) {
       resolve(ret)
     })
     .catch(function(err) {
@@ -76,5 +101,6 @@ exports = module.exports = {
   getClient,
   query,
   commitClient,
-  endClient
+  endClient,
+  setup_notify_listeners
 }

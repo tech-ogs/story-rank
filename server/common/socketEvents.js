@@ -71,6 +71,8 @@ const rankUpdate = (socket) => {
   }
 }
 
+
+
 const setHandlers = (socket) => {
   socket.on('handshake', function (data) {
     console.log('socket event handshake:', this.id,  data);
@@ -78,8 +80,20 @@ const setHandlers = (socket) => {
   socket.on('rank_update', registerHandler(socket, 'rank_update', rankUpdate(socket)))
   
   socket.on('disconnect', registerHandler(socket, 'disconnect', releaseHandlers(socket)))
+
+}
+
+const getHandler = (evtName) => {
+  var result = null
+  Object.keys(handlersTable).forEach( s => {
+    Object.keys (handlersTable[s]).forEach( e => {
+      result = handlersTable[s][e] === evtName ? handlersTable[s][e] : result
+    })
+  })
+  return result
 }
 
 module.exports = exports = {
-  setHandlers : setHandlers
+  setHandlers : setHandlers,
+  getHandler : getHandler
 }
