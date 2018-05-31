@@ -22,6 +22,7 @@ const registerHandler = (socket, eventName, handler) => {
 const releaseHandlers = (socket) => {
   return () => {
     delete handlersTable[socket.id] 
+    socket.removeAllListeners()
     console.log('handlers released: ', socket.id)
   }
 }
