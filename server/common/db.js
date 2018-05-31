@@ -2,7 +2,6 @@ const { Client } = require('pg')
 const path = require('path')
 //const socketEvents = require (path.join ( __dirname, '../../server/common/socketEvents.js'))
 
-
 function getClient() {
   const client = new Client({
     user: 'postgres',
@@ -12,19 +11,11 @@ function getClient() {
   return client
 }
 
-function doBroadCast(socket) {
-  return function(msg) {
-    console.log ('broadcast handler', msg)
-    socket.emit ('broadcast', msg.payload)
-    socket.broadcast.emit ('broadcast', msg.payload)
-  }
-}
 
-function setup_notify_listeners(socket) {
-  var client = getClient() 
-  client.on('notification', doBroadCast(socket));
-  socket.on('disconnect', function() { endClient(client) });
-  client.query("LISTEN broadcast");
+function setup_notify_listeners(socketEvents) {
+  const notificationsClient = getClient() 
+  notificationsClient.query("LISTEN broadcast");
+  notificationsClient.on('notification', socketEvents.doBroadcast);
 }
 
 function query(client, params) {

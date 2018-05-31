@@ -2,7 +2,13 @@ var path = require('path');
 var ranks = require (path.join ( __dirname, '../../server/modules/ranks/ranks.js'))
 var sessions = require (path.join ( __dirname, '../../server/modules/sessions/sessions.js'))
 
+var io = null
+
 var handlersTable = {}
+
+const setIO = (x) => {
+  io = x
+}
 
 const registerHandler = (socket, eventName, handler) => {
   console.log('handler register: ', socket.id, eventName)
@@ -72,6 +78,15 @@ const rankUpdate = (socket) => {
 }
 
 
+function doBroadcast(msg) {
+  console.log ('broadcast handler', msg)
+  var socket = getBroadcastSocket() /* to do namespace */
+  if (socket != null) { 
+    socket.emit ('broadcast', msg.payload)
+    socket.broadcast.emit ('broadcast', msg.payload)
+  }
+}
+
 
 const setHandlers = (socket) => {
   socket.on('handshake', function (data) {
@@ -81,19 +96,41 @@ const setHandlers = (socket) => {
   
   socket.on('disconnect', registerHandler(socket, 'disconnect', releaseHandlers(socket)))
 
+  /* this is not a socket event handler, it is used by database notifications listener to emit broadcasts */
+  registerHandler(socket, 'broadcast', doBroadcast(socket))
 }
 
 const getHandler = (evtName) => {
   var result = null
   Object.keys(handlersTable).forEach( s => {
     Object.keys (handlersTable[s]).forEach( e => {
-      result = handlersTable[s][e] === evtName ? handlersTable[s][e] : result
+      if (e === evtName) {
+        result = handlersTable[s][e]
+      }
     })
   })
+  console.log('getHandler returns:', result)
+  return result
+}
+
+const getBroadcastSocket = (/*TODO namespace*/) => {
+  var result = null
+  var socketId = Object.keys(handlersTable)[0]
+  //console.log('getBroadcastSocket socketId:', socketId, Object.keys(io.sockets.sockets))
+  for (var x in io.sockets.sockets) {
+    //console.log ('getBroadcastSocket x:', x)
+    if (x === socketId) {
+      result = io.sockets.sockets[x];
+      break;
+    }
+  }
+  //console.log('getBroadcastSocket returns:', result)
   return result
 }
 
 module.exports = exports = {
+  setIO : setIO,
   setHandlers : setHandlers,
-  getHandler : getHandler
+  getHandler : getHandler,
+  doBroadcast : doBroadcast
 }

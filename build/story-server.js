@@ -16,8 +16,8 @@ var cookieParser = require('cookie-parser')
 
 var routes = require(path.join(__dirname , '../server/routes.js'))(io)
 var sessions = require(path.join(__dirname , '../server/modules/sessions/sessions.js'))
-var db = require(path.join(__dirname , '../server/common/db.js'))
 var socketEvents = require(path.join(__dirname , '../server/common/socketEvents.js'))
+var db = require(path.join(__dirname , '../server/common/db.js'))
 
 var cookieName = 'SRSESSION';
 
@@ -83,12 +83,17 @@ function onError(err) {
 function onListening(evt) {
   console.log('socket listening', evt)
 }
+socketEvents.setIO(io);
+
 io.on('error', onError);
 io.on('listening', onListening);
 io.on('connection', function (socket) {
   console.log('socket event connection')
   socket.emit('handshake', { hello: 'world' });
   socketEvents.setHandlers (socket)
-  db.setup_notify_listeners(socket)
 });
+
+/* just do this once. The db notification listeners are not socket specific */
+db.setup_notify_listeners(socketEvents)
+
 
