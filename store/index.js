@@ -31,7 +31,7 @@ export default new Vuex.Store({
       console.log('init socket:', params)
       var socket = params.socket
       context.commit('setSocket', {socket: socket})
-      socketEvents.registerHandlers(socket)     
+      socketEvents.registerHandlers(context, socket)     
     },
 
     fetchData(context, params) { 

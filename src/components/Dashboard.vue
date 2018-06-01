@@ -209,8 +209,8 @@ export default {
       //console.log('checking state stories', this.items)
       //console.log('checking state users', this.users)
       //console.log('checking state stories Id Map', this.stories)
-      console.log('checking state ranks', this.ranks)
-      console.log('checking state favorites', this.favorites)
+      //console.log('checking state ranks', this.ranks)
+      //console.log('checking state favorites', this.favorites)
       console.log('checking state results', JSON.stringify(this.results))
     })
 

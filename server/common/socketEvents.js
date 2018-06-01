@@ -97,8 +97,6 @@ const setHandlers = (socket) => {
   
   socket.on('disconnect', registerHandler(socket, 'disconnect', releaseHandlers(socket)))
 
-  /* this is not a socket event handler, it is used by database notifications listener to emit broadcasts */
-  registerHandler(socket, 'broadcast', doBroadcast(socket))
 }
 
 const getHandler = (evtName) => {
