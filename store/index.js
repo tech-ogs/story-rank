@@ -6,6 +6,7 @@ import comments from './modules/comments'
 import ranks from './modules/ranks'
 import socketEvents from './socketEvents'
 
+
 Vue.use(Vuex)
 
 // TODO: b-table showDetails function is causing strict mode violations. Figure it out and fix
@@ -33,6 +34,7 @@ export default new Vuex.Store({
       context.commit('setSocket', {socket: socket})
       socketEvents.registerHandlers(context, socket)     
     },
+
 
     fetchData(context, params) { 
       var promise = new Promise( (resolve, reject) => {
@@ -73,6 +75,7 @@ export default new Vuex.Store({
       })
       return promise
     },
+
     initStore(context, params) {
 
       var promise = new Promise((resolve, reject) => {
@@ -138,11 +141,27 @@ export default new Vuex.Store({
       })
 
       return promise
+    },
+
+
+    initStoreTest(context, params) {
+
+      context.commit('usersSetData', require('./testdata/users.json'))
+      context.commit('commentsSetData', require('./testdata/comments.json'))
+      context.commit('ranksSetData', require('./testdata/myranks.json'))
+      context.commit('resultsSetData', require('./testdata/results.json'))
+      context.commit('ranksInitData', require('./testdata/stories.json'))
+      context.commit('storiesSetData', require('./testdata/stories.json'))
+      context.commit('setSocketTest')
     }
+
   },
   mutations: {
     setSocket: (state, params) => {
       state.socket = params.socket
+    },
+    setSocketTest: (state) => {
+      state.socket = { emit : () => null }
     }
   },
   modules: {

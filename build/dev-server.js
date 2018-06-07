@@ -1,24 +1,25 @@
 require('./check-versions')()
 
 var config = require('../config')
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
-}
+process.env.NODE_ENV = 'client-development'
+
+process.title = 'story-server'
 
 var opn = require('opn')
 var path = require('path')
 var express = require('express')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
-var webpackConfig = require('./webpack.dev.conf')
-
+var webpackConfig = require('./webpack.cdev.conf')
+console.log('webpackConfig:', webpackConfig)
 // default port where dev server listens for incoming traffic
-var port = process.env.PORT || config.dev.port
+
+var port = process.env.PORT || config.cdev.port
 // automatically open browser, if not set will be false
-var autoOpenBrowser = !!config.dev.autoOpenBrowser
+var autoOpenBrowser = !!config.cdev.autoOpenBrowser
 // Define HTTP proxies to your custom API backend
 // https://github.com/chimurai/http-proxy-middleware
-var proxyTable = config.dev.proxyTable
+var proxyTable = config.cdev.proxyTable
 
 var app = express()
 var compiler = webpack(webpackConfig)
@@ -60,21 +61,35 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
-var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
-app.use(staticPath, express.static('./static'))
+var staticPath = path.posix.join(config.cdev.assetsPublicPath, config.cdev.assetsSubDirectory)
+app.use(staticPath, express.static('./src/assets'))
 
-var uri = 'http://localhost:' + port
+function getIP() { 
+  const interfaces = require('os').networkInterfaces();
+    
+  const addresses = Object.keys(interfaces)
+    .reduce((results, name) => results.concat(interfaces[name]), [])
+    .filter((iface) => iface.family === 'IPv4' && !iface.internal)
+    .map((iface) => iface.address);
+    
+  return addresses[0]
+}
+
+var IP = getIP()
+
+var uri = 'http://' + IP + ':' + port
 
 var _resolve
 var readyPromise = new Promise(resolve => {
   _resolve = resolve
 })
 
-console.log('> Starting dev server...')
+console.log('> Starting cdev server...')
 devMiddleware.waitUntilValid(() => {
   console.log('> Listening at ' + uri + '\n')
   // when env is testing, don't need open it
   if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
+    console.log ('opn NODE_ENV:', process.env.NODE_ENV)
     opn(uri)
   }
   _resolve()

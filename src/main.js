@@ -5,7 +5,6 @@ import store from '../store'
 import App from './App'
 import router from './router'
 
-
 import Dashboard from '@/components/Dashboard'
 import RankUI from '@/components/RankUI'
 import StoryRow from '@/components/StoryRow'

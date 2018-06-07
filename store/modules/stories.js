@@ -15,13 +15,15 @@ const state = {
 // helpers
 // getters
 const getters = {
+/*
   storiesGetItems: (state) => {
     return state.items
   },
+*/
   storiesGetIdMap: (state) => {
     return state.byId
   },
-  storiesGetItemsF: (state, getters) => {
+  storiesGetItems: (state, getters) => {
     //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     var ranks = getters.ranks
     var filtered = state.items.filter( (story) => {
@@ -32,15 +34,16 @@ const getters = {
       return result
     })
     console.log('filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
-    //console.log('ranks', ranks)
-    var sorted = filtered.sort ( (a ,b) => {
-      //default display order is id desc (latest is greatest)
-      return b.id - a.id
+    console.log('ranks', ranks)
+    var ranks = getters.ranks
+    var sorted = state.items.sort ( (a ,b) => {
+      return ranks[a.id] - ranks[b.id]
     })
 
     console.log('sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     return sorted
   },
+
   // strictly ranked list to support all moves via swaps, use this when calling mutations in moveRanks
   storiesGetItemsS: (state, getters) => {
     //console.log('storiesGetItemsS', getters)
@@ -56,11 +59,11 @@ const getters = {
     var ranks = getters.getResults.ranks
     console.log('storiesGetAllResults:', JSON.stringify(ranks))
     var filtered = state.items.filter ( (x) => { return ranks.indexOf(x.id) >= 0 } )
-    console.log('res-filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
+    //console.log('res-filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     var sorted = filtered.sort ( (a ,b) => {
       return  ranks.indexOf(a.id) - ranks.indexOf(b.id)
     })
-    console.log('res-sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
+    //console.log('res-sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     return sorted
   },
 

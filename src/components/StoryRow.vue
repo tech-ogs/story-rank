@@ -1,8 +1,14 @@
 <template>
-  <b-container small :class="rowClass(row)">
+  <b-container small>
     <b-row>
+      <b-col>
+        <rank-ui :row="row" :items="items" :settings="settings"> </rank-ui>
+      </b-col>
+    </b-row>
+
+    <b-row :class="rowClass(row)">
       <b-col cols="4"> 
-        <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" >
+        <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
       </b-col>
       <b-col class="story-title-container">
         <span class="story-title">
@@ -11,6 +17,7 @@
         </span>
       </b-col>
     </b-row>
+<!--
     <b-row>
       <b-col class="story-excerpt-container">
         <span class="story-excerpt">
@@ -22,11 +29,13 @@
     <b-row class="story-footer">
       <b-col class="story-data-container">
         <span class="story-data">
-          <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
+          <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :key="idx" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
         </span>
-      </b-col>
-      <b-col cols="6">
-        <rank-ui :row="row" :items="items" :settings="settings"> </rank-ui>
+        <br>
+        <span class="story-data">
+                id: {{row.id}} me: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
+
+        </span>
       </b-col>
       <b-col class="story-submitter-container">
         <span class="story-submitter">
@@ -34,6 +43,7 @@
         </span>
       </b-col>
     </b-row>
+-->
   </b-container>
 </template>
 
@@ -44,9 +54,9 @@ export default {
   data () {
     return {
       rowClass: (row) => {
-        var result = ''
+        var result = 'story-row'
         if (this.selectedRow === row.id) {
-          result = 'story-selected'
+          result += ' story-selected'
         }
         return result
       },
@@ -55,6 +65,8 @@ export default {
   },
   computed: {
     selectedRow() { return this.$store.getters.storiesSelectedRow },
+    ranks () { return this.$store.getters.ranks},
+    results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap }
   },
   methods: {
@@ -68,6 +80,10 @@ export default {
 </script>
 
 <style scoped>
+  .story-row {
+    height:100px; 
+    overflow: hidden;
+  }
   .story-image {
   /*
     height: 100px;
@@ -110,5 +126,6 @@ export default {
     align-items: center;
   }
   .story-selected {
+    opacity: 0.3;
   }
 </style>

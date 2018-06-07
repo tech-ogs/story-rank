@@ -47,8 +47,9 @@ const actions = {
   ranksMoveUpAction: moveRanks.moveUpAction,
   ranksMoveDownAction: moveRanks.moveDownAction,
   ranksMoveTopAction: moveRanks.moveTopAction,
-  ranksMoveBottomAction: moveRanks.moveBottomAction
-
+  ranksMoveBottomAction: moveRanks.moveBottomAction,
+  ranksMoveInFavAction: moveRanks.moveInFavAction,
+  ranksMoveOutFavAction: moveRanks.moveOutFavAction
 }
 
 // mutations
@@ -111,7 +112,8 @@ const mutations = {
   ranksMoveDown: moveRanks.moveDown,
   ranksMoveTop: moveRanks.moveTop,
   ranksMoveBottom: moveRanks.moveBottom,
-  
+  ranksMoveInFav: moveRanks.moveInFav,
+  ranksMoveOutFav: moveRanks.moveOutFav
 }
 
 export default {

@@ -43,14 +43,12 @@
         <b-navbar-nav class="width100">
           <b-nav-form  class="width100">
             <b-form-row  class="width100 flex-left-right">
-              <b-form-col>
               <b-form-radio-group id="btnradios1"
                   buttons
                   button-variant="link"
                   size="md"
                   class="height100"
                   v-model="settings.list"
-                  @change="handleListChange"
                   name="radioBtnOutline1" >
                 <b-form-radio value="full" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
                   &nbsp;
@@ -69,14 +67,11 @@
                   &nbsp;
                 </b-form-radio>
               </b-form-radio-group>
-              </b-form-col>
-              <b-form-col>
               <b-form-radio-group id="btnradios2"
                   buttons
                   button-variant="outline-primary"
                   size="md"
                   v-model="settings.domain"
-                  @change="handleDomainChange"
                   name="radioBtnOutline2" >
                 <b-form-radio value="me" class="flex-perfect-center">
                   Me
@@ -85,7 +80,6 @@
                   All
                 </b-form-radio>
               </b-form-radio-group>
-              </b-form-col>
             </b-form-row>
           </b-nav-form>
         </b-navbar-nav>
@@ -96,7 +90,7 @@
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :row="data.item" :items="itemsS" :settings="settings">
+            <story-row :row="data.item" :items="items" :settings="settings">
             </story-row>
           </template>
         </b-table>
@@ -136,17 +130,17 @@ export default {
         this.$store.commit('storiesSetSelected', item.id)
       },
       starClass: () => {
-        console.log('animateStar: ', this.animateStar)
+        //console.log('animateStar: ', this.animateStar)
         var ret = 'star-bright stack-layer-1'
         ret += this.animateStar ? ' star-animation' : ' square30'
-        console.log('starClass: ', ret)
+        //console.log('starClass: ', ret)
         return ret
       },
       circleClass: () => {
-        console.log('animateCircle: ', this.animateCircle)
+        //console.log('animateCircle: ', this.animateCircle)
         var ret = 'circle-faded stack-layer-1'
         ret += this.animateCircle ? ' circle-animation' : ' square30'
-        console.log('circleClass: ', ret)
+        //console.log('circleClass: ', ret)
         return ret
       }
     }
@@ -154,15 +148,17 @@ export default {
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
     items() { return {
-                me : {full : this.$store.getters.storiesGetItemsF, fav : this.$store.getters.storiesGetFavs },
-                all: {full : this.$store.getters.storiesGetAllResults, fav : this.$store.getters.storiesGetAllResults }
-              }[this.settings.domain][this.settings.list]
+                me : this.$store.getters.storiesGetItems,
+                all: this.$store.getters.storiesGetAllResults
+              }[this.settings.domain]
             },
+/*
      itemsS() { return { 
                 me : {full : this.$store.getters.storiesGetItemsS, fav : this.$store.getters.storiesGetFavs },
                 all: {full : this.$store.getters.storiesGetAllResults, fav : this.$store.getters.storiesGetAllResults }
               }[this.settings.domain][this.settings.list]
-            },             
+            },
+*/        
     users () { return this.$store.getters.usersGetIdMap },
     stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
@@ -200,19 +196,24 @@ export default {
       })
     }
   },
-  mounted () { 
-    //var socket = window.io('http://192.168.1.2:8080', {forceNew: true});
-    var socket = window.io();
-    console.log('Dashboard socket:', socket)
-    this.$store.dispatch('initStore', {socket: socket})
-    .then(() => {
-      //console.log('checking state stories', this.items)
-      //console.log('checking state users', this.users)
-      //console.log('checking state stories Id Map', this.stories)
-      //console.log('checking state ranks', this.ranks)
-      //console.log('checking state favorites', this.favorites)
-      console.log('checking state results', JSON.stringify(this.results))
-    })
+  mounted () {
+    console.log('ENV', process.env)
+    if (process.env.NODE_ENV === 'client-development') {
+      this.$store.dispatch('initStoreTest')
+    }
+    else { 
+      var socket = window.io();
+      console.log('Dashboard socket:', socket)
+      this.$store.dispatch('initStore', {socket: socket})
+      .then(() => {
+        //console.log('checking state stories', this.items)
+        //console.log('checking state users', this.users)
+        //console.log('checking state stories Id Map', this.stories)
+        //console.log('checking state ranks', this.ranks)
+        //console.log('checking state favorites', this.favorites)
+        console.log('checking state results', JSON.stringify(this.results))
+      })
+    }
 
   }
 }

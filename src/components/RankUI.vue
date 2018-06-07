@@ -1,15 +1,19 @@
 <template>
-  <div class="rank-dialog-wrapper">
-  <span :class="rankingBarClass" v-if="settings.domain === 'me'">
-        <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveDown"> <icon name="arrow-down" /> </b-link> 
+  <div class="rank-dialog-wrapper flex-perfect-center width100" v-if="selectedRow === row.id">
+  <b-container :class="rankingBarClass" v-if="settings.domain === 'me'">
+    <b-row class="width100">
+      <b-col>
+        <b-link v-if="favorites[row.id]" href="#" @click="moveDown"> <icon name="caret-square-down" class="rbutton" /> </b-link> 
+      </b-col>
+      <b-col>
         <b-link href="#" @click="toggleFavorite"> <icon name="star" :class="starClass"/> </b-link> 
-        <b-link v-if="settings.list === 'fav' && favorites[row.id]" href="#" @click="moveUp"> <icon name="arrow-up" /> </b-link> 
-  </span>
-  <br>
-  <span class="story-data">
-          id: {{row.id}} me: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
+      </b-col>
+      <b-col>
+        <b-link v-if="favorites[row.id]" href="#" @click="moveUp"> <icon name="caret-square-up" class="rbutton"/> </b-link> 
+      </b-col>
+    </b-row>
+  </b-container>
 
-  </span>
   </div>
 </template>
 
@@ -22,11 +26,12 @@ export default {
       title: "Rank This Story",
       moveUp: () => this.$store.dispatch('ranksMoveUpAction', {items: this.items, storyId: this.row.id}),
       moveDown: () => this.$store.dispatch('ranksMoveDownAction', {items: this.items, storyId: this.row.id}),
-      moveTop: () => this.$store.dispatch('ranksMoveTopAction', {items: this.items, storyId: this.row.id}),
-      moveBottom: () => this.$store.dispatch('ranksMoveBottomAction', {items: this.items, storyId: this.row.id}),
+      moveInFav: () => this.$store.dispatch('ranksMoveInFavAction', {items: this.items, storyId: this.row.id}),
+      moveOutFav: () => this.$store.dispatch('ranksMoveOutFavAction', {items: this.items, storyId: this.row.id}),
     }
   },
   computed: {
+    selectedRow() { return this.$store.getters.storiesSelectedRow },
     filterClear() { return this.$store.getters.storiesFilterIsClear},
     starClass() { return this.favorites[this.row.id] ? 'star star-bright' : 'star star-dim' },
     rankingBarClass() { return this.settings.list === 'fav' && this.favorites[this.row.id] ? 'ranking-bar' : 'star-bar' },
@@ -38,11 +43,11 @@ export default {
       toggleFavorite: function() {
         if (this.favorites[this.row.id]) { 
           this.$store.commit('storiesAnimateCircle')
-          this.moveBottom() 
+          this.moveOutFav() 
         }
         else {
           this.$store.commit('storiesAnimateStar')
-          this.moveTop() 
+          this.moveInFav() 
         }
       }
   },
@@ -53,13 +58,18 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .ranking-bar {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
+  .rank-dialog-wrapper {
+    position: absolute;
+    z-index: 10;
+    height: 100px;
   }
+
+  .ranking-bar {
+  }
+
   .star-bar {
   }
+
   .star {
     width: 25px;
     height: 25px;
@@ -69,6 +79,10 @@ export default {
   }
   .star-bright {
     color: gold;
+  }
+  .rbutton {
+    width: 25px;
+    height: 25px;
   }
   .story-data {
     font-size: x-small;

@@ -9,6 +9,7 @@ const swapRanks = (state, id1, id2) => {
   state.byRank[rank2] = id1
 }
 
+/*
 const rebuildByRank = (state) => {
   var byRank = {}
   Object.keys(state.ranks).forEach( sid => {
@@ -16,6 +17,7 @@ const rebuildByRank = (state) => {
   })
   state.byRank = byRank
 }
+*/
 
 const moveUp = (state, {storyId, items}) => {
   //console.log( 'ranks moveUp', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
@@ -39,34 +41,56 @@ const moveTop = (state, {storyId, items}) => {
   //console.log( 'ranks moveTop', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
 
   //console.log(JSON.stringify(state.favorites))
-  Vue.set(state.favorites, storyId, true)
   if (state.ranks[storyId] > 1) {
     var pos = items.findIndex( x => { return x.id === storyId } )
     for (var i = pos ; i > 0; i-- ) {
       swapRanks(state,  storyId, items[i-1].id)
     }
   }
-  //console.log(JSON.stringify(state.favorites))
-  //console.log( 'ranks moveTop', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
-  //rebuildByRank(state)
 }
 
 const moveBottom = (state, {storyId, items}) => {
   //console.log( 'ranks moveBottom', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
   console.log(JSON.stringify(state.favorites))
 
-  Vue.set(state.favorites, storyId,  false)
   if (state.ranks[storyId] < Object.keys(state.ranks).length) {
     var pos = items.findIndex( x => { return x.id === storyId } )
     for (var i = pos ; i < items.length - 1; i++ ) {
       swapRanks(state, storyId, items[i+1].id)
     }
   }
-  //console.log(JSON.stringify(state.favorites))
-  //console.log( 'ranks moveBottom', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
-
-  //rebuildByRank(state)
 }
+
+const moveInFav = (state, {storyId, items}) => {
+  //console.log( 'ranks moveInFav', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
+
+  Vue.set(state.favorites, storyId, true)
+  if (state.ranks[storyId] > 1) {
+    var pos = items.findIndex( x => { return x.id === storyId } )
+    for (var i = pos ; i > 0; i-- ) {
+      if (!state.favorites[items[i-1].id]) {
+        swapRanks(state,  storyId, items[i-1].id)
+      }
+    }
+  }
+}
+
+const moveOutFav = (state, {storyId, items}) => {
+  //console.log( 'ranks moveOutFav', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
+  //console.log(JSON.stringify(state.favorites))
+
+  Vue.set(state.favorites, storyId,  false)
+  if (state.ranks[storyId] < Object.keys(state.ranks).length) {
+    var pos = items.findIndex( x => { return x.id === storyId } )
+    for (var i = pos ; i < items.length - 1; i++ ) {
+      if (state.favorites[items[i+1].id]) {
+        swapRanks(state, storyId, items[i+1].id)
+      }
+    }
+  }
+}
+
+
 
 /* the entry points for rank manipulations are actions since they need to work with socket (in rootstate) as well as ranks module state */
 const postData = (context) => {
@@ -96,14 +120,29 @@ const  moveBottomAction = (context, params) => {
 
 }
 
+const  moveInFavAction = (context, params) => {
+  context.commit('ranksMoveInFav', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+
+}
+const  moveOutFavAction = (context, params) => {
+  context.commit('ranksMoveOutFav', params)
+  context.rootState.socket.emit('rank_update', postData(context))
+
+}
+
 export default {
   moveUpAction,
   moveDownAction,
   moveTopAction,
   moveBottomAction,
+  moveInFavAction,
+  moveOutFavAction,
   moveUp,
   moveDown,
   moveTop,
-  moveBottom
+  moveBottom,
+  moveInFav,
+  moveOutFav
 }
   

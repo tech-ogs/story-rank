@@ -35,6 +35,22 @@ var handler = function(fn) {
   }
 }
 
+var getHandler = function(fn) {
+  return function (req, res, next) {
+    req.body = req.query
+    fn(req, res)
+    .then(
+      function(result) {
+        res.json(result)
+      }
+    )
+    .catch(
+      function(err) {
+        res.status(420).json({message: err.message})
+      }
+    )
+  }
+}
 // public
 
 router.get('/', function(req, res){
@@ -86,6 +102,13 @@ router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
 router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
+
+/* to get debug data for client work only, comment in production */
+router.get('/list',  getHandler(query.list)) 
+router.get('/logout',  getHandler(auth.logout))
+router.get('/myranks',  getHandler(ranks.myranks))
+router.get('/results',  getHandler(ranks.results))
+router.get('/myfavorites',  getHandler(ranks.myfavorites))
 
 module.exports = function (io) {
     //Socket.IO
