@@ -29,7 +29,7 @@ const moveUp = (state, {storyId, items}) => {
 
 const moveDown = (state, {storyId, items}) => {
   //console.log( 'ranks moveDown', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
-  if (state.ranks[storyId] < Object.keys(state.ranks).length) {
+  if (state.ranks[storyId] < Object.keys(state.ranks).length && state.favorites[ state.byRank[state.ranks[storyId] + 1 ] ] ) {
     swapRanks(state, storyId, state.byRank[state.ranks[storyId] + 1 ])
   }
   //console.log( 'ranks moveDown', console.log( Object.keys(state.ranks).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
@@ -101,12 +101,24 @@ const postData = (context) => {
 }
 
 const  moveUpAction = (context, params) => {
+  var oldVal = context.state.ranks[params.storyId]
   context.commit('ranksMoveUp', params)
+  var newVal = context.state.ranks[params.storyId]
+  if (oldVal !== newVal) {
+    var scrollTop = context.getters.dashScrollTop
+    context.commit('dashSetScrollTop', scrollTop - 120)
+  }
   context.rootState.socket.emit('rank_update', postData(context))
 }
 
 const moveDownAction = (context, params) => {
+  var oldVal = context.state.ranks[params.storyId]
   context.commit('ranksMoveDown', params)
+  var newVal = context.state.ranks[params.storyId]
+  if (oldVal !== newVal) {
+    var scrollTop = context.getters.dashScrollTop
+    context.commit('dashSetScrollTop', scrollTop + 120)
+  }
   context.rootState.socket.emit('rank_update', postData(context))
 }
 const  moveTopAction = (context, params) => {

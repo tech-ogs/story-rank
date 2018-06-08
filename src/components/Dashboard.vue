@@ -60,7 +60,7 @@
                 </b-form-radio>
                 <b-form-radio value="fav" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
                   &nbsp;
-                  <div class="inline-flex-perfect-center">
+                  <div class="inline-flex-perfect-center" @click="scrollToTop">
                     <icon name="star" :class="starClass()"/>
                     <div class="stack-layer-2 icon-text"> {{ favlength }} </div>
                   </div>
@@ -86,7 +86,7 @@
       </b-navbar>
 
     </b-row>
-    <b-row class="app-content">
+    <b-row class="app-content" ref="list">
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
@@ -113,6 +113,7 @@ const fields = [
 export default {
   data () {
     return {
+      listTable: null,
       settings : {
         list: 'full', 
         domain : 'me'
@@ -126,8 +127,12 @@ export default {
         this.$store.commit('storiesSetFilter', {submitter_id : null })
       },
       rowclick: (item, index, event) => {
-        //console.log('rowclick')
-        this.$store.commit('storiesSetSelected', item.id)
+        if (this.selectedRow != null && this.selectedRow.id === item.id) {
+          this.$store.commit('storiesSetSelected', null) 
+        }
+        else {
+          this.$store.commit('storiesSetSelected', item)
+        }
       },
       starClass: () => {
         //console.log('animateStar: ', this.animateStar)
@@ -152,13 +157,6 @@ export default {
                 all: this.$store.getters.storiesGetAllResults
               }[this.settings.domain]
             },
-/*
-     itemsS() { return { 
-                me : {full : this.$store.getters.storiesGetItemsS, fav : this.$store.getters.storiesGetFavs },
-                all: {full : this.$store.getters.storiesGetAllResults, fav : this.$store.getters.storiesGetAllResults }
-              }[this.settings.domain][this.settings.list]
-            },
-*/        
     users () { return this.$store.getters.usersGetIdMap },
     stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
@@ -168,8 +166,9 @@ export default {
     results() { return this.$store.getters.getResults},
     favlength() { return this.$store.getters.numFavorites},
     animateStar() { return this.$store.getters.storiesGetAnimateStar},
-    animateCircle() { return this.$store.getters.storiesGetAnimateCircle}
-
+    animateCircle() { return this.$store.getters.storiesGetAnimateCircle},
+    selectedRow() { return this.$store.getters.storiesSelectedRow},
+    scrollTop() { return this.$store.getters.dashScrollTop }
   },
   methods: {
     doLogout: () => {
@@ -185,7 +184,6 @@ export default {
         if (!res.ok ) { 
           throw Error (res.json())
         }
-        //console.log('i am here', res)
         return res.json()
       })
       .then( response => {
@@ -194,10 +192,34 @@ export default {
       .catch( err => {
         alert (err.message)
       })
+    },
+    scrollToTop: function() { 
+      this.$store.commit('dashSetScrollTop', 0)
+    },
+    scrollListener: function() {
+      var _this = this
+      return function(evt) { 
+        //console.log('scroll evt:', _this.listTable.scrollTop)
+        _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
+      }
     }
   },
+  watch: {
+    'scrollTop': function(newValue, oldValue)  {
+      //console.log ('emitting schedule-scroll event:', newValue)
+      this.listTable.scrollTop = this.scrollTop
+    }
+  },
+
   mounted () {
     console.log('ENV', process.env)
+    var listTable = this.$refs.list
+    console.log('listTable:', listTable)
+    this.listTable = listTable
+    
+    this.listTable.addEventListener('scroll', this.scrollListener());
+
+    this.listTable.scrollTop = this.scrollTop
     if (process.env.NODE_ENV === 'client-development') {
       this.$store.dispatch('initStoreTest')
     }
@@ -266,7 +288,7 @@ body,
 }
 
 .icon-button.active .stack-layer-1{
-  border-bottom: 2px outset red;
+  /* border-bottom: 2px outset red; */
 }
 
 

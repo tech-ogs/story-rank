@@ -1,12 +1,16 @@
 <template>
   <div id="app">
-    <router-view/>
+    <dashboard v-if="mode === 'list'"></dashboard>
+    <story-detail v-if="mode === 'detail'"></story-detail>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  computed: {
+    mode () { return this.$store.getters.dashMode }
+  }
 }
 </script>
 

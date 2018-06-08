@@ -1,17 +1,33 @@
 <template>
-  <div class="rank-dialog-wrapper flex-perfect-center width100" v-if="selectedRow === row.id">
+  <div class="rank-dialog-wrapper flex-perfect-center width100" v-if="selectedRow.id === row.id">
   <b-container :class="rankingBarClass" v-if="settings.domain === 'me'">
     <b-row class="width100">
       <b-col>
-        <b-link v-if="favorites[row.id]" href="#" @click="moveDown"> <icon name="caret-square-down" class="rbutton" /> </b-link> 
+        <b-link v-if="favorites[row.id]" href="#" @click.stop="moveDown" class="rankbutton"> <icon name="caret-down" class="rankicon" /> </b-link> 
       </b-col>
       <b-col>
-        <b-link href="#" @click="toggleFavorite"> <icon name="star" :class="starClass"/> </b-link> 
+        <b-link href="#" @click.stop="toggleFavorite"> <icon name="star" :class="starClass"/> </b-link> 
       </b-col>
       <b-col>
-        <b-link v-if="favorites[row.id]" href="#" @click="moveUp"> <icon name="caret-square-up" class="rbutton"/> </b-link> 
+        <b-link v-if="favorites[row.id]" href="#" @click.stop="moveUp" class="rankbutton"> <icon name="caret-up" class="rankicon"/> </b-link> 
       </b-col>
     </b-row>
+    <b-row class="width100">
+      <b-col>
+      </b-col>
+      <b-col>
+        <!--
+          <b-link href="#" @click="showMore" class="morebutton"> <icon name="ellipsis-h" class="moreicon"/> </b-link> 
+        -->
+        <br>
+        <b-badge variant="primary">
+          <b-link href="#" @click.stop="showMore" class="morebutton">more...</b-link>
+        </b-badge>
+      </b-col>
+      <b-col>
+      </b-col>
+    </b-row>
+
   </b-container>
 
   </div>
@@ -31,7 +47,8 @@ export default {
     }
   },
   computed: {
-    selectedRow() { return this.$store.getters.storiesSelectedRow },
+    dashState() { return this.$store.getters.dashState},
+    selectedRow() { return this.$store.getters.storiesSelectedRow},
     filterClear() { return this.$store.getters.storiesFilterIsClear},
     starClass() { return this.favorites[this.row.id] ? 'star star-bright' : 'star star-dim' },
     rankingBarClass() { return this.settings.list === 'fav' && this.favorites[this.row.id] ? 'ranking-bar' : 'star-bar' },
@@ -49,6 +66,9 @@ export default {
           this.$store.commit('storiesAnimateStar')
           this.moveInFav() 
         }
+      },
+      showMore: function() {
+        this.$store.commit('dashSetMode', 'detail')
       }
   },
   mounted () { 
@@ -71,8 +91,8 @@ export default {
   }
 
   .star {
-    width: 25px;
-    height: 25px;
+    width: 40px;
+    height: 40px;
   }
   .star-dim {
     color: gray;
@@ -80,10 +100,21 @@ export default {
   .star-bright {
     color: gold;
   }
-  .rbutton {
-    width: 25px;
-    height: 25px;
+  .rankbutton {
   }
+  .rankicon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .morebutton {
+    color: black;
+  }
+  .moreicon {
+    width: 40px;
+    height: 40px;
+  }
+
   .story-data {
     font-size: x-small;
   }

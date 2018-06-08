@@ -93,7 +93,7 @@ const getters = {
     }
     return result
   },
-  storiesSelectedRow: (state) => state.selected,
+  storiesSelectedRow: (state) => state.selected || {id:0},
   storiesGetAnimateStar: state => state.animateStar,
   storiesGetAnimateCircle: state => state.animateCircle
 }
@@ -107,9 +107,12 @@ const mutations = {
   storiesSetData: (state, params) => {
     //console.log('storiesSetData', params instanceof Array, params.length,  params)
     state.items = params
+    var byId = {}
     params.forEach( x => {
-      state.byId[x.id] = x
+      byId[x.id] = x
     })
+    state.byId = byId
+    //console.log('state.byId', JSON.stringify(state.byId))
   },
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)

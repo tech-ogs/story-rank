@@ -5,7 +5,7 @@ import users from './modules/users'
 import comments from './modules/comments'
 import ranks from './modules/ranks'
 import socketEvents from './socketEvents'
-
+import dashboard from './modules/dashboard'
 
 Vue.use(Vuex)
 
@@ -90,6 +90,7 @@ export default new Vuex.Store({
             }
           })
         })
+/*
         .then ( () => {
           return context.dispatch('fetchData', { 
             url: '/list',
@@ -110,6 +111,7 @@ export default new Vuex.Store({
             }
           })
         })
+*/
         .then( () => {
           return context.dispatch('fetchData', { 
             url: '/myranks',
@@ -168,7 +170,8 @@ export default new Vuex.Store({
     stories,
     users,
     comments,
-    ranks
+    ranks,
+    dashboard
   },
   strict: debug,
   plugins: debug ? [/*createLogger()*/] : []

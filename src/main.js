@@ -3,11 +3,15 @@
 import Vue from 'vue'
 import store from '../store'
 import App from './App'
-import router from './router'
+
+import BootstrapVue from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Dashboard from '@/components/Dashboard'
 import RankUI from '@/components/RankUI'
 import StoryRow from '@/components/StoryRow'
+import StoryDetail from '@/components/StoryDetail'
 
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -15,15 +19,19 @@ import Icon from 'vue-awesome/components/Icon'
 
 Vue.config.productionTip = false
 
+Vue.use(BootstrapVue);
+
+Vue.component('dashboard', Dashboard)
 Vue.component('icon', Icon)
 Vue.component('rank-ui', RankUI)
 Vue.component('story-row', StoryRow)
+Vue.component('story-detail', StoryDetail)
+
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   store,
-  router,
   components: { App },
   template: '<App/>'
 })

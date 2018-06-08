@@ -17,33 +17,25 @@
         </span>
       </b-col>
     </b-row>
-<!--
-    <b-row>
-      <b-col class="story-excerpt-container">
-        <span class="story-excerpt">
-          {{ row.attributes.excerpt }}
-        </span>
-      </b-col>
-    </b-row>
 
     <b-row class="story-footer">
       <b-col class="story-data-container">
         <span class="story-data">
-          <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :key="idx" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
+                my: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> 
+                lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
         </span>
-        <br>
-        <span class="story-data">
-                id: {{row.id}} me: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
+      </b-col>
 
-        </span>
+      <b-col cols="1">
+          <icon name="star" class="footer-star" v-if="favorites[row.id] && !(selectedRow.id === row.id)"/> 
       </b-col>
       <b-col class="story-submitter-container">
         <span class="story-submitter">
+          [{{row.id}}]
           {{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
         </span>
       </b-col>
     </b-row>
--->
   </b-container>
 </template>
 
@@ -55,7 +47,7 @@ export default {
     return {
       rowClass: (row) => {
         var result = 'story-row'
-        if (this.selectedRow === row.id) {
+        if (this.selectedRow.id === row.id) {
           result += ' story-selected'
         }
         return result
@@ -67,7 +59,8 @@ export default {
     selectedRow() { return this.$store.getters.storiesSelectedRow },
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
-    users () { return this.$store.getters.usersGetIdMap }
+    users () { return this.$store.getters.usersGetIdMap },
+    favorites() { return this.$store.getters.favorites}
   },
   methods: {
     makeArr: (x) => { 
@@ -99,11 +92,10 @@ export default {
     font-weight: bold;
   }
 
-  .story-excerpt-container {
-    text-align: left;
-  }
-
-  .story-excerpt {
+  .story-footer {
+    height: 20px;
+    display: flex;
+    align-items: center;
   }
 
   .story-data-container {
@@ -114,18 +106,23 @@ export default {
     font-size: x-small;
   }
 
+  .footer-star {
+    height: 10px;
+    width: 10px;
+    color: gold;
+  }
   .story-submitter-container {
-    text-align: right;
+    display: inline-flex;
+    white-space: nowrap;
+    text-align: left;
+    text-overflow: ellipsis;
   }
 
   .story-submitter {
     font-size: x-small;
-  }
-  .story-footer {
-    display: flex;
-    align-items: center;
+    width: 100%;
   }
   .story-selected {
-    opacity: 0.3;
+    opacity: 0.1;
   }
 </style>
