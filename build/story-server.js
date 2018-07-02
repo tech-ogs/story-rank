@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
   sessions.getSession(cookie)
   .then( function (retval) {
     req.session = retval
-    res.cookie(cookieName, req.session.id, { maxAge: 900000, httpOnly: true });
+    res.cookie(cookieName, req.session.id, { expires: new Date((new Date().getTime() + 31536000000)), httpOnly: true }); // cookie expires after 1 year
     console.log('cookie created successfully from session', req.session);
     next(); // <-- important!
   })
