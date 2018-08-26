@@ -38,15 +38,17 @@
         </b-collapse>
       </b-navbar>
 
-      <b-navbar class="width100">
+      <b-navbar class="rank-nav-bar">
+				Your top 3<br>
 				<b-nav pills class="width100 rank-links-bar" fill>
-					<b-nav-item class="rank-link" >1</b-nav-item>
-					<b-nav-item class="rank-link" >2</b-nav-item>
-					<b-nav-item class="rank-link" >3</b-nav-item>
+					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle" :src="items[0] != null ? getImg(items[0].attributes.image) : ''"> </b-img></b-nav-item>
+					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle" :src="items[5] != null ? getImg(items[5].attributes.image) : ''"> </b-img></b-nav-item>
+					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle"  :src="items[9] != null ? getImg(items[9].attributes.image) : ''"> </b-img></b-nav-item>
 				</b-nav>
       </b-navbar>
-
+			&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard
     </b-row>
+
     <b-row class="app-content" ref="list">
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
@@ -108,7 +110,8 @@ export default {
         ret += this.animateCircle ? ' circle-animation' : ' square30'
         //console.log('circleClass: ', ret)
         return ret
-      }
+      },
+      getImg: (url) => { return require('@/'+url) } 
     }
   },
   computed: {
@@ -240,6 +243,10 @@ body,
   /*justify-content: center;*/
 }
 
+.rank-nav-bar {
+	width: 100%;
+	margin-bottom: 45px;
+}
 .rank-links-bar {
 }
 .rank-link {
