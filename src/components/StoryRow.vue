@@ -1,11 +1,12 @@
 <template>
   <b-container small>
+<!--
     <b-row>
       <b-col>
         <rank-ui :row="row" :items="items" :settings="settings"> </rank-ui>
       </b-col>
     </b-row>
-
+-->
     <b-row :class="rowClass(row)">
       <b-col cols="4"> 
         <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
@@ -19,6 +20,7 @@
     </b-row>
 
     <b-row class="story-footer">
+<!--
       <b-col class="story-data-container">
         <span class="story-data">
                 my: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> 
@@ -29,12 +31,37 @@
       <b-col cols="1">
           <icon name="star" class="footer-star" v-if="favorites[row.id] && !(selectedRow.id === row.id)"/> 
       </b-col>
-      <b-col class="story-submitter-container">
+-->
+      <b-col cols="3" class="story-submitter-container">
         <span class="story-submitter">
           [{{row.id}}]
           {{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
         </span>
+
       </b-col>
+			<b-col class="rank-button-bar">
+				<div class="rank-button-container">
+					<b-button class="rank-button" variant="secondary" size="sm">
+						1st 
+						<br>	
+						<b-badge variant="light">4</b-badge>
+					</b-button>
+				</div>
+				<div class="rank-button-container">
+					<b-button class="rank-button" variant="secondary" size="sm">
+						2nd 
+						<br>
+						<b-badge variant="light">4</b-badge>
+					</b-button>
+				</div>
+				<div class="rank-button-container">
+					<b-button class="rank-button" variant="secondary" size="sm">
+						3rd 
+						<br>
+						<b-badge variant="light">4</b-badge>
+					</b-button>
+				</div>
+			</b-col>
     </b-row>
   </b-container>
 </template>
@@ -122,7 +149,22 @@ export default {
     font-size: x-small;
     width: 100%;
   }
+
+  .rank-button-bar {
+		display: flex;
+		justify-content: flex-end;
+		padding: 1px;
+	}
+	
+	.rank-button-container {
+		margin-left: 20px;
+		padding-bottom: 20px;
+	 	opacity: 0.5;
+	}
+	.rank-button {
+		font-size: x-small;
+	}
   .story-selected {
-    opacity: 0.1;
+    /* opacity: 0.1; */
   }
 </style>

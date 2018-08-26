@@ -73,11 +73,11 @@
                   size="md"
                   v-model="settings.domain"
                   name="radioBtnOutline2" >
-                <b-form-radio value="me" class="flex-perfect-center">
-                  Me
-                </b-form-radio>
                 <b-form-radio value="all" class="flex-perfect-center">
                   All
+                </b-form-radio>
+                <b-form-radio value="me" class="flex-perfect-center">
+                  Me
                 </b-form-radio>
               </b-form-radio-group>
             </b-form-row>

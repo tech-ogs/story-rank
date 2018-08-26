@@ -44,6 +44,7 @@ const getters = {
     return sorted
   },
 
+/*
   // strictly ranked list to support all moves via swaps, use this when calling mutations in moveRanks
   storiesGetItemsS: (state, getters) => {
     //console.log('storiesGetItemsS', getters)
@@ -54,6 +55,7 @@ const getters = {
 
     return sorted
   },
+*/
 
   storiesGetAllResults: (state, getters) => {
     var ranks = getters.getResults.ranks
@@ -67,6 +69,7 @@ const getters = {
     return sorted
   },
 
+/*
   storiesGetFavs: (state, getters) => {
     //console.log('storiesGetItemsF', getters)
     var ranks = getters.ranks
@@ -82,6 +85,7 @@ const getters = {
 
     return sorted
   },
+*/
 
   storiesFilterIsClear: (state) => {
     var result = true

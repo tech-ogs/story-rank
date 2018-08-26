@@ -80,6 +80,15 @@ html, body {
   justify-content: space-between;
 }
 
+.flex-space-around{
+  display: flex;
+  justify-content: space-around;
+}
+
+.flex-right {
+	display: flex;
+	justify-content: flex-end;
+}
 .stack-layer-1 {
   position: absolute;
   z-index: 1;
