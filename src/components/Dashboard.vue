@@ -11,7 +11,6 @@
           </span>
         </b-navbar-brand>
 
-        
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-collapse is-nav id="nav_collapse">
@@ -40,49 +39,11 @@
       </b-navbar>
 
       <b-navbar class="width100">
-        <b-navbar-nav class="width100">
-          <b-nav-form  class="width100">
-            <b-form-row  class="width100 flex-left-right">
-              <b-form-radio-group id="btnradios1"
-                  buttons
-                  button-variant="link"
-                  size="md"
-                  class="height100"
-                  v-model="settings.list"
-                  name="radioBtnOutline1" >
-                <b-form-radio value="full" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
-                  &nbsp;
-                  <div class="inline-flex-perfect-center">
-                    <icon name="circle" :class="circleClass()"/>
-                    <div class="stack-layer-2 icon-text"> {{ stories.length - favlength }} </div>
-                  </div>
-                  &nbsp;
-                </b-form-radio>
-                <b-form-radio value="fav" class="inline-flex-perfect-center icon-button" :disabled="settings.domain === 'all'">
-                  &nbsp;
-                  <div class="inline-flex-perfect-center" @click="scrollToTop">
-                    <icon name="star" :class="starClass()"/>
-                    <div class="stack-layer-2 icon-text"> {{ favlength }} </div>
-                  </div>
-                  &nbsp;
-                </b-form-radio>
-              </b-form-radio-group>
-              <b-form-radio-group id="btnradios2"
-                  buttons
-                  button-variant="outline-primary"
-                  size="md"
-                  v-model="settings.domain"
-                  name="radioBtnOutline2" >
-                <b-form-radio value="all" class="flex-perfect-center">
-                  All
-                </b-form-radio>
-                <b-form-radio value="me" class="flex-perfect-center">
-                  Me
-                </b-form-radio>
-              </b-form-radio-group>
-            </b-form-row>
-          </b-nav-form>
-        </b-navbar-nav>
+				<b-nav pills class="width100 rank-links-bar" fill>
+					<b-nav-item class="rank-link" >1</b-nav-item>
+					<b-nav-item class="rank-link" >2</b-nav-item>
+					<b-nav-item class="rank-link" >3</b-nav-item>
+				</b-nav>
       </b-navbar>
 
     </b-row>
@@ -277,6 +238,17 @@ body,
   display: flex;
   align-items: center;
   /*justify-content: center;*/
+}
+
+.rank-links-bar {
+}
+.rank-link {
+	height: 25px;
+	width: 25px;
+/*
+	display: inline-grid;
+	margin-right: 5px;
+*/
 }
 
 .icon-button {
