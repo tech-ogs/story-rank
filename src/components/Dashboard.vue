@@ -38,7 +38,7 @@
         </b-collapse>
       </b-navbar>
 
-      <rank-bar > </rank-bar>
+      <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 
 			&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard
     </b-row>
@@ -140,8 +140,9 @@ export default {
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
       }
     },
-	handleRankBtnClick: function (evt, val) {
-		console.log ('rank button clicked', val)
+	handleRankBtnClick: function (val) {
+		console.log ('rank button clicked (dashboard)', val, this.$store)
+		this.$store.commit('dashHandleRankBtnClick', val)
 	}
   },
   watch: {

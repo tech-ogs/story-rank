@@ -42,6 +42,9 @@ const mutations = {
   },
 	dashSetMyRank(state, param) { 
 		state.myrank[param.rank] = param.id
+	},
+    dashHandleRankBtnClick(state, val) {
+		console.log ('ok now what', val)
 	}
 }
 
