@@ -6,7 +6,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/logo.png" class="d-inline-block align-top tag-icon avatar" alt="WTF">
+          <img src="assets/logo.png" class="logo-icon" alt="WTF">
           WTF stories &nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -38,14 +38,8 @@
         </b-collapse>
       </b-navbar>
 
-      <b-navbar class="rank-nav-bar">
-				Your top 3<br>
-				<b-nav pills class="width100 rank-links-bar" fill>
-					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle" :src="items[0] != null ? getImg(items[0].attributes.image) : ''"> </b-img></b-nav-item>
-					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle" :src="items[5] != null ? getImg(items[5].attributes.image) : ''"> </b-img></b-nav-item>
-					<b-nav-item class="d-inline-block align-top tag-icon" > <b-img thumbnail rounded fluid rounded="circle"  :src="items[9] != null ? getImg(items[9].attributes.image) : ''"> </b-img></b-nav-item>
-				</b-nav>
-      </b-navbar>
+      <rank-bar> </rank-bar>
+
 			&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard
     </b-row>
 
@@ -96,22 +90,7 @@ export default {
         else {
           this.$store.commit('storiesSetSelected', item)
         }
-      },
-      starClass: () => {
-        //console.log('animateStar: ', this.animateStar)
-        var ret = 'star-bright stack-layer-1'
-        ret += this.animateStar ? ' star-animation' : ' square30'
-        //console.log('starClass: ', ret)
-        return ret
-      },
-      circleClass: () => {
-        //console.log('animateCircle: ', this.animateCircle)
-        var ret = 'circle-faded stack-layer-1'
-        ret += this.animateCircle ? ' circle-animation' : ' square30'
-        //console.log('circleClass: ', ret)
-        return ret
-      },
-      getImg: (url) => { return require('@/'+url) } 
+      }
     }
   },
   computed: {
@@ -122,15 +101,9 @@ export default {
               }[this.settings.domain]
             },
     users () { return this.$store.getters.usersGetIdMap },
-    stories () { return this.$store.getters.storiesGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
-    stories () { return this.$store.getters.storiesGetItems },
-    ranks() { return this.$store.getters.ranks},
-    favorites() { return this.$store.getters.favorites},
+    myranks() { return this.$store.getters.myranks},
     results() { return this.$store.getters.getResults},
-    favlength() { return this.$store.getters.numFavorites},
-    animateStar() { return this.$store.getters.storiesGetAnimateStar},
-    animateCircle() { return this.$store.getters.storiesGetAnimateCircle},
     selectedRow() { return this.$store.getters.storiesSelectedRow},
     scrollTop() { return this.$store.getters.dashScrollTop }
   },
@@ -193,11 +166,7 @@ export default {
       this.$store.dispatch('initStore', {socket: socket})
       .then(() => {
         //console.log('checking state stories', this.items)
-        //console.log('checking state users', this.users)
-        //console.log('checking state stories Id Map', this.stories)
-        //console.log('checking state ranks', this.ranks)
-        //console.log('checking state favorites', this.favorites)
-        console.log('checking state results', JSON.stringify(this.results))
+        //console.log('checking state results', JSON.stringify(this.results))
       })
     }
 
@@ -233,78 +202,20 @@ body,
   flex: 0 0 auto;
 }
 
-.tag-icon {
-  height: 50px;
-  width: 50px;
+.logo-icon {
+    height: 50px;
+    width: 50px;
+    margin: 10px;
+    border:1px solid gray;
+    border-radius: 500px;
+    -webkit-border-radius: 500px;
+    -moz-border-radius: 500px;
 }
+
 .title-brand {
   display: flex;
   align-items: center;
   /*justify-content: center;*/
 }
 
-.rank-nav-bar {
-	width: 100%;
-	margin-bottom: 45px;
-}
-.rank-links-bar {
-}
-.rank-link {
-	height: 25px;
-	width: 25px;
-/*
-	display: inline-grid;
-	margin-right: 5px;
-*/
-}
-
-.icon-button {
-  color:black;
-}
-
-.icon-button.active {
-  color:black;
-}
-
-.icon-button.active .stack-layer-1{
-  /* border-bottom: 2px outset red; */
-}
-
-
-.star-dim {
-  color: khaki;
-}
-.star-bright {
-  color: gold;
-}
-.star-animation {
-  animation-name: pulse;
-  animation-duration: .5s;
-}
-
-.circle-faded {
-  color: lightgray;
-}
-
-.circle-animation {
-  animation-name: pulse;
-  animation-duration: .5s;
-}
-
-@keyframes pulse {
-    0%   {height: 35px; width: 35px}
-    25%   {height: 37px; width: 37px}
-    50%   {height: 40px; width: 40px}
-    100%   {height: 40px; width: 40px}
-}
-
-.icon-text {
-  font-size: small;
-  font-weight: bold;
-  margin-top: .2em;
-}
-
-.flip-list-move {
-  transition: transform 1s;
-}
 </style>

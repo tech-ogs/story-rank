@@ -28,14 +28,6 @@ html, body {
   margin-top: 5px;
   height: 100%;
 }
-.avatar {
-    width:128px;
-    margin: 10px;
-    border:1px solid gray;
-    border-radius: 500px;
-    -webkit-border-radius: 500px;
-    -moz-border-radius: 500px;
-}
 
 .width100 {
   width: 100%;
@@ -89,16 +81,6 @@ html, body {
 	display: flex;
 	justify-content: flex-end;
 }
-.stack-layer-1 {
-  position: absolute;
-  z-index: 1;
-}
-
-.stack-layer-2 {
-  position: absolute;
-  z-index: 2;
-}
-
 .no-border {
   border-width: 0px;
 }

@@ -9,7 +9,8 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Dashboard from '@/components/Dashboard'
-import RankUI from '@/components/RankUI'
+import Rankbar from '@/components/Rankbar'
+import Rankbutton from '@/components/Rankbutton'
 import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 
@@ -23,7 +24,8 @@ Vue.use(BootstrapVue);
 
 Vue.component('dashboard', Dashboard)
 Vue.component('icon', Icon)
-Vue.component('rank-ui', RankUI)
+Vue.component('rank-bar', Rankbar)
+Vue.component('rank-button', Rankbutton)
 Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 

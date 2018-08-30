@@ -1,8 +1,6 @@
 <template>
   <b-container small>
-		<b-row>
-			<b-col>
-				<b-row :class="rowClass(row)">
+		<b-row :class="rowClass(row)" >
 					<b-col cols="4"> 
 						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
 					</b-col>
@@ -22,26 +20,6 @@
 						</span>
 					</b-col>
 				</b-row>
-			</b-col>
-			<b-col cols="2" class="rank-button-bar">
-				<div class="rank-button-container">
-					<b-button class="rank-button" variant="link" size="sm">
-						<b-badge class="rank-badge" variant="secondary">1</b-badge>
-						<span class="rank-score"> 15 </span>
-					</b-button>
-				</div>
-				<div class="rank-button-container">
-					<b-button class="rank-button" variant="link" size="sm">
-						<b-badge class="rank-badge" variant="secondary">2</b-badge>
-						<span class="rank-score"> 22 </span>
-					</b-button>
-				</div>
-				<div class="rank-button-container">
-					<b-button class="rank-button" variant="link" size="sm">
-						<b-badge class="rank-badge" variant="secondary">3</b-badge>
-						<span class="rank-score"> 34 </span>
-					</b-button>
-				</div>
 			</b-col>
 		</b-row>
   </b-container>
@@ -131,20 +109,7 @@ export default {
     width: 100%;
   }
 
-  .rank-button-bar {
-		display: flex;
-		flex-direction: column;
-		justify-content: space-around;
-	}
-	
-	.rank-button-container {
-	}
-	.rank-badge {
-	}
-	.rank-score {
-		font-size: x-small;
-	}
-
   .story-selected {
+    background-color: gold;
   }
 </style>

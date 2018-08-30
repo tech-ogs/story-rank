@@ -5,18 +5,27 @@ const state = {
   list: {
     scrollTop: 0
   },
-	myrank: {
+	/*
+	myranks: {
 		1: null,
 		2: null,
 		3: null
 	}
+	*/
+	myranks: {
+		1: 0,
+		2: 5,
+		3: 9
+	}
+
 }
 
 // getters
 const getters = {
   dashState: state => state,
   dashMode: state => state.mode,
-  dashScrollTop: state => state.list.scrollTop
+  dashScrollTop: state => state.list.scrollTop,
+  myranks: state => state.myranks
 }
 
 // actions
