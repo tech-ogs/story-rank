@@ -38,7 +38,7 @@
         </b-collapse>
       </b-navbar>
 
-      <rank-bar> </rank-bar>
+      <rank-bar > </rank-bar>
 
 			&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard
     </b-row>
@@ -139,7 +139,10 @@ export default {
         //console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
       }
-    }
+    },
+	handleRankBtnClick: function (evt, val) {
+		console.log ('rank button clicked', val)
+	}
   },
   watch: {
     'scrollTop': function(newValue, oldValue)  {
