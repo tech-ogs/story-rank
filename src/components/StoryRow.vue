@@ -1,5 +1,5 @@
 <template>
-  <b-container small>
+  <b-container small ref="trow">
 		<b-row :class="rowClass(row)" >
 					<b-col cols="4"> 
 						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
@@ -54,6 +54,7 @@ export default {
     }
   },
   mounted () { 
+	this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
   }
 }
 </script>

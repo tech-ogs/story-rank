@@ -136,18 +136,25 @@ export default {
     scrollListener: function() {
       var _this = this
       return function(evt) { 
-        //console.log('scroll evt:', _this.listTable.scrollTop)
+        console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
       }
     },
 	handleRankBtnClick: function (val) {
 		console.log ('rank button clicked (dashboard)', val, this.$store)
-		this.$store.commit('dashHandleRankBtnClick', val)
+		if (this.selectedRow.id !== 0) {
+			this.$store.commit('dashHandleRankBtnClick', val)
+		}
+		else {
+			if (this.myranks[val] != null) { 
+				document.getElementById('row_' + this.myranks[val]).scrollIntoView()
+			}
+		}
 	}
   },
   watch: {
     'scrollTop': function(newValue, oldValue)  {
-      //console.log ('emitting schedule-scroll event:', newValue)
+      console.log ('emitting schedule-scroll event:', newValue)
       this.listTable.scrollTop = this.scrollTop
     }
   },

@@ -98,6 +98,7 @@ const mutations = {
 		for (i=0; i<myranks.length; i++) {
 			if (state.myranks[i] !== myranks[i]) {
 				state.myranks = myranks;
+				state.selected = null;
 				break
 			}
 		}
