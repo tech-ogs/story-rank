@@ -15,7 +15,7 @@
 				<b-row class="story-footer">
 					<b-col class="story-submitter-container">
 						<span class="story-submitter">
-							<!-- [{{row.id}}] -->
+							 [{{row.id}}] 
 							{{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
 						</span>
 					</b-col>
@@ -42,7 +42,7 @@ export default {
     }
   },
   computed: {
-    selectedRow() { return this.$store.getters.storiesSelectedRow },
+    selectedRow() { return this.$store.getters.dashSelectedRow },
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap },

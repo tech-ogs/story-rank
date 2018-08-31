@@ -85,10 +85,10 @@ export default {
       },
       rowclick: (item, index, event) => {
         if (this.selectedRow != null && this.selectedRow.id === item.id) {
-          this.$store.commit('storiesSetSelected', null) 
+          this.$store.commit('dashSetSelected', null) 
         }
         else {
-          this.$store.commit('storiesSetSelected', item)
+          this.$store.commit('dashSetSelected', item)
         }
       }
     }
@@ -104,7 +104,7 @@ export default {
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     myranks() { return this.$store.getters.myranks},
     results() { return this.$store.getters.getResults},
-    selectedRow() { return this.$store.getters.storiesSelectedRow},
+    selectedRow() { return this.$store.getters.dashSelectedRow},
     scrollTop() { return this.$store.getters.dashScrollTop }
   },
   methods: {

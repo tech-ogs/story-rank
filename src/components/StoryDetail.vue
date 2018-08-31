@@ -62,7 +62,7 @@ export default {
     }
   },
   computed: {
-    row() { return this.$store.getters.storiesSelectedRow},
+    row() { return this.$store.getters.dashSelectedRow},
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap }

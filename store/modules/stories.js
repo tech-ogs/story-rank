@@ -7,7 +7,6 @@ const state = {
   filters: {
     submitter_id: null
   },
-  selected: null,
   animateStar: false,
   animateCircle: false
 }
@@ -97,7 +96,6 @@ const getters = {
     }
     return result
   },
-  storiesSelectedRow: (state) => state.selected || {id:0},
   storiesGetAnimateStar: state => state.animateStar,
   storiesGetAnimateCircle: state => state.animateCircle
 }
@@ -121,12 +119,6 @@ const mutations = {
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)
     //console.log('filters:', state.filters)
-  },
-  storiesSetSelected: (state, index) => {
-    state.selected = index
-  },
-  storiesClearSelection: (state, index) => {
-    state.selected = null
   },
   storiesAnimateStar: (state) => {
     if (!state.animateStar) {
