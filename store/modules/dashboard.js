@@ -1,8 +1,15 @@
 // initial state
 // shape: [{ id, quantity }]
 const state = {
+  login: 'kavi', /* will be set by session cookie payload */
+  groups: ['admin', 'editor', 'public'], /* will be set by session cookie payload */
+  //groups: ['public'], /* will be set by session cookie payload */
   mode: 'list', /* ['list', 'detail'] */
   detailRow: null,
+  detail: {
+	mode: 'view' /* ['view', 'edit'] */
+  },
+
   list: {
     scrollTop: 0
   },
@@ -13,12 +20,20 @@ const state = {
 
 // getters
 const getters = {
+  myranks: state => state.myranks,
+  login: state => state.login,
+  groups: state => state.groups,
+  isAdmin: state => state.groups.indexOf('admin') >= 0,
+  isEditor: state => state.groups.indexOf('editor') >= 0,
+
   dashState: state => state,
   dashMode: state => state.mode,
-  dashDetailRow: state => state.detailRow,
   dashScrollTop: state => state.list.scrollTop,
   dashSelectedRow: (state) => state.selected || {id:0},
-  myranks: state => state.myranks
+
+  dashDetailRow: state => state.detailRow,
+  dashDetailMode: state => state.detail.mode
+  
 }
 
 // actions
@@ -105,6 +120,9 @@ const mutations = {
   },
   dashSetDetailRow: (state,row) => { 
   	state.detailRow = row 
+  },
+  dashSetDetailMode: (state, mode) => {
+    state.detail.mode = mode
   }
 }
 

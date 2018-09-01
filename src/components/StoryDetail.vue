@@ -7,6 +7,7 @@
           <b-link href="#" @click="close" class="close-button"> <icon name="arrow-left" class="close-icon" /> </b-link> 
 		</b-col>
 	  </b-row>
+
 	  <b-row>
 		<b-col>
       		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
@@ -14,29 +15,66 @@
 	  </b-row>
 	  <br>
 	  <br>
-      <b-row>
-        <b-col class="story-title-container">
-        </b-col>
-      </b-row>
 
       <b-row>
         <b-col cols="4"> 
           <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
         </b-col>
         <b-col class="story-title-container">
-          <span class="story-title">
-            {{ row.attributes.title || row.name}}
+          <span v-if="mode === 'view'" class="story-title">
+            {{ row.attributes.title }}
           <i class="fa fa-fw fa-question"></i>
           </span>
+			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Title"
+				v-model="editRow.title" 
+				:rows="3"
+				:max-rows="3"
+			>
+			</b-form-textarea>
         </b-col>
       </b-row>
       <b-row>
         <b-col class="story-excerpt-container">
-          <span class="story-excerpt">
-            {{ row.attributes.excerpt }}
-          </span>
+            <span v-if="mode === 'view'" class="story-excerpt">
+              {{ row.attributes.excerpt }}
+            </span>
+			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Excerpt"
+				v-model="editRow.excerpt"
+				:rows="10"
+				:max-rows="10"
+			>
+			</b-form-textarea>
+        </b-col>
+
+      </b-row>
+
+	  <br>
+	  <br>
+      <b-row v-if="isEditor || isAdmin">
+        <b-col class="flex-perfect-center">
+		  <b-button-toolbar v-if="mode === 'view'" key-nav>
+			<b-button-group class="mx-1">
+			  <b-btn>&laquo;</b-btn>
+			  <b-btn>&lsaquo;</b-btn>
+			</b-button-group>
+			<b-button-group class="mx-1">
+			  <b-btn @click="doEdit">Edit</b-btn>
+			</b-button-group>
+			<b-button-group class="mx-1">
+			  <b-btn>&rsaquo;</b-btn>
+			  <b-btn>&raquo;</b-btn>
+			</b-button-group>
+		  </b-button-toolbar>
+
+		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
+			<b-button-group class="mx-1">
+			  <b-btn @click="doSave">Save</b-btn>
+			</b-button-group>
+		  </b-button-toolbar>
+
         </b-col>
       </b-row>
+
 
       <b-row class="story-footer">
         <b-col class="story-data-container">
@@ -65,7 +103,9 @@ export default {
   data () {
     return {
       getImg: (url) => { 
-        return url != null ? require('@/'+url) : null } 
+        return url != null ? require('@/'+url) : null 
+	  },
+      editRow: {}
     }
   },
   computed: {
@@ -75,7 +115,10 @@ export default {
 	},
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
-    users () { return this.$store.getters.usersGetIdMap }
+    users () { return this.$store.getters.usersGetIdMap },
+	isEditor () { return this.$store.getters.isEditor },
+	isAdmin () { return this.$store.getters.isAdmin },
+	mode() { return this.$store.getters.dashDetailMode }
   },
   methods: {
     makeArr: (x) => { 
@@ -88,7 +131,17 @@ export default {
 		console.log ('rank button click in details', pos)
 		this.$store.commit('dashSetSelected', this.row)
 		this.$store.commit('dashHandleRankBtnClick', pos)
+	},
+	doEdit: function() {
+		this.$store.commit('dashSetDetailMode', 'edit')
+	},
+	doSave: function() {
+		this.$store.commit('dashSetDetailMode', 'view')
 	}
+  },
+  created() {
+	this.editRow.title = this.row.attributes.title
+	this.editRow.excerpt = this.row.attributes.excerpt
   },
   mounted () { 
   }
