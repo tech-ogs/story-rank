@@ -1,6 +1,6 @@
 <template>
   <b-container small ref="trow">
-		<b-row :class="rowClass(row)" >
+		<b-row :class="rowClass(row)" v-touch:swipe.left="swipeHandler">
 					<b-col cols="4"> 
 						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
 					</b-col>
@@ -51,7 +51,12 @@ export default {
   methods: {
     makeArr: (x) => { 
       return  x instanceof Array ? x : [x] 
-    }
+    },
+	swipeHandler (id)  {
+		console.log ('swipe handler in row', this.row)
+		this.$store.commit('dashSetDetailRow', this.row)
+		this.$store.commit('dashSetMode', 'detail')
+	}
   },
   mounted () { 
 	this.$refs.trow.setAttribute('id',  "row_" + this.row.id)

@@ -2,6 +2,7 @@
 // shape: [{ id, quantity }]
 const state = {
   mode: 'list', /* ['list', 'detail'] */
+  detailRow: null,
   list: {
     scrollTop: 0
   },
@@ -14,6 +15,7 @@ const state = {
 const getters = {
   dashState: state => state,
   dashMode: state => state.mode,
+  dashDetailRow: state => state.detailRow,
   dashScrollTop: state => state.list.scrollTop,
   dashSelectedRow: (state) => state.selected || {id:0},
   myranks: state => state.myranks
@@ -86,14 +88,6 @@ const mutations = {
 				}
 			}
 		}
-		else {
-			if (myranks[val] != null) {
-				// scroll to the ranked story
-			}
-			else {
-				// do nothing
-			}
-		}
 		
 		for (i=0; i<myranks.length; i++) {
 			if (state.myranks[i] !== myranks[i]) {
@@ -109,7 +103,9 @@ const mutations = {
   dashClearSelection: (state) => {
     state.selected = null
   },
-
+  dashSetDetailRow: (state,row) => { 
+  	state.detailRow = row 
+  }
 }
 
 export default {

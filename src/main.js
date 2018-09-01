@@ -17,10 +17,16 @@ import StoryDetail from '@/components/StoryDetail'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 
+import Vue2TouchEvents from 'vue2-touch-events'
+ 
 
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue);
+Vue.use(Vue2TouchEvents,{
+	swipeTolerance: 60,
+	tapTolerance: 10
+})
 
 Vue.component('dashboard', Dashboard)
 Vue.component('icon', Icon)

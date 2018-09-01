@@ -81,6 +81,11 @@ html, body {
 	display: flex;
 	justify-content: flex-end;
 }
+.flex-left {
+	display: flex;
+	justify-content: flex-start;
+}
+
 .no-border {
   border-width: 0px;
 }

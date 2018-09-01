@@ -138,6 +138,21 @@ export default {
       return function(evt) { 
         console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
+		if (_this.selectedRow != null) { 
+			var el0 = document.getElementById('row_' + _this.items[0].id);
+			var el0Parent = el0 ? el0.parentElement : null;
+			var offset = el0Parent.offsetTop + el0.offsetHeight;
+			var el = document.getElementById ('row_' + _this.selectedRow.id)
+			var elParent = el ? el.parentElement : null
+			if (el0Parent && elParent) {
+				var bot = elParent.offsetTop + elParent.offsetHeight
+				console.log ('scroll, bot:', _this.listTable.scrollTop + offset, bot, _this.listTable.scrollTop + offset - bot)
+				if (_this.listTable.scrollTop + offset > bot) {
+					_this.$store.commit('dashClearSelection')
+				}
+				
+			}
+		}
       }
     },
 	handleRankBtnClick: function (val) {

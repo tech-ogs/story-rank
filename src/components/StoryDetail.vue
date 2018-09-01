@@ -1,13 +1,20 @@
 <template>
   <div>
     <b-container small>
-
-      <b-row>
-        <b-col cols="1"> 
-          <br>
+	  <br>
+	  <b-row>
+        <b-col class="close-button-container flex-left"> 
           <b-link href="#" @click="close" class="close-button"> <icon name="arrow-left" class="close-icon" /> </b-link> 
-          <br><br>
-        </b-col>
+		</b-col>
+	  </b-row>
+	  <b-row>
+		<b-col>
+      		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
+		</b-col>
+	  </b-row>
+	  <br>
+	  <br>
+      <b-row>
         <b-col class="story-title-container">
         </b-col>
       </b-row>
@@ -38,7 +45,7 @@
           </span>
           <br>
           <span class="story-data">
-                  id: {{row.id}} me: {{ranks[row.id]}} all: <b>{{ results.ranks.indexOf(row.id) >= 0 ? results.ranks.indexOf(row.id) +1 : 'x' }}</b> lead: {{ typeof results.leads[results.ranks.indexOf(row.id)] !== 'undefined' ? results.leads[results.ranks.indexOf(row.id)] : 'x' }}
+                  id: {{row.id}} rank: {{'xx'}}
           </span>
         </b-col>
         <b-col class="story-submitter-container">
@@ -62,7 +69,10 @@ export default {
     }
   },
   computed: {
-    row() { return this.$store.getters.dashSelectedRow},
+    row() { 
+		console.log ('detail row:', this.$store.getters.dashDetailRow)
+		return this.$store.getters.dashDetailRow 
+	},
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap }
@@ -73,7 +83,12 @@ export default {
     },
     close: function() {
       this.$store.commit('dashSetMode', 'list')
-    }
+    },
+	handleRankBtnClick: function(pos) {
+		console.log ('rank button click in details', pos)
+		this.$store.commit('dashSetSelected', this.row)
+		this.$store.commit('dashHandleRankBtnClick', pos)
+	}
   },
   mounted () { 
   }
@@ -81,6 +96,8 @@ export default {
 </script>
 
 <style scoped>
+  .close-button-container{
+  }
   .close-button {
     color: black;
   }
