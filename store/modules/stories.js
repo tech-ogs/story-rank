@@ -32,6 +32,7 @@ const getters = {
       })
       return result
     })
+
     console.log('filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     console.log('ranks', ranks)
     var ranks = getters.ranks

@@ -28,7 +28,7 @@
               <div style="float:left;">
               <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">
               &nbsp;&nbsp;X
-              &nbsp;&nbsp;<b-badge class="flex-perfect-center"> {{ items.length }} </b-badge>
+              &nbsp;&nbsp;<b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge>
               </b-nav-item>
               </div>
               </div>
@@ -93,7 +93,8 @@ export default {
   },
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
-    items() { this.$store.getters.stories },
+    //items() { return this.$store.getters.stories },
+    items() { return this.$store.getters.storiesGetItems },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     myranks() { return this.$store.getters.myranks},
