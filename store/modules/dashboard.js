@@ -13,8 +13,13 @@ const state = {
   },
 
   list: {
-    scrollTop: 0
+    scrollTop: 0,
+    filters: {
+        submitter_id: null
+    },
+	filterShortlist: false
   },
+
   selected: null,
   myranks: [null, null, null],
   shortlist: []
@@ -35,7 +40,10 @@ const getters = {
   dashSelectedRow: (state) => state.selected || {id:0},
 
   dashDetailRow: state => state.detailRow,
-  dashDetailMode: state => state.detail.mode
+  dashDetailMode: state => state.detail.mode,
+
+  dashListFilters: state => state.list.filters,
+  dashFilterShortlist: state => state.list.filterShortlist
   
 }
 
@@ -144,7 +152,11 @@ const mutations = {
 	if (idx >=0) {
 		state.shortlist.splice(idx,1)
 	}
+  },
+  dashToggleFilterShortlist: (state) => {
+  	state.list.filterShortlist = !state.list.filterShortlist
   }
+
 		
 }
 

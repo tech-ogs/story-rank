@@ -16,7 +16,9 @@
 	<b-navbar>
 		<b-nav pills class="width100 flex-left-right rank-toolbar">
 		  <b-btn class="rank-text" disabled>Leaderboard</b-btn>
-		  <b-btn class="shortlist-button">Your shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> </b-btn>
+		  <b-btn class="shortlist-button" @click="toggleFilterShortlist">
+			Your shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
+		  </b-btn>
 		</b-nav>
 	</b-navbar>
 
@@ -43,13 +45,18 @@ export default {
     },
     myranks() { return this.$store.getters.myranks},
     selectedRow() { return this.$store.getters.dashSelectedRow},
-	shortlist() { return this.$store.getters.shortlist}
+	shortlist() { return this.$store.getters.shortlist},
+	filterShortlist() { return this.$store.getters.dashFilterShortlist }
   },
   methods: {
 		getImg: (url) => { return require('@/'+url) },
 		handleRankBtnClick (val)  {
 			this.$emit('rank-button-click', val)
+		},
+        toggleFilterShortlist ()  {
+			this.$store.commit('dashToggleFilterShortlist')
 		}
+				
   },
   watch: {
   },

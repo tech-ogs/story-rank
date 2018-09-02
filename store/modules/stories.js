@@ -4,9 +4,6 @@ import Vue from 'vue'
 const state = {
   items: [],
   byId: {},
-  filters: {
-    submitter_id: null
-  },
   animateStar: false,
   animateCircle: false
 }
@@ -25,6 +22,7 @@ const getters = {
   storiesGetItems: (state, getters) => {
     //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     var ranks = getters.ranks
+	/*
     var filtered = state.items.filter( (story) => {
       var result = true
       Object.keys(state.filters).forEach((f) => {
@@ -32,11 +30,20 @@ const getters = {
       })
       return result
     })
+	*/
+	var filtered = state.items;
+
+	if (getters.dashFilterShortlist) {
+		var shortlist = getters.shortlist
+		filtered = filtered.filter ( (story) => {
+			return shortlist.indexOf(story.id) >= 0
+		} )
+	}
 
     console.log('filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     console.log('ranks', ranks)
     var ranks = getters.ranks
-    var sorted = state.items.sort ( (a ,b) => {
+    var sorted = filtered.sort ( (a ,b) => {
       return ranks[a.id] - ranks[b.id]
     })
 
