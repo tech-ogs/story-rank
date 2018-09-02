@@ -24,8 +24,7 @@ Vue.config.productionTip = false
 
 Vue.use(BootstrapVue);
 Vue.use(Vue2TouchEvents,{
-	swipeTolerance: 60,
-	tapTolerance: 10
+	swipeTolerance: 60
 })
 
 Vue.component('dashboard', Dashboard)

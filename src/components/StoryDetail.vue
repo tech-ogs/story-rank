@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-touch:swipe.left="close"  v-touch:swipe.right="close" >
     <b-container small>
 	  <br>
 	  <b-row>
@@ -138,6 +138,7 @@ export default {
 	doSave: function() {
 		this.$store.commit('dashSetDetailMode', 'view')
 	}
+
   },
   created() {
 	this.editRow.title = this.row.attributes.title
