@@ -1,9 +1,12 @@
 <template>
 	<div class="width100">
-	<b-navbar>
-		<b-nav pills class="width100 flex-left-right rank-toolbar">
+	<b-navbar class="top-text-container">
+<!--
+		<b-nav pills class="width100 flex-left-right">
 		  <b-btn class="rank-text" disabled>Your top 3</b-btn>
 		</b-nav>
+-->
+		<span class="top-text"> Your top 3 </span>
 	</b-navbar>
 
 	<b-navbar class="rank-nav-bar" >
@@ -14,9 +17,9 @@
 		</b-nav>
 	</b-navbar>
 	<b-navbar v-if="mode === 'list'">
-		<b-nav pills class="width100 flex-left-right rank-toolbar">
-		  <b-btn class="rank-text" disabled>Leaderboard</b-btn>
-		  <b-btn class="shortlist-button" @click="toggleFilterShortlist">
+		<b-nav pills class="width100 flex-left-right">
+		  <span class="leaderboard-text">Leaderboard</span>
+		  <b-btn :size="sm" class="shortlist-button" @click="toggleFilterShortlist">
 			Your shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
 		</b-nav>
@@ -79,6 +82,19 @@ export default {
 .rank-text {
 	background-color: rgba(0, 0, 0, 0.05);
 	color: black;
+}
+.top-text-container {
+	height:10px;
+}
+
+.top-text {
+	font-size: x-small;
+}
+.leaderboard-text {
+	font-size: x-small;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 }
 .shortlist-button {
 	
