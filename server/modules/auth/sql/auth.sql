@@ -1,3 +1,11 @@
+CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
+  var ret = plv8.execute('select login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
+
+  return ret
+$$ LANGUAGE plv8;
+
+
+
 CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   plv8.elog(LOG, 'plv8 login', JSON.stringify(params))
   
@@ -11,7 +19,7 @@ CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   var ret = plv8.execute('select * from application.users where login = $1 and (password = crypt($2, password))', [params.login, params.password])
   plv8.elog(LOG, 'plv8 login ret', JSON.stringify(ret))
 
-  if (['nikesh', 'kavi'].indexOf(params.login) < 0) {
+  if (['nikesh', 'kavi', 'test'].indexOf(params.login) < 0) {
     throw new Error ('login restricted to construction crew at this time')
   }
 

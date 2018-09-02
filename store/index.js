@@ -82,6 +82,14 @@ export default new Vuex.Store({
         context.dispatch('initSockets', params)
         .then( () => {
           context.dispatch('fetchData',{ 
+            url: '/shell',
+            payload: {
+              schema: 'application',
+              table: 'users',
+              mutation: 'dashInitialize'
+            }
+          })
+          context.dispatch('fetchData',{ 
             url: '/list',
             payload: {
               schema: 'application',

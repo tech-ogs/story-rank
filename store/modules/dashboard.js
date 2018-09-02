@@ -1,8 +1,9 @@
 // initial state
 // shape: [{ id, quantity }]
 const state = {
-  login: 'kavi', /* will be set by session cookie payload */
-  groups: ['admin', 'editor', 'public'], /* will be set by session cookie payload */
+  login: '', /* will be set by session cookie payload */
+  name: '',
+  groups: [], /* will be set by session cookie payload */
   //groups: ['public'], /* will be set by session cookie payload */
   mode: 'list', /* ['list', 'detail'] */
   detailRow: null,
@@ -42,6 +43,11 @@ const actions = {
 
 // mutations
 const mutations = {
+  dashInitialize (state, params) {
+	state.login = params.login,
+	state.name = params.name,
+	state.groups = params.groups
+  },
   dashSetMode (state, params) {
     state.mode = params
   },

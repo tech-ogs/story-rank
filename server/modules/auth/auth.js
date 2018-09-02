@@ -1,6 +1,24 @@
 var path = require('path')
 var db = require(path.join(__dirname, '../../common/db'))
-
+function shell (req, res) {
+  var client = db.getClient()
+  var promise = new Promise(function(resolve, reject) {
+    var session = req.session
+    console.log('shell:', session.id)
+    client.query('select shell($1)', [session.id || null], function (err, ret) {
+      client.end()
+      console.log('pg callback', err)
+      if (err == null) {
+        resolve(ret.rows[0].shell)
+      }
+      else {
+        reject(err)
+      }
+    })
+  })
+  return promise
+}
+ 
 function login (req, res) {
   var client = db.getClient()
   var params = req.body
@@ -89,6 +107,7 @@ function reset (req, res) {
 }
 
 exports = module.exports = {
+  shell: shell,
   login: login,
   logout: logout,
   reset: reset

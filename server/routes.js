@@ -97,6 +97,7 @@ router.use('/assets', checkAuth, function(req,res,next){
   express.static(path.join(__dirname, '../dist/static'))(req, res, next);
 })
 
+router.post('/shell', checkAuth, handler(auth.shell)) 
 router.post('/list', checkAuth, handler(query.list)) 
 router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))

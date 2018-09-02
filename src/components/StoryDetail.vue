@@ -116,6 +116,8 @@ export default {
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap },
+	login() { return this.$store.getters.login },
+	groups() { return this.$store.getters.groups },
 	isEditor () { return this.$store.getters.isEditor },
 	isAdmin () { return this.$store.getters.isAdmin },
 	mode() { return this.$store.getters.dashDetailMode }
