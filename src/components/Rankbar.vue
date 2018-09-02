@@ -13,7 +13,7 @@
 		   <rank-button :pos=2  @rank-button-click="handleRankBtnClick"> </rank-button>
 		</b-nav>
 	</b-navbar>
-	<b-navbar>
+	<b-navbar v-if="mode === 'list'">
 		<b-nav pills class="width100 flex-left-right rank-toolbar">
 		  <b-btn class="rank-text" disabled>Leaderboard</b-btn>
 		  <b-btn class="shortlist-button" @click="toggleFilterShortlist">
@@ -46,7 +46,8 @@ export default {
     myranks() { return this.$store.getters.myranks},
     selectedRow() { return this.$store.getters.dashSelectedRow},
 	shortlist() { return this.$store.getters.shortlist},
-	filterShortlist() { return this.$store.getters.dashFilterShortlist }
+	filterShortlist() { return this.$store.getters.dashFilterShortlist },
+	mode() { return this.$store.getters.dashMode }
   },
   methods: {
 		getImg: (url) => { return require('@/'+url) },
