@@ -19,6 +19,11 @@
 							{{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
 						</span>
 					</b-col>
+					<b-col class="story-shortlist-container">
+						<span class="story-shortlist-marker" v-if="shortlist.indexOf(row.id) >= 0">
+          					<icon name="star" class="shortlist-icon" />
+						</span>
+					</b-col>
 				</b-row>
 			</b-col>
 		</b-row>
@@ -46,7 +51,7 @@ export default {
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap },
-    favorites() { return this.$store.getters.favorites}
+    shortlist() { return this.$store.getters.shortlist }
   },
   methods: {
     makeArr: (x) => { 
@@ -84,6 +89,10 @@ export default {
     font-weight: bold;
   }
 
+  .story-selected {
+    background-color: gold;
+  }
+
   .story-footer {
     height: 20px;
     display: flex;
@@ -98,11 +107,6 @@ export default {
     font-size: x-small;
   }
 
-  .footer-star {
-    height: 10px;
-    width: 10px;
-    color: gold;
-  }
   .story-submitter-container {
     display: inline-flex;
     white-space: nowrap;
@@ -114,8 +118,9 @@ export default {
     font-size: x-small;
     width: 100%;
   }
-
-  .story-selected {
-    background-color: gold;
+  .shortlist-icon {
+	/*color: #007bff;*/
+	color:gold;
   }
+
 </style>

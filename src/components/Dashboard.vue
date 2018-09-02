@@ -1,19 +1,19 @@
 <template>
   <b-container class="app-container">
     <b-row class="app-header">
-      <b-navbar toggleable="sm" type="light" variant="faded" style="width: 100%">
+      <b-navbar class="title-bar" toggleable="sm" type="light" variant="faded" style="width: 100%">
 
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/logo.png" class="logo-icon" alt="WTF">
-          WTF stories &nbsp; &nbsp;
+          <img src="assets/logo.png" class="logo-icon" alt="WTF-2">
+          WTF stories #2 &nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
-        <b-collapse is-nav id="nav_collapse">
+        <b-collapse is-nav size="small" id="nav_collapse">
           <b-navbar-nav>
           </b-navbar-nav>
           <!-- Right aligned nav items -->
@@ -40,14 +40,13 @@
 
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 
-			&nbsp;&nbsp;&nbsp;&nbsp;Leaderboard
     </b-row>
 
     <b-row class="app-content" ref="list">
       <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :row="data.item" :items="items" :settings="settings">
+            <story-row :row="data.item" :items="items">
             </story-row>
           </template>
         </b-table>
@@ -71,10 +70,7 @@ export default {
   data () {
     return {
       listTable: null,
-      settings : {
-        list: 'full', 
-        domain : 'me'
-      },
+
       fields: fields,
       submitterId: null,
       filterSubmitter: (sid) => {
@@ -85,21 +81,19 @@ export default {
       },
       rowclick: (item, index, event) => {
         if (this.selectedRow != null && this.selectedRow.id === item.id) {
-          this.$store.commit('dashSetSelected', null) 
+          this.$store.commit('dashClearSelection') 
+		  this.$store.commit('dashRemoveShortlist', item.id)
         }
         else {
           this.$store.commit('dashSetSelected', item)
+		  this.$store.commit('dashAddShortlist', item.id)
         }
       }
     }
   },
   computed: {
     usersList() { return this.$store.getters.usersGetItems },
-    items() { return {
-                me : this.$store.getters.storiesGetItems,
-                all: this.$store.getters.storiesGetAllResults
-              }[this.settings.domain]
-            },
+    items() { this.$store.getters.stories },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
     myranks() { return this.$store.getters.myranks},
@@ -215,6 +209,12 @@ body,
 
 .app-header {
   flex: 0 0 auto;
+}
+.title-bar {
+	height: 65px;
+	border-bottom-color: rgba(0, 0, 0, 0.05);
+	border-bottom-thickness: 1px;
+	border-bottom-style: solid;
 }
 
 .app-content {

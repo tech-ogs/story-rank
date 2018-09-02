@@ -1,10 +1,11 @@
 // initial state
 // shape: [{ id, quantity }]
 const state = {
-  login: '', /* will be set by session cookie payload */
+	/* set by dashInitialize after login */
+  login: '', 
   name: '',
-  groups: [], /* will be set by session cookie payload */
-  //groups: ['public'], /* will be set by session cookie payload */
+  groups: [], 
+  	
   mode: 'list', /* ['list', 'detail'] */
   detailRow: null,
   detail: {
@@ -15,17 +16,18 @@ const state = {
     scrollTop: 0
   },
   selected: null,
-  //myranks: [33, 6, 43]
-  myranks: [null, null, null]
+  myranks: [null, null, null],
+  shortlist: []
 }
 
 // getters
 const getters = {
-  myranks: state => state.myranks,
   login: state => state.login,
   groups: state => state.groups,
   isAdmin: state => state.groups.indexOf('admin') >= 0,
   isEditor: state => state.groups.indexOf('editor') >= 0,
+  myranks: state => state.myranks,
+  shortlist: state=>state.shortlist,
 
   dashState: state => state,
   dashMode: state => state.mode,
@@ -129,7 +131,21 @@ const mutations = {
   },
   dashSetDetailMode: (state, mode) => {
     state.detail.mode = mode
+  },
+
+  /* we use splice operations to add and remove shortlist entries to force vue to "react" */
+  dashAddShortlist: (state, id) => {
+  	if (state.shortlist.indexOf(id) < 0) {
+		state.shortlist.splice(-1, 0, id)
+	}
+  },
+  dashRemoveShortlist: (state, id) => { 
+  	var idx = state.shortlist.indexOf(id)
+	if (idx >=0) {
+		state.shortlist.splice(idx,1)
+	}
   }
+		
 }
 
 export default {
