@@ -13,12 +13,11 @@
 	</b-navbar>
 	<b-navbar v-if="mode === 'list'">
 		<b-nav pills class="width100 flex-left-right">
-		  <span class="leaderboard-text">Leaderboard</span>
-		  <b-btn :size="sm" class="shortlist-button" @click="toggleFilterShortlist">
-			Shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
+		  <b-btn :size="sm" class="tool-button" @click="toggleFilterShortlist">
+			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
-		  <b-btn :size="sm" class="shortlist-button" @click="">
-			<span class="submit-text" :disabled="electionLocked">SUBMIT</span><b-badge variant="light" class="shortlist-badge"> {{electionDaysToCLose}} days left</b-badge> 
+		  <b-btn :size="sm" class="tool-button" @click="">
+			<span class="tool-text" :disabled="userElectionDetails.locked">SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
 		  </b-btn>
 		</b-nav>
 	</b-navbar>
@@ -44,8 +43,8 @@ export default {
     items() { 
 		return this.$store.getters.stories
     },
-	electionLocked() { return this.$store.getters.electionLocked },
-	electionDaysToClose() { return this.$store.getters.electionDaysToClose },
+	election() { return this.$store.getters.election},
+	userElectionDetails() { return this.$store.getters.userElectionDetails },
     myranks() { return this.$store.getters.myranks},
     selectedRow() { return this.$store.getters.dashSelectedRow},
 	shortlist() { return this.$store.getters.shortlist},
@@ -73,37 +72,29 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 
-.rank-tool-bar {
-	height: 50px;
-    border-bottom-color: rgba(0, 0, 0, 0.05);
-    border-bottom-thickness: 1px;
-    border-bottom-style: solid;
-}
 .rank-text {
 	background-color: rgba(0, 0, 0, 0.05);
 	color: black;
 }
 .top-text-container {
 	height:10px;
+	display: flex;
+	justify-content: center;
 }
 
 .top-text {
+	color: silver;
 	font-size: x-small;
 }
-.leaderboard-text {
-	font-size: x-small;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
-}
-.shortlist-button {
+
+.tool-button {
 	
 }
 .shortlist-badge {
 	background-color: gold;
 }
 
-.submit-text {
+.tool-text {
 	font-weight: bold;
 	/*color: gold;*/
 }

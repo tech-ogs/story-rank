@@ -35,12 +35,12 @@ update application.users set attributes = jsonb_set(attributes, '{groups}', '["p
 update application.users set attributes = jsonb_set(attributes, '{groups}', '["public", "admin", "editor"]'::jsonb) where login = 'kavi';
 update application.users set attributes = jsonb_set(attributes, '{groups}', '["public", "editor"]'::jsonb) where login = 'nikesh';
 
-create table user_elections (
+create table application.user_elections (
 	id bigserial,
 	user_id bigint,
 	election_id bigint,
 	attributes jsonb
 );
-alter table user_elections add constraint foreign key user_elections_user_id references application.users (id);
-alter table user_elections add constraint foreign key user_elections_election_id references application.elections (id);
+alter table application.user_elections add constraint user_elections_user_id foreign key (user_id) references application.users (id);
+alter table application.user_elections add constraint user_elections_election_id foreign key (election_id)  references application.elections (id);
 

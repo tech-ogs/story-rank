@@ -3,10 +3,6 @@ import socketEvents from '../socketEvents'
 // shape: [{ id, quantity }]
 const state = {
   socket: null,
-	/* set by dashInitialize after login */
-  login: '', 
-  name: '',
-  groups: [], 
   	
   mode: 'list', /* ['list', 'detail'] */
   detailRow: null,
@@ -21,38 +17,50 @@ const state = {
     },
 	filterShortlist: false
   },
-
-  electionId: null,
-  electionName : '',
-  electionLabel: '',
-  locked: false,
-  daysToClose: 0,
-
   selected: null,
+
+  /* from server */
+  user: {
+  	login: '', 
+ 	name: '',
+  	groups: []
+  },
+  election: {
+  	id: null,
+  	name : '',
+  	label: '',
+    locked: false,
+    days_to_close: 0,
+  },
+  userElectionDetails : {
+  	shortlist: [],
+	locked: false
+  },
   myranks: [null, null, null],
-  shortlist: [],
+
+
 }
 
 const postData = (state) => {
   return {
   	list: state.list,
 	myranks: state.myranks,
-	shortlist: state.shortlist
+	election: state.election,
+	userElectionDetails: state.userElectionDetails,
+
   }
 }
 
 // getters
 const getters = {
 
-  electionLabel: state => state.electionLabel,
-  electionLocked: state => state.locked,
-  electionDaysToClose: state => state.daysToClose,
-  login: state => state.login,
-  groups: state => state.groups,
-  isAdmin: state => state.groups.indexOf('admin') >= 0,
-  isEditor: state => state.groups.indexOf('editor') >= 0,
+  user: state => state.user,
+  election: state => state.election,
+  userElectionDetails: state => state.userElectionDetails,
+  isAdmin: state => state.user.groups.indexOf('admin') >= 0,
+  isEditor: state => state.user.groups.indexOf('editor') >= 0,
   myranks: state => state.myranks,
-  shortlist: state=>state.shortlist,
+  shortlist: state=>state.userElectionDetails.shortlist,
 
   dashState: state => state,
   dashMode: state => state.mode,
@@ -87,10 +95,12 @@ const mutations = {
     },
 
   dashInitialize (state, params) {
-	state.login = params.login,
-	state.name = params.name,
-	state.groups = params.groups
+  	Object.assign(state.user, params.user)
+	Object.assign(state.election, params.election)
+	Object.assign(state.userElectionDetails, params.userElectionDetails.attributes)
+	state.myranks = params.myranks
   },
+
   dashSetMode (state, params) {
     state.mode = params
   },
@@ -177,15 +187,15 @@ const mutations = {
 
   /* we use splice operations to add and remove shortlist entries to force vue to "react" */
   dashAddShortlist: (state, id) => {
-  	if (state.shortlist.indexOf(id) < 0) {
-		state.shortlist.splice(-1, 0, id)
+  	if (state.userElectionDetails.shortlist.indexOf(id) < 0) {
+		state.userElectionDetails.shortlist.splice(-1, 0, id)
 	}
   	state.socket.emit('rank_update', postData(state))
   },
   dashRemoveShortlist: (state, id) => { 
-  	var idx = state.shortlist.indexOf(id)
+  	var idx = state.userElectionDetails.shortlist.indexOf(id)
 	if (idx >=0) {
-		state.shortlist.splice(idx,1)
+		state.userElectionDetails.shortlist.splice(idx,1)
 	}
   	state.socket.emit('rank_update', postData(state))
   },

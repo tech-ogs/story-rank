@@ -7,7 +7,7 @@
         <b-navbar-brand href="#">
           <span class="title-brand">
           <img src="assets/logo.png" class="logo-icon" alt="WTF-2">
-          {{ electionLabel }} &nbsp; &nbsp;
+          {{ election.label }} &nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
@@ -44,6 +44,7 @@
 
     <b-row class="app-content" ref="list">
       <b-col>
+		<span class="leaderboard-text">Leaderboard</span>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
             <story-row :row="data.item" :items="items">
@@ -92,7 +93,9 @@ export default {
     }
   },
   computed: {
-	electionLabel() { return this.$store.getters.electionLabel },
+	election() { return this.$store.getters.election },
+	user() { return this.$store.getters.user },
+	userElectionDetails() { return this.$store.getters.userElectionDetails },
     usersList() { return this.$store.getters.usersGetItems },
     //items() { return this.$store.getters.stories },
     items() { return this.$store.getters.storiesGetItems },
@@ -246,4 +249,10 @@ body,
   /*justify-content: center;*/
 }
 
+.leaderboard-text {
+	font-size: x-small;
+	color: silver;
+	display: flex;
+	justify-content: center;
+}
 </style>
