@@ -4,7 +4,6 @@ import stories from './modules/stories'
 import users from './modules/users'
 import comments from './modules/comments'
 import ranks from './modules/ranks'
-import socketEvents from './socketEvents'
 import dashboard from './modules/dashboard'
 
 Vue.use(Vuex)
@@ -15,7 +14,6 @@ const debug = false // process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
   state: {
-    socket: null
   },
   namespaced: true,
   getters: {
@@ -28,12 +26,6 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    initSockets(context, params) {
-      console.log('init socket:', params)
-      var socket = params.socket
-      context.commit('setSocket', {socket: socket})
-      socketEvents.registerHandlers(context, socket)     
-    },
 
 
     fetchData(context, params) { 
@@ -167,12 +159,6 @@ export default new Vuex.Store({
 
   },
   mutations: {
-    setSocket: (state, params) => {
-      state.socket = params.socket
-    },
-    setSocketTest: (state) => {
-      state.socket = { emit : () => null }
-    }
   },
   modules: {
     stories,

@@ -49,6 +49,7 @@ const makeReq = (socket) => {
     console.log('cookie:', cookie)
     sessions.getSession(cookie)
     .then( (retval) => {
+      console.log('session:', retval)
       result.session = retval
       resolve(result) 
     })

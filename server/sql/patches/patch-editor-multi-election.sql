@@ -1,15 +1,19 @@
 drop table application.elections cascade;
 drop table application.groups cascade;
+drop table application.user_elections cascade;
 
 create table application.elections (
 	id bigserial primary key,
 	name varchar,
+	label varchar,
 	creation_date timestamp default now(),
-	close_date timestamp
+	open_date timestamp,
+	close_date timestamp,
+	active boolean
 );
 
-insert into application.elections (name, creation_date, close_date) values ('wtf-q1', '2018-04-15'::timestamp, '2018-06-26'::timestamp);
-insert into application.elections (name, creation_date) values ('wtf-q2', '2018-09-01');
+insert into application.elections (name, label, open_date, close_date, active) values ('wtf-q1', 'WTF stories #1', '2018-04-15'::timestamp, '2018-06-26'::timestamp, false);
+insert into application.elections (name, label, open_date, close_date, active) values ('wtf-q2', 'WTF stories #2', '2018-09-01'::timestamp, '2018-09-21'::timestamp, true);
 
 alter table application.stories add column election_id bigint;
 
@@ -30,4 +34,13 @@ update application.users set attributes = '{}'::jsonb;
 update application.users set attributes = jsonb_set(attributes, '{groups}', '["public"]'::jsonb);
 update application.users set attributes = jsonb_set(attributes, '{groups}', '["public", "admin", "editor"]'::jsonb) where login = 'kavi';
 update application.users set attributes = jsonb_set(attributes, '{groups}', '["public", "editor"]'::jsonb) where login = 'nikesh';
+
+create table user_elections (
+	id bigserial,
+	user_id bigint,
+	election_id bigint,
+	attributes jsonb
+);
+alter table user_elections add constraint foreign key user_elections_user_id references application.users (id);
+alter table user_elections add constraint foreign key user_elections_election_id references application.elections (id);
 

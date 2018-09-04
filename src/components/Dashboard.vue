@@ -7,7 +7,7 @@
         <b-navbar-brand href="#">
           <span class="title-brand">
           <img src="assets/logo.png" class="logo-icon" alt="WTF-2">
-          WTF stories #2 &nbsp; &nbsp;
+          {{ electionLabel }} &nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
@@ -92,6 +92,7 @@ export default {
     }
   },
   computed: {
+	electionLabel() { return this.$store.getters.electionLabel },
     usersList() { return this.$store.getters.usersGetItems },
     //items() { return this.$store.getters.stories },
     items() { return this.$store.getters.storiesGetItems },

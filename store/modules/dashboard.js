@@ -1,6 +1,8 @@
+import socketEvents from '../socketEvents'
 // initial state
 // shape: [{ id, quantity }]
 const state = {
+  socket: null,
 	/* set by dashInitialize after login */
   login: '', 
   name: '',
@@ -20,13 +22,31 @@ const state = {
 	filterShortlist: false
   },
 
+  electionId: null,
+  electionName : '',
+  electionLabel: '',
+  locked: false,
+  daysToClose: 0,
+
   selected: null,
   myranks: [null, null, null],
-  shortlist: []
+  shortlist: [],
+}
+
+const postData = (state) => {
+  return {
+  	list: state.list,
+	myranks: state.myranks,
+	shortlist: state.shortlist
+  }
 }
 
 // getters
 const getters = {
+
+  electionLabel: state => state.electionLabel,
+  electionLocked: state => state.locked,
+  electionDaysToClose: state => state.daysToClose,
   login: state => state.login,
   groups: state => state.groups,
   isAdmin: state => state.groups.indexOf('admin') >= 0,
@@ -49,10 +69,23 @@ const getters = {
 
 // actions
 const actions = {
+    initSockets(context, params) {
+      console.log('init socket:', params)
+      var socket = params.socket
+      context.commit('setSocket', {socket: socket})
+      socketEvents.registerHandlers(context, socket)     
+    }
 }
 
 // mutations
 const mutations = {
+    setSocket: (state, params) => {
+      state.socket = params.socket
+    },
+    setSocketTest: (state) => {
+      state.socket = { emit : () => null }
+    },
+
   dashInitialize (state, params) {
 	state.login = params.login,
 	state.name = params.name,
@@ -124,6 +157,7 @@ const mutations = {
 			if (state.myranks[i] !== myranks[i]) {
 				state.myranks = myranks;
 				state.selected = null;
+  				state.socket.emit('rank_update', postData(state))
 				break
 			}
 		}
@@ -146,17 +180,19 @@ const mutations = {
   	if (state.shortlist.indexOf(id) < 0) {
 		state.shortlist.splice(-1, 0, id)
 	}
+  	state.socket.emit('rank_update', postData(state))
   },
   dashRemoveShortlist: (state, id) => { 
   	var idx = state.shortlist.indexOf(id)
 	if (idx >=0) {
 		state.shortlist.splice(idx,1)
 	}
+  	state.socket.emit('rank_update', postData(state))
   },
   dashToggleFilterShortlist: (state) => {
   	state.list.filterShortlist = !state.list.filterShortlist
+  	state.socket.emit('rank_update', postData(state))
   }
-
 		
 }
 

@@ -1,11 +1,6 @@
 <template>
 	<div class="width100">
 	<b-navbar class="top-text-container">
-<!--
-		<b-nav pills class="width100 flex-left-right">
-		  <b-btn class="rank-text" disabled>Your top 3</b-btn>
-		</b-nav>
--->
 		<span class="top-text"> Your top 3 </span>
 	</b-navbar>
 
@@ -20,7 +15,10 @@
 		<b-nav pills class="width100 flex-left-right">
 		  <span class="leaderboard-text">Leaderboard</span>
 		  <b-btn :size="sm" class="shortlist-button" @click="toggleFilterShortlist">
-			Your shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
+			Shortlist &nbsp;<b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
+		  </b-btn>
+		  <b-btn :size="sm" class="shortlist-button" @click="">
+			<span class="submit-text" :disabled="electionLocked">SUBMIT</span><b-badge variant="light" class="shortlist-badge"> {{electionDaysToCLose}} days left</b-badge> 
 		  </b-btn>
 		</b-nav>
 	</b-navbar>
@@ -46,6 +44,8 @@ export default {
     items() { 
 		return this.$store.getters.stories
     },
+	electionLocked() { return this.$store.getters.electionLocked },
+	electionDaysToClose() { return this.$store.getters.electionDaysToClose },
     myranks() { return this.$store.getters.myranks},
     selectedRow() { return this.$store.getters.dashSelectedRow},
 	shortlist() { return this.$store.getters.shortlist},
@@ -103,6 +103,10 @@ export default {
 	background-color: gold;
 }
 
+.submit-text {
+	font-weight: bold;
+	/*color: gold;*/
+}
 .rank-nav-bar {
 	width: 100%;
 	border-bottom-color: rgba(0, 0, 0, 0.05);
