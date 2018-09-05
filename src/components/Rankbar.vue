@@ -103,7 +103,7 @@ export default {
 	border-bottom-color: rgba(0, 0, 0, 0.05);
 	border-bottom-thickness: 1px;
 	border-bottom-style: solid;
-
+    padding: 0.0rem 1rem;
 }
 .rank-buttons-bar {
 }

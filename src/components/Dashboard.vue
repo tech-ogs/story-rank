@@ -7,7 +7,7 @@
         <b-navbar-brand href="#">
           <span class="title-brand">
           <img src="assets/logo.png" class="logo-icon" alt="WTF-2">
-          {{ election.label }} &nbsp; &nbsp;
+          {{ election.label }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
@@ -41,19 +41,22 @@
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 
     </b-row>
-
-    <b-row class="app-content" ref="list">
-      <b-col>
+	<b-row class="app-header">
+		<b-col>
 		<div class="info-bar">
 		<div class="leaderboard-text">Leaderboard</div>
 		<div class="blinkenlights-container">
 			<span class="blinkenlights">  
-				<icon name="circle" :class="blinkenClass[0]" /> 
-				<icon name="circle" :class="blinkenClass[1]" /> 
-				<icon name="circle" :class="blinkenClass[2]" /> 
+				<icon name="circle" :class="blinkenClass(networkTxnStatus)[0]" /> 
+				<icon name="circle" :class="blinkenClass(networkTxnStatus)[1]" /> 
+				<icon name="circle" :class="blinkenClass(networkTxnStatus)[2]" /> 
 			</span> 
 		</div>
 		</div>
+		</b-col>
+	</b-row>
+    <b-row class="app-content" ref="list">
+      <b-col>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
             <story-row :row="data.item" :items="items">
@@ -98,11 +101,11 @@ export default {
 		  this.$store.commit('dashAddShortlist', item.id)
         }
       },
-	  blinkenClass: [
+	  blinkenClass: (status) => { return [
 		['blinken blinken0', 'blinken blinken1 blinken-fade', 'blinken blinken2 blinken-fade'],
 		['blinken blinken0 blinken-fade', 'blinken blinken1', 'blinken blinken2 blinken-fade'],
 		['blinken blinken0 blinken-fade', 'blinken blinken1 blinken-fade', 'blinken blinken2']
-	  ][this.networkState || 0]
+	  ][status || 0] }
     }
   },
   computed: {
@@ -118,7 +121,7 @@ export default {
     results() { return this.$store.getters.getResults},
     selectedRow() { return this.$store.getters.dashSelectedRow},
     scrollTop() { return this.$store.getters.dashScrollTop },
-	networkState() { return this.store.getters.networkState},
+	networkTxnStatus() {return this.$store.getters.networkTxnStatus}
   },
   methods: {
     doLogout: () => {
@@ -149,7 +152,7 @@ export default {
     scrollListener: function() {
       var _this = this
       return function(evt) { 
-        console.log('scroll evt:', _this.listTable.scrollTop)
+        //console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
 		if (_this.selectedRow != null) { 
 			var el0 = document.getElementById('row_' + _this.items[0].id);
@@ -182,7 +185,7 @@ export default {
   },
   watch: {
     'scrollTop': function(newValue, oldValue)  {
-      console.log ('emitting schedule-scroll event:', newValue)
+      //console.log ('emitting schedule-scroll event:', newValue)
       this.listTable.scrollTop = this.scrollTop
     }
   },
@@ -200,7 +203,9 @@ export default {
       this.$store.dispatch('initStoreTest')
     }
     else { 
-      var socket = window.io();
+      var socket = window.io({
+		reconnection: true
+	  });
       console.log('Dashboard socket:', socket)
       this.$store.dispatch('initStore', {socket: socket})
       .then(() => {
@@ -234,6 +239,8 @@ body,
 	border-bottom-color: rgba(0, 0, 0, 0.05);
 	border-bottom-thickness: 1px;
 	border-bottom-style: solid;
+    padding: 0.0rem 1rem;
+
 }
 
 .app-content {
@@ -294,7 +301,7 @@ body,
 
 }
 .blinken1 {
-	color: yellow;
+	color: orange;
 }
 .blinken2 {
 	color: red;

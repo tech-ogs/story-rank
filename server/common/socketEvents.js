@@ -63,6 +63,7 @@ const makeReq = (socket) => {
 
 const rankUpdate = (socket) => {
   return (data) => {
+
     socket.emit ('ack1', {timestamp: data.timestamp})
     console.log('socket event rank_update', this.id,  data);
     makeReq(socket)

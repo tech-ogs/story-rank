@@ -21,7 +21,15 @@ const state = {
 
   /* from socket handlers */
 
-  networkState: 0, /* 0 = green, 1 = yellow, 2 = red */
+  network : {
+    /* rank_update txn */
+  	txnStatus: 2, /* 0 = green, 1 = yellow, 2 = red */
+	ack1Timestamp: 0,
+	ack2Timestamp: 0,
+
+	/* websocket connection status */
+	pingTimestamp: 0
+  },
 
   /* from server */
   user: {
@@ -51,6 +59,7 @@ const postData = (state) => {
 	myranks: state.myranks,
 	election: state.election,
 	userElectionDetails: state.userElectionDetails,
+	timestamp: (new Date()).getTime()
 
   }
 }
@@ -75,7 +84,10 @@ const getters = {
   dashDetailMode: state => state.detail.mode,
 
   dashListFilters: state => state.list.filters,
-  dashFilterShortlist: state => state.list.filterShortlist
+  dashFilterShortlist: state => state.list.filterShortlist,
+
+  /* network related */
+  networkTxnStatus: state => state.network.txnStatus
   
 }
 
@@ -171,6 +183,7 @@ const mutations = {
 			if (state.myranks[i] !== myranks[i]) {
 				state.myranks = myranks;
 				state.selected = null;
+				state.network.txnStatus = 2;
   				state.socket.emit('rank_update', postData(state))
 				break
 			}
@@ -194,6 +207,7 @@ const mutations = {
   	if (state.userElectionDetails.shortlist.indexOf(id) < 0) {
 		state.userElectionDetails.shortlist.splice(-1, 0, id)
 	}
+	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
   dashRemoveShortlist: (state, id) => { 
@@ -201,13 +215,44 @@ const mutations = {
 	if (idx >=0) {
 		state.userElectionDetails.shortlist.splice(idx,1)
 	}
+	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
   dashToggleFilterShortlist: (state) => {
   	state.list.filterShortlist = !state.list.filterShortlist
+	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
-  }
+  },
+
+  /* network related */
+
+  netProcessHandshake: (state) => {
+	state.network.txnStatus = 0
+  },
+
+  netProcessReconnect: (state) => {
+  	if (state.network.txnStatus > 0) {
+		state.network.txnStatus = 2;
+		state.socket.emit('rank_update', postData(state))
+	}
+	else {
+		state.network.txnStatus = 0
+	}
+  },
+
+  netProcessAck1: (state, data) => {
+  	if (data.timestamp > state.network.ack1Timestamp && state.network.txnStatus > 1) {
+		state.network.ack1Timestamp = data.timestamp
+		state.network.txnStatus = 1
+	}
+  },
 		
+  netProcessAck2: (state, data) => {
+  	if (data.timestamp > state.network.ack2Timestamp && state.network.txnStatus > 0) {
+		state.network.ack2Timestamp = data.timestamp
+		state.network.txnStatus = 0
+	}
+  }
 }
 
 export default {
