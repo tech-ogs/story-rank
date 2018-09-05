@@ -44,7 +44,16 @@
 
     <b-row class="app-content" ref="list">
       <b-col>
-		<span class="leaderboard-text">Leaderboard</span>
+		<div class="info-bar">
+		<div class="leaderboard-text">Leaderboard</div>
+		<div class="blinkenlights-container">
+			<span class="blinkenlights">  
+				<icon name="circle" :class="blinkenClass[0]" /> 
+				<icon name="circle" :class="blinkenClass[1]" /> 
+				<icon name="circle" :class="blinkenClass[2]" /> 
+			</span> 
+		</div>
+		</div>
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
             <story-row :row="data.item" :items="items">
@@ -71,7 +80,6 @@ export default {
   data () {
     return {
       listTable: null,
-
       fields: fields,
       submitterId: null,
       filterSubmitter: (sid) => {
@@ -89,7 +97,12 @@ export default {
           this.$store.commit('dashSetSelected', item)
 		  this.$store.commit('dashAddShortlist', item.id)
         }
-      }
+      },
+	  blinkenClass: [
+		['blinken blinken0', 'blinken blinken1 blinken-fade', 'blinken blinken2 blinken-fade'],
+		['blinken blinken0 blinken-fade', 'blinken blinken1', 'blinken blinken2 blinken-fade'],
+		['blinken blinken0 blinken-fade', 'blinken blinken1 blinken-fade', 'blinken blinken2']
+	  ][this.networkState || 0]
     }
   },
   computed: {
@@ -104,7 +117,8 @@ export default {
     myranks() { return this.$store.getters.myranks},
     results() { return this.$store.getters.getResults},
     selectedRow() { return this.$store.getters.dashSelectedRow},
-    scrollTop() { return this.$store.getters.dashScrollTop }
+    scrollTop() { return this.$store.getters.dashScrollTop },
+	networkState() { return this.store.getters.networkState},
   },
   methods: {
     doLogout: () => {
@@ -249,10 +263,44 @@ body,
   /*justify-content: center;*/
 }
 
+.info-bar {
+	height: 12px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .leaderboard-text {
+	width: 55%;
 	font-size: x-small;
 	color: silver;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-end;
+}
+.blinkenlights-container {
+	width: 45%;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.blinken {
+
+	height: 8px;
+	width: 8px;
+
+}
+.blinken0 {
+	color: lime;
+
+}
+.blinken1 {
+	color: yellow;
+}
+.blinken2 {
+	color: red;
+}
+
+.blinken-fade {
+	opacity: 0.15
 }
 </style>

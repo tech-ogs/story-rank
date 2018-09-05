@@ -13,10 +13,10 @@
 	</b-navbar>
 	<b-navbar v-if="mode === 'list'">
 		<b-nav pills class="width100 flex-left-right">
-		  <b-btn :size="sm" class="tool-button" @click="toggleFilterShortlist">
+		  <b-btn  class="tool-button" @click="toggleFilterShortlist">
 			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
-		  <b-btn :size="sm" class="tool-button" @click="">
+		  <b-btn class="tool-button" @click="">
 			<span class="tool-text" :disabled="userElectionDetails.locked">SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
 		  </b-btn>
 		</b-nav>

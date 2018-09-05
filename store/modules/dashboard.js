@@ -19,6 +19,10 @@ const state = {
   },
   selected: null,
 
+  /* from socket handlers */
+
+  networkState: 0, /* 0 = green, 1 = yellow, 2 = red */
+
   /* from server */
   user: {
   	login: '', 
