@@ -5,9 +5,9 @@ const state = {
   socket: null,
   	
   mode: 'list', /* ['list', 'detail'] */
-  detailRow: null,
   detail: {
 	mode: 'view' /* ['view', 'edit'] */
+  	row: null
   },
 
   list: {
@@ -63,6 +63,47 @@ const postData = (state) => {
 
   }
 }
+async function editRow(row) {
+	var headers = new Headers();
+	headers.append('Content-Type', 'application/json');
+	var response;
+	try {
+		response = await window.fetch('/edit_row', {
+		  method: 'post',
+		  credentials: 'same-origin',
+		  headers: headers,
+		  body: JSON.stringify(row || {})
+		}) 
+	}
+	catch (err) {
+		throw (new Error ('error editing row: ' + err.message) )
+	}
+
+	var jsonData = response.json()
+	context.$commit('dashSetDetailMode', 'view')
+	context.$commit('storiesEditRow', jsonData)
+}
+
+async function createRow(row) {
+	var headers = new Headers();
+	headers.append('Content-Type', 'application/json');
+	var response;
+	try {
+		response = await window.fetch('/create_row', {
+		  method: 'post',
+		  credentials: 'same-origin',
+		  headers: headers,
+		  body: JSON.stringify(row || {})
+		}) 
+	}
+	catch (err) {
+		throw (new Error ('error creating row: ' + err.message) )
+	}
+
+	var jsonData = response.json()
+	context.$commit('dashSetDetailMode', 'view')
+	context.$commit('storiesAddNewRow', jsonData)
+}
 
 // getters
 const getters = {
@@ -80,7 +121,7 @@ const getters = {
   dashScrollTop: state => state.list.scrollTop,
   dashSelectedRow: (state) => state.selected || {id:0},
 
-  dashDetailRow: state => state.detailRow,
+  dashDetailRow: state => state.detail.row,
   dashDetailMode: state => state.detail.mode,
 
   dashListFilters: state => state.list.filters,
@@ -98,7 +139,13 @@ const actions = {
       var socket = params.socket
       context.commit('setSocket', {socket: socket})
       socketEvents.registerHandlers(context, socket)     
-    }
+    },
+	dashEditRow(context, row) {
+		return editRow(context, row)
+	},
+	dashCreateRow(context, row) {
+		return createRow(context, row)
+	}
 }
 
 // mutations
@@ -196,7 +243,7 @@ const mutations = {
     state.selected = null
   },
   dashSetDetailRow: (state,row) => { 
-  	state.detailRow = row 
+  	state.detail.row = row 
   },
   dashSetDetailMode: (state, mode) => {
     state.detail.mode = mode

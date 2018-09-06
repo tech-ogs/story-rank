@@ -8,6 +8,7 @@ var path = require('path');
 var query = require(path.join(__dirname , 'common/query.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
 var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
+var stories = require(path.join(__dirname , 'modules/stories/stories.js'))
 // middleware
 
 var checkAuth = function (req, res, next) {
@@ -103,6 +104,8 @@ router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
 router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
+router.post('/edit_row', checkAuth, handler(stories.editRow))
+router.post('/create_row', checkAuth, handler(stories.createRow))
 
 /* to get debug data for client work only, comment in production */
 router.get('/list',  getHandler(query.list)) 

@@ -138,7 +138,7 @@ export default {
 		this.$store.commit('dashSetDetailMode', 'edit')
 	},
 	doSave: function() {
-		this.$store.commit('dashSetDetailMode', 'view')
+		this.$store.dispatch('dashSaveEdits')
 	}
 
   },

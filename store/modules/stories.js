@@ -51,18 +51,6 @@ const getters = {
     return sorted
   },
 
-/*
-  // strictly ranked list to support all moves via swaps, use this when calling mutations in moveRanks
-  storiesGetItemsS: (state, getters) => {
-    //console.log('storiesGetItemsS', getters)
-    var ranks = getters.ranks
-    var sorted = state.items.sort ( (a ,b) => {
-      return ranks[a.id] - ranks[b.id]
-    })
-
-    return sorted
-  },
-*/
 
   stories: (state, getters) => {
     var ranks = getters.getResults.ranks
@@ -75,23 +63,6 @@ const getters = {
     return sorted
   },
 
-/*
-  storiesGetFavs: (state, getters) => {
-    //console.log('storiesGetItemsF', getters)
-    var ranks = getters.ranks
-    var favorites = getters.favorites
-    var filtered = state.items.filter( (story) => {
-      return favorites[story.id] 
-    })
-    //console.log('filtered', filtered)
-    //console.log('ranks', ranks)
-    var sorted = filtered.sort ( (a ,b) => {
-      return ranks[a.id] - ranks[b.id]
-    })
-
-    return sorted
-  },
-*/
 
   storiesFilterIsClear: (state) => {
     var result = true
@@ -117,35 +88,29 @@ const mutations = {
     //console.log('storiesSetData', params instanceof Array, params.length,  params)
     state.items = params
     var byId = {}
-    params.forEach( x => {
+    var indexById = {}
+    params.forEach( (x, idx) => {
       byId[x.id] = x
+      indexById[x.id] = idx
     })
     state.byId = byId
+    state.indexById = indexById
     //console.log('state.byId', JSON.stringify(state.byId))
   },
   storiesSetFilter: (state, params) => {
     Object.assign(state.filters, params)
     //console.log('filters:', state.filters)
   },
-  storiesAnimateStar: (state) => {
-    if (!state.animateStar) {
-      console.log('start star animation')
-      state.animateStar = true
-      setTimeout( () => {
-        console.log('end star animation')
-        state.animateStar = false
-      }, 1500)
-    }
+  storiesEditRow: (state, row) => {
+    var idx = state.indexById(row.id)
+    delete state.items[idx]
+    Vue.set(state.items, idx, row)
   },
-  storiesAnimateCircle: (state) => {
-    if (!state.animateCircle) {
-      console.log('start circle animation')
-      state.animateCircle = true
-      setTimeout( () => {
-        console.log('end circle animation')
-        state.animateCircle = false
-      }, 1500)
-    }
+  storiesCreateRow: (state, row) => {
+    var idx = state.items.length
+    Vue.set(state.items, idx, row)
+    state.byId[row.id] = state.items[idx]
+    state.indexById[row.id] = idx
   }
 }
 
