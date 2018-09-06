@@ -28,7 +28,7 @@
 			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Title"
 				v-model="editRow.title" 
 				:rows="3"
-				:max-rows="3"
+				:max-rows="5"
 			>
 			</b-form-textarea>
         </b-col>
@@ -41,7 +41,7 @@
 			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Excerpt"
 				v-model="editRow.excerpt"
 				:rows="10"
-				:max-rows="10"
+				:max-rows="12"
 			>
 			</b-form-textarea>
         </b-col>
@@ -53,22 +53,26 @@
       <b-row v-if="isEditor || isAdmin">
         <b-col class="flex-perfect-center">
 		  <b-button-toolbar v-if="mode === 'view'" key-nav>
+<!--
 			<b-button-group class="mx-1">
 			  <b-btn>&laquo;</b-btn>
 			  <b-btn>&lsaquo;</b-btn>
 			</b-button-group>
+-->
 			<b-button-group class="mx-1">
 			  <b-btn @click="doEdit">Edit</b-btn>
 			</b-button-group>
+<!--
 			<b-button-group class="mx-1">
 			  <b-btn>&rsaquo;</b-btn>
 			  <b-btn>&raquo;</b-btn>
 			</b-button-group>
+-->
 		  </b-button-toolbar>
 
 		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
 			<b-button-group class="mx-1">
-			  <b-btn @click="doSave">Save</b-btn>
+			  <b-btn @click="doSave(editRow)">Save</b-btn>
 			</b-button-group>
 		  </b-button-toolbar>
 
@@ -105,12 +109,15 @@ export default {
       getImg: (url) => { 
         return url != null ? require('@/'+url) : null 
 	  },
-      editRow: {}
+      editRow: {
+		id: '',
+		title: '',
+		excerpt: ''
+	  }
     }
   },
   computed: {
     row() { 
-		console.log ('detail row:', this.$store.getters.dashDetailRow)
 		return this.$store.getters.dashDetailRow 
 	},
     ranks () { return this.$store.getters.ranks},
@@ -137,12 +144,13 @@ export default {
 	doEdit: function() {
 		this.$store.commit('dashSetDetailMode', 'edit')
 	},
-	doSave: function() {
-		this.$store.dispatch('dashSaveEdits')
+	doSave: function( row ) {
+		this.$store.dispatch('storiesEditRow', row)
 	}
 
   },
   created() {
+	this.editRow.id = this.row.id
 	this.editRow.title = this.row.attributes.title
 	this.editRow.excerpt = this.row.attributes.excerpt
   },

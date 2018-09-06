@@ -33,7 +33,9 @@
               </div>
               </div>
             </b-nav-item>
-            <b-button variant="outline" size="sm" @click="doLogout"> Sign out </b-button>
+            <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> New Story </b-button>
+			<br>
+            <b-button size="sm" @click="doLogout"> Sign out </b-button>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -109,6 +111,8 @@ export default {
     }
   },
   computed: {
+	isEditor () { return this.$store.getters.isEditor },
+	isAdmin () { return this.$store.getters.isAdmin },
 	election() { return this.$store.getters.election },
 	user() { return this.$store.getters.user },
 	userElectionDetails() { return this.$store.getters.userElectionDetails },
@@ -181,6 +185,11 @@ export default {
 				document.getElementById('row_' + this.myranks[val]).scrollIntoView()
 			}
 		}
+	},
+	addRow: function() { 
+		this.$store.commit('dashSetDetailRow', {id: null, attributes: { title : null, excerpt: null } } )
+		this.$store.commit('dashSetMode', 'detail')
+		this.$store.commit ('dashSetDetailMode', 'edit')
 	}
   },
   watch: {
@@ -235,7 +244,9 @@ body,
   flex: 0 0 auto;
 }
 .title-bar {
+/*
 	height: 65px;
+*/
 	border-bottom-color: rgba(0, 0, 0, 0.05);
 	border-bottom-thickness: 1px;
 	border-bottom-style: solid;

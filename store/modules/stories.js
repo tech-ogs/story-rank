@@ -8,6 +8,51 @@ const state = {
   animateCircle: false
 }
 
+async function editRow(context, row) {
+	var headers = new Headers();
+	headers.append('Content-Type', 'application/json');
+	var response;
+	try {
+		response = await window.fetch('/edit_row', {
+		  method: 'post',
+		  credentials: 'same-origin',
+		  headers: headers,
+		  body: JSON.stringify(row || {})
+		}) 
+	}
+	catch (err) {
+		throw (new Error ('error editing row: ' + err.message) )
+	}
+
+	var jsonData = response.json()
+	context.commit('dashSetDetailMode', 'view')
+	context.commit('storiesEditRow', jsonData)
+}
+
+async function createRow(context, row) {
+	var headers = new Headers();
+	headers.append('Content-Type', 'application/json');
+	var response;
+	try {
+		response = await window.fetch('/create_row', {
+		  method: 'post',
+		  credentials: 'same-origin',
+		  headers: headers,
+		  body: JSON.stringify(row || {})
+		}) 
+	}
+	catch (err) {
+		throw (new Error ('error creating row: ' + err.message) )
+	}
+
+	var jsonData = response.json()
+	context.commit('dashSetDetailMode', 'view')
+	context.commit('storiesAddNewRow', jsonData)
+}
+
+
+
+
 // helpers
 // getters
 const getters = {
@@ -80,6 +125,12 @@ const getters = {
 
 // actions
 const actions = {
+	storiesEditRow(context, row) {
+		return editRow(context, row)
+	},
+	storiesCreateRow(context, row) {
+		return createRow(context, row)
+	}
 }
 
 // mutations
@@ -102,7 +153,7 @@ const mutations = {
     //console.log('filters:', state.filters)
   },
   storiesEditRow: (state, row) => {
-    var idx = state.indexById(row.id)
+    var idx = state.indexById[row.id]
     delete state.items[idx]
     Vue.set(state.items, idx, row)
   },

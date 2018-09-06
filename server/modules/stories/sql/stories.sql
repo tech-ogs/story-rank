@@ -3,9 +3,12 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
     throw Error ('missing user_id in session ' + session.id)
   }
   plv8.elog(LOG, JSON.stringify(params)) 
-  Object.keys(params)forEach(function(key) {
-    plv8.elog(LOG, key, params[key]) 
-	plv8.execute('update application.stories set attributes = jsonb_set(attributes, \'{' + key + '}\', $1) where id = $2', [params[key], params.id) 
+  Object.keys(params).forEach(function(key) {
+	if (key !== 'id') {
+    	plv8.elog(LOG, key, params[key]) 
+		val = JSON.stringify (params[key])
+		plv8.execute('update application.stories set attributes = jsonb_set(attributes, $1, $2) where id = $3', [ [key], val,  params.id]) 
+	}
   })
 
   /*update the flags to request a recalc*/

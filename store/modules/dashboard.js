@@ -6,7 +6,7 @@ const state = {
   	
   mode: 'list', /* ['list', 'detail'] */
   detail: {
-	mode: 'view' /* ['view', 'edit'] */
+	mode: 'view', /* ['view', 'edit'] */
   	row: null
   },
 
@@ -63,47 +63,6 @@ const postData = (state) => {
 
   }
 }
-async function editRow(row) {
-	var headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	var response;
-	try {
-		response = await window.fetch('/edit_row', {
-		  method: 'post',
-		  credentials: 'same-origin',
-		  headers: headers,
-		  body: JSON.stringify(row || {})
-		}) 
-	}
-	catch (err) {
-		throw (new Error ('error editing row: ' + err.message) )
-	}
-
-	var jsonData = response.json()
-	context.$commit('dashSetDetailMode', 'view')
-	context.$commit('storiesEditRow', jsonData)
-}
-
-async function createRow(row) {
-	var headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	var response;
-	try {
-		response = await window.fetch('/create_row', {
-		  method: 'post',
-		  credentials: 'same-origin',
-		  headers: headers,
-		  body: JSON.stringify(row || {})
-		}) 
-	}
-	catch (err) {
-		throw (new Error ('error creating row: ' + err.message) )
-	}
-
-	var jsonData = response.json()
-	context.$commit('dashSetDetailMode', 'view')
-	context.$commit('storiesAddNewRow', jsonData)
-}
 
 // getters
 const getters = {
@@ -139,13 +98,7 @@ const actions = {
       var socket = params.socket
       context.commit('setSocket', {socket: socket})
       socketEvents.registerHandlers(context, socket)     
-    },
-	dashEditRow(context, row) {
-		return editRow(context, row)
-	},
-	dashCreateRow(context, row) {
-		return createRow(context, row)
-	}
+    }
 }
 
 // mutations

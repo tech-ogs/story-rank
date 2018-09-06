@@ -2,14 +2,15 @@ var path = require('path')
 var db = require(path.join(__dirname, '../../common/db'))
 
 
-function editRow (req, data) {
+function editRow (req, res) {
+  console.log ('stories editRow', req.body)
   var client = db.getClient()
   var promise = new Promise(function(resolve, reject) {
     var session = req.session
     var result = null
     db.query(client, {
       cmd: 'select edit_row($1, $2)', 
-      params: [session, data]
+      params: [req.session, req.body]
     })
     .then(function(ret) {
       result = ret
@@ -27,14 +28,15 @@ function editRow (req, data) {
   return promise
 }
 
-function createRow (req, data) {
+function createRow (req, res) {
+  console.log ('stories createRow', req.body)
   var client = db.getClient()
   var promise = new Promise(function(resolve, reject) {
     var session = req.session
     var result = null
     db.query(client, {
-      cmd: 'select edit_row($1, $2)', 
-      params: [session, data]
+      cmd: 'select create_row($1, $2)', 
+      params: [req.session, req.body]
     })
     .then(function(ret) {
       result = ret
