@@ -3,13 +3,19 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
     throw Error ('missing user_id in session ' + session.id)
   }
   plv8.elog(LOG, JSON.stringify(params)) 
-  Object.keys(params).forEach(function(key) {
+/*
+  Object.keys(params.attributes).forEach(function(key) {
 	if (key !== 'id') {
     	plv8.elog(LOG, key, params[key]) 
 		val = JSON.stringify (params[key])
 		plv8.execute('update application.stories set attributes = jsonb_set(attributes, $1, $2) where id = $3', [ [key], val,  params.id]) 
 	}
   })
+*/
+  var attributes = plv8.execute('select attributes from application.stories where id = $1', [params.id])[0].attributes
+  Object.assign(attributes, params.attributes)
+
+  plv8.execute('update application.stories set attributes = $1 where id = $2', [attributes, params.id])
 
   /*update the flags to request a recalc*/
 
@@ -24,8 +30,8 @@ CREATE OR REPLACE FUNCTION create_row(session jsonb,  params jsonb) returns json
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)
   }
-  
-  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, attributes) values ($1, $2, $3) returning *', [session.user_id, params.election_id, params.row])
+
+  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, attributes) values ($1, $2, $3) returning *', [session.user_id, params.election_id, params.attributes])[0]
   /*update the flags to request a recalc*/
 
   plv8.execute('update application.flags set value =  $2 where name = $1', ['request_recalc', true])

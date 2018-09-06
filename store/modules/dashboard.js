@@ -7,7 +7,8 @@ const state = {
   mode: 'list', /* ['list', 'detail'] */
   detail: {
 	mode: 'view', /* ['view', 'edit'] */
-  	row: null
+  	row: null,
+	action: ''
   },
 
   list: {
@@ -82,6 +83,7 @@ const getters = {
 
   dashDetailRow: state => state.detail.row,
   dashDetailMode: state => state.detail.mode,
+  dashDetailAction: state => state.detail.action,
 
   dashListFilters: state => state.list.filters,
   dashFilterShortlist: state => state.list.filterShortlist,
@@ -201,7 +203,9 @@ const mutations = {
   dashSetDetailMode: (state, mode) => {
     state.detail.mode = mode
   },
-
+  dashSetDetailAction: (state, action) => {
+  	state.detail.action = action
+  },
   /* we use splice operations to add and remove shortlist entries to force vue to "react" */
   dashAddShortlist: (state, id) => {
   	if (state.userElectionDetails.shortlist.indexOf(id) < 0) {

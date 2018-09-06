@@ -19,14 +19,15 @@ async function editRow(context, row) {
 		  headers: headers,
 		  body: JSON.stringify(row || {})
 		}) 
+		var jsonData = await response.json()
+		context.commit('dashSetDetailMode', 'view')
+		context.commit('storiesEditRow', jsonData)
+		context.commit('dashSetDetailRow', jsonData)
 	}
 	catch (err) {
 		throw (new Error ('error editing row: ' + err.message) )
 	}
 
-	var jsonData = response.json()
-	context.commit('dashSetDetailMode', 'view')
-	context.commit('storiesEditRow', jsonData)
 }
 
 async function createRow(context, row) {
@@ -40,14 +41,15 @@ async function createRow(context, row) {
 		  headers: headers,
 		  body: JSON.stringify(row || {})
 		}) 
+		var jsonData = await response.json()
+		context.commit('dashSetDetailMode', 'view')
+		context.commit('storiesCreateRow', jsonData)
+		context.commit('dashSetDetailRow', jsonData)
 	}
 	catch (err) {
 		throw (new Error ('error creating row: ' + err.message) )
 	}
 
-	var jsonData = response.json()
-	context.commit('dashSetDetailMode', 'view')
-	context.commit('storiesAddNewRow', jsonData)
 }
 
 

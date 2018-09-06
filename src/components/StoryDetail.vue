@@ -26,7 +26,7 @@
           <i class="fa fa-fw fa-question"></i>
           </span>
 			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Title"
-				v-model="editRow.title" 
+				v-model="editRow.attributes.title" 
 				:rows="3"
 				:max-rows="5"
 			>
@@ -39,7 +39,7 @@
               {{ row.attributes.excerpt }}
             </span>
 			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Excerpt"
-				v-model="editRow.excerpt"
+				v-model="editRow.attributes.excerpt"
 				:rows="10"
 				:max-rows="12"
 			>
@@ -72,7 +72,7 @@
 
 		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
 			<b-button-group class="mx-1">
-			  <b-btn @click="doSave(editRow)">Save</b-btn>
+			  <b-btn @click="doSave(action, editRow)">Save</b-btn>
 			</b-button-group>
 		  </b-button-toolbar>
 
@@ -111,8 +111,11 @@ export default {
 	  },
       editRow: {
 		id: '',
-		title: '',
-		excerpt: ''
+		election_id: '',
+		attributes: { 
+			title: '',
+			excerpt: ''
+		}
 	  }
     }
   },
@@ -124,10 +127,12 @@ export default {
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap },
 	login() { return this.$store.getters.login },
+	election() { return this.$store.getters.election },
 	groups() { return this.$store.getters.groups },
 	isEditor () { return this.$store.getters.isEditor },
 	isAdmin () { return this.$store.getters.isAdmin },
-	mode() { return this.$store.getters.dashDetailMode }
+	mode() { return this.$store.getters.dashDetailMode },
+	action() { return this.$store.getters.dashDetailAction }
   },
   methods: {
     makeArr: (x) => { 
@@ -142,17 +147,19 @@ export default {
 		this.$store.commit('dashHandleRankBtnClick', pos)
 	},
 	doEdit: function() {
+		this.$store.commit('dashSetDetailAction', 'storiesEditRow')
 		this.$store.commit('dashSetDetailMode', 'edit')
 	},
-	doSave: function( row ) {
-		this.$store.dispatch('storiesEditRow', row)
+	doSave: function( action, editRow ) {
+		this.$store.dispatch(action, editRow)
 	}
 
   },
   created() {
 	this.editRow.id = this.row.id
-	this.editRow.title = this.row.attributes.title
-	this.editRow.excerpt = this.row.attributes.excerpt
+	this.editRow.election_id = this.election.id
+	this.editRow.attributes.title = this.row.attributes.title
+	this.editRow.attributes.excerpt = this.row.attributes.excerpt
   },
   mounted () { 
   }

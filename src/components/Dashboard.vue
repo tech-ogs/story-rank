@@ -190,6 +190,7 @@ export default {
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { title : null, excerpt: null } } )
 		this.$store.commit('dashSetMode', 'detail')
 		this.$store.commit ('dashSetDetailMode', 'edit')
+		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
 	}
   },
   watch: {

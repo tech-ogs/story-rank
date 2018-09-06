@@ -13,11 +13,13 @@ function editRow (req, res) {
       params: [req.session, req.body]
     })
     .then(function(ret) {
-      result = ret
+	  //console.log ('ret editrow: ',ret )
+      result = ret.rows[0].edit_row
       return db.commitClient(client)
     })
     .then(function(ret) {
       db.endClient(client)
+	  console.log ('resolving editrow: ', result)
       resolve(result)
     })
     .catch(function(err) {
@@ -39,11 +41,12 @@ function createRow (req, res) {
       params: [req.session, req.body]
     })
     .then(function(ret) {
-      result = ret
+      result = ret.rows[0].create_row
       return db.commitClient(client)
     })
     .then(function(ret) {
       db.endClient(client)
+	  console.log ('resolving createrow: ', result)
       resolve(result)
     })
     .catch(function(err) {
