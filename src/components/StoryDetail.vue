@@ -19,18 +19,43 @@
       <b-row>
         <b-col cols="4"> 
           <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
+          <span v-if="mode === 'view'" class="story-title">
+            {{ row.attributes.shortTitle }}
+          <i class="fa fa-fw fa-question"></i>
+          </span>
+		  <div>
+			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Short Title"
+				v-model="editRow.attributes.shortTitle" 
+				:rows="1"
+				:max-rows="1"
+				id="inputShortTitle"
+				:state="shortTitleState"
+			>
+			</b-form-textarea>
+			<b-form-invalid-feedback id="inputShortTitle">
+			 	Maximum 10 characters!
+			</b-form-invalid-feedback>
+		  </div>
+
         </b-col>
         <b-col class="story-title-container">
           <span v-if="mode === 'view'" class="story-title">
             {{ row.attributes.title }}
           <i class="fa fa-fw fa-question"></i>
           </span>
+		  <div>
 			<b-form-textarea v-if="mode === 'edit'" type="text" placeholder="Title"
 				v-model="editRow.attributes.title" 
 				:rows="3"
 				:max-rows="5"
+				id="inputTitle"
+				:state="titleState"
 			>
 			</b-form-textarea>
+			<b-form-invalid-feedback id="inputTitle">
+			 	Maximum 100 characters!
+			</b-form-invalid-feedback>
+		  </div>
         </b-col>
       </b-row>
       <b-row>
@@ -47,9 +72,48 @@
         </b-col>
 
       </b-row>
+	  <br>
+	  <b-row>
+		<b-col class="story-link-container">
+          <span v-if="mode === 'view'" class="story-link">
+            <b-link  :href="row.attributes.url" target="_blank">link &nbsp;&nbsp;</b-link>
+          </span>
+          <span v-if="mode === 'edit'" class="story-link-editor">
+				<span> link: </span><b-input type="url" v-model="editRow.attributes.url"> </b-input>
+          </span>
+          <br>
+		</b-col>
+	  </b-row>
 
 	  <br>
 	  <br>
+
+
+      <b-row class="story-footer">
+        <b-col class="story-data-container">
+          <span class="story-data">
+                  id: {{row.id}} rank: {{'xx'}}
+          </span>
+        </b-col>
+        <b-col class="story-submitter-container">
+          <span v-if="mode === 'view'" class="story-submitter">
+            {{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
+          </span>
+		  <div>
+			<b-form-select v-if="mode === 'edit'"  placeholder="Submitter"
+				v-model="editRow.submitter_id" 
+				:state="submitterState"
+			>
+                <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
+			</b-form-select>
+			<b-form-invalid-feedback id="inputTitle">
+			 	Maximum 100 characters!
+			</b-form-invalid-feedback>
+		  </div>
+
+        </b-col>
+      </b-row>
+
       <b-row v-if="isEditor || isAdmin">
         <b-col class="flex-perfect-center">
 		  <b-button-toolbar v-if="mode === 'view'" key-nav>
@@ -79,23 +143,6 @@
         </b-col>
       </b-row>
 
-
-      <b-row class="story-footer">
-        <b-col class="story-data-container">
-          <span class="story-data">
-            <b-link v-for="(url,idx) in makeArr(row.attributes.url)" :key="idx" :href="url" target="_blank">link{{idx}} &nbsp;&nbsp;</b-link>
-          </span>
-          <br>
-          <span class="story-data">
-                  id: {{row.id}} rank: {{'xx'}}
-          </span>
-        </b-col>
-        <b-col class="story-submitter-container">
-          <span class="story-submitter">
-            {{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
-          </span>
-        </b-col>
-      </b-row>
     </b-container>
   </div>
 </template>
@@ -107,14 +154,17 @@ export default {
   data () {
     return {
       getImg: (url) => { 
-        return url != null ? require('@/'+url) : null 
+        return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
 	  },
       editRow: {
 		id: '',
 		election_id: '',
-		attributes: { 
+		submitter_id: '',
+		attributes: {
+			shortTitle: '',
 			title: '',
-			excerpt: ''
+			excerpt: '',
+			url: ''
 		}
 	  }
     }
@@ -126,18 +176,21 @@ export default {
     ranks () { return this.$store.getters.ranks},
     results() { return this.$store.getters.getResults },
     users () { return this.$store.getters.usersGetIdMap },
+    user () { return this.$store.getters.user },
 	login() { return this.$store.getters.login },
 	election() { return this.$store.getters.election },
+    usersList() { return this.$store.getters.usersGetItems },
 	groups() { return this.$store.getters.groups },
 	isEditor () { return this.$store.getters.isEditor },
 	isAdmin () { return this.$store.getters.isAdmin },
 	mode() { return this.$store.getters.dashDetailMode },
-	action() { return this.$store.getters.dashDetailAction }
+	action() { return this.$store.getters.dashDetailAction },
+	// editing helpers
+	titleState() { return this.editRow.attributes.title.length <= 100 },
+	shortTitleState() { return this.editRow.attributes.shortTitle.length <= 10 },
+	submitterState() { return this.editRow.submitter_id != null }
   },
   methods: {
-    makeArr: (x) => { 
-      return  x instanceof Array ? x : [x] 
-    },
     close: function() {
       this.$store.commit('dashSetMode', 'list')
     },
@@ -157,9 +210,12 @@ export default {
   },
   created() {
 	this.editRow.id = this.row.id
-	this.editRow.election_id = this.election.id
+	this.editRow.submitter_id = this.row.submitter_id || this.user.id
+	this.editRow.election_id = this.row.election_id || this.election.id
+	this.editRow.attributes.shortTitle = this.row.attributes.shortTitle
 	this.editRow.attributes.title = this.row.attributes.title
 	this.editRow.attributes.excerpt = this.row.attributes.excerpt
+	this.editRow.attributes.url = this.row.attributes.url
   },
   mounted () { 
   }
@@ -189,6 +245,19 @@ export default {
   }
 
   .story-excerpt {
+  }
+
+  .story-link-container {
+	display: flex;
+	justify-content: flex-start;
+  }
+
+  .story-link {
+	
+  }
+  .story-link-editor {
+	display: inline-flex;
+	align-items: center;
   }
 
   .story-data-container {

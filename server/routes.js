@@ -106,6 +106,7 @@ router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
 router.post('/stories', checkAuth, handler(stories.list))
 router.post('/edit_row', checkAuth, handler(stories.editRow))
+router.post('/media/upload', checkAuth, handler(media.upload))
 router.post('/create_row', checkAuth, handler(stories.createRow))
 
 /* to get debug data for client work only, comment in production */

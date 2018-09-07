@@ -52,7 +52,6 @@ export default {
 	mode() { return this.$store.getters.dashMode }
   },
   methods: {
-		getImg: (url) => { return require('@/'+url) },
 		handleRankBtnClick (val)  {
 			this.$emit('rank-button-click', val)
 		},

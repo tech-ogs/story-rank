@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 
 	var result = {}
 
-	var userDetails = plv8.execute('select login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
+	var userDetails = plv8.execute('select id, login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
 
 	var election = plv8.find_function('active_election')()
 

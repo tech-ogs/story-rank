@@ -34,6 +34,7 @@ const state = {
 
   /* from server */
   user: {
+  	id: null,
   	login: '', 
  	name: '',
   	groups: []

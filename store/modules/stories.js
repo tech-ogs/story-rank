@@ -51,7 +51,16 @@ async function createRow(context, row) {
 
 }
 
-
+function reindex () { 
+    var byId = {}
+    var indexById = {}
+    state.items.forEach( (x, idx) => {
+      byId[x.id] = x
+      indexById[x.id] = idx
+    })
+    state.byId = byId
+    state.indexById = indexById
+}
 
 
 // helpers
@@ -139,14 +148,7 @@ const mutations = {
   storiesSetData: (state, params) => {
     //console.log('storiesSetData', params instanceof Array, params.length,  params)
     state.items = params
-    var byId = {}
-    var indexById = {}
-    params.forEach( (x, idx) => {
-      byId[x.id] = x
-      indexById[x.id] = idx
-    })
-    state.byId = byId
-    state.indexById = indexById
+	reindex()
     //console.log('state.byId', JSON.stringify(state.byId))
   },
   storiesSetFilter: (state, params) => {
@@ -157,12 +159,15 @@ const mutations = {
     var idx = state.indexById[row.id]
     delete state.items[idx]
     Vue.set(state.items, idx, row)
+	reindex()
   },
   storiesCreateRow: (state, row) => {
+  /*
     var idx = state.items.length
     Vue.set(state.items, idx, row)
-    state.byId[row.id] = state.items[idx]
-    state.indexById[row.id] = idx
+  */
+	state.items.splice(0, 0, row)
+	reindex()
   }
 }
 

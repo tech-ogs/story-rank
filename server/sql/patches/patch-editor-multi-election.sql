@@ -1,6 +1,7 @@
 drop table application.elections cascade;
 drop table application.groups cascade;
 drop table application.user_elections cascade;
+drop table application.media cascade;
 
 create table application.elections (
 	id bigserial primary key,
@@ -43,4 +44,17 @@ create table application.user_elections (
 );
 alter table application.user_elections add constraint user_elections_user_id foreign key (user_id) references application.users (id);
 alter table application.user_elections add constraint user_elections_election_id foreign key (election_id)  references application.elections (id);
+
+create table application.media (
+	id  bigserial primary key,
+	name  character varying,
+	attributes  json,
+	data  bytea,
+	creation_date timestamp,
+	created_by bigint
+);
+
+alter table application.stories drop column image_id;
+alter table application.stories add column image_id bigint;
+alter table application.stories add constraint stories_media_id foreign key (image_id) references application.media(id);
 

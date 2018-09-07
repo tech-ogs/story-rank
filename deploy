@@ -5,6 +5,7 @@ psql -U postgres stories < server/modules/auth/sql/auth.sql
 psql -U postgres stories < server/modules/ranks/sql/ranks.sql
 psql -U postgres stories < server/modules/stories/sql/stories.sql
 psql -U postgres stories < server/modules/ranks/sql/recalc.sql
+psql -U postgres stories < server/modules/media/sql/media.sql
 #./makethumbs
 yarn run build
 cp node_modules/socket.io-client/dist/socket.io.js dist/static/

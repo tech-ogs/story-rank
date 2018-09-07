@@ -8,7 +8,7 @@
 		> 
 		</b-img>
     	<br>
-    	{{ itemsById[myranks[pos]].name.substr(0,10) }}
+    	{{ itemsById[myranks[pos]].attributes.shortTitle }}
 		</div>
 		<div v-else class="">
 			<div class="rank-button-placeholder flex-perfect-center"> {{ pos + 1 }} 
@@ -42,7 +42,10 @@ export default {
     }
   },
   methods: {
-      getImg: (url) => { return require('@/'+url) },
+      getImg: (url) => { 
+        return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
+      },
+
       handleClick: function () { 
 		this.$emit('rank-button-click', this.pos)
       }
