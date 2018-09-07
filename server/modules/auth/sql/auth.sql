@@ -3,16 +3,26 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 	var result = {}
 
 	var userDetails = plv8.execute('select login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
-	var electionDetails = plv8.execute ('select *, (close_date::date - open_date::date)::int as days_to_close  from application.elections where active = true')[0] || {}
-	var userElectionDetails = plv8.execute ('select * from application.user_elections where election_id = $1  and user_id = (select user_id from application.sessions where id = $2)', [electionDetails.id, cookie])[0] || {}
+
+	var election = plv8.find_function('active_election')()
+
+	var userElectionDetails = plv8.execute ('select * from application.user_elections where election_id = $1  and user_id = (select user_id from application.sessions where id = $2)', [election.id, cookie])[0] || {}
     var ranks = plv8.execute('with x as (select story_id from application.ranks where user_id = (select user_id from application.sessions where id = $1) order by rank asc) select jsonb_agg(x.story_id) as ranks from x', [cookie])[0] || {}
 
 	result.user = userDetails
-	result.election = electionDetails;
+	result.election = election;
 	result.userElectionDetails = userElectionDetails
     result.myranks = ranks.ranks
     
     return result
+
+$$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION active_election() returns jsonb AS $$
+
+	var election = plv8.execute ('select *, (close_date::date - open_date::date)::int as days_to_close  from application.elections where active = true')[0] || {}
+	return election
 
 $$ LANGUAGE plv8;
 

@@ -130,11 +130,9 @@ export default new Vuex.Store({
         })
         .then( () => {
           return context.dispatch('fetchData', { 
-            url: '/list',
+            url: '/stories',
             payload: {
-              schema: 'application',
-              table: 'stories',
-              mutation: ['ranksInitData', 'storiesSetData']
+              mutation: [/*'ranksInitData'*/, 'storiesSetData']
             }
           })
         })

@@ -4,8 +4,7 @@ import Vue from 'vue'
 const state = {
   items: [],
   byId: {},
-  animateStar: false,
-  animateCircle: false
+  indexById: {}
 }
 
 async function editRow(context, row) {

@@ -1,3 +1,8 @@
+CREATE OR REPLACE FUNCTION stories(params jsonb, control jsonb) returns jsonb AS $$
+  var result = plv8.execute('with election as ( select * from active_election()) select stories.* from application.stories, election where election_id = (election.active_election->>\'id\')::bigint order by id desc')
+  return result
+$$ LANGUAGE plv8;
+
 CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb AS $$
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)

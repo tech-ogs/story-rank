@@ -43,7 +43,7 @@ export default {
         }
         return result
       },
-      getImg: (url) => { return require('@/'+url) } 
+      getImg: (url) => { return url != null ? require('@/'+url) : require ('@/assets/thumbs/placeholder.jpg')} 
     }
   },
   computed: {
