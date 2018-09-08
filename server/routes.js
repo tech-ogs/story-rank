@@ -1,5 +1,7 @@
 var express = require('express')
 var router = express.Router()
+var multer  = require('multer')
+var upload = multer({ dest: 'uploads/' })
 
 
 var path = require('path');
@@ -9,6 +11,8 @@ var query = require(path.join(__dirname , 'common/query.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
 var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
 var stories = require(path.join(__dirname , 'modules/stories/stories.js'))
+var media = require(path.join(__dirname, 'modules/media/media.js'))
+
 // middleware
 
 var checkAuth = function (req, res, next) {
@@ -22,7 +26,7 @@ var checkAuth = function (req, res, next) {
 
 var handler = function(fn) {
   return function(req, res, next) {
-    fn(req, res)
+    fn(req, res, next)
     .then(
       function(result) {
         res.json(result)
@@ -106,7 +110,7 @@ router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
 router.post('/stories', checkAuth, handler(stories.list))
 router.post('/edit_row', checkAuth, handler(stories.editRow))
-router.post('/media/upload', checkAuth, handler(media.upload))
+router.post('/media/upload', checkAuth, upload.single('imgfile'), handler(media.upload))
 router.post('/create_row', checkAuth, handler(stories.createRow))
 
 /* to get debug data for client work only, comment in production */

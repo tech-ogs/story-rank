@@ -18,7 +18,19 @@
 
       <b-row>
         <b-col cols="4"> 
-          <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
+
+		  <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
+		  <b-form enctype="multipart/form-data">
+
+		  <b-form-file v-model="imageFile" state="true" name="imgfile" v-if="mode === 'edit'" 
+  			style="width: 300px;"
+			@change="fileChange($event.target.name, $event.target.files)"
+			accept="image/jpeg, image/png, image/gif"
+			placeholder="Image file..." >
+		  </b-form-file>
+	
+		  </b-form>
+
           <span v-if="mode === 'view'" class="story-title">
             {{ row.attributes.shortTitle }}
           <i class="fa fa-fw fa-question"></i>
@@ -38,6 +50,7 @@
 		  </div>
 
         </b-col>
+
         <b-col class="story-title-container">
           <span v-if="mode === 'view'" class="story-title">
             {{ row.attributes.title }}
@@ -154,8 +167,10 @@ export default {
   data () {
     return {
       getImg: (url) => { 
-        return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
+        //return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
+        return url != null ? url : '/assets/thumbs/placeholder.jpg'
 	  },
+	  imageFile: '',
       editRow: {
 		id: '',
 		election_id: '',
@@ -205,8 +220,19 @@ export default {
 	},
 	doSave: function( action, editRow ) {
 		this.$store.dispatch(action, editRow)
-	}
+	},
 
+	saveFile(formData) {
+	},
+
+	fileChange(fieldName, fileList) {
+
+		if (!fileList.length) return;
+		var fileObj = fileList[0]
+		// async ..
+		console.log ('StoryDetail fileChange', fileObj, this.row.id)
+		this.$store.dispatch('storyImageUpload', { fileObj : fileObj, id : this.row.id })
+	}
   },
   created() {
 	this.editRow.id = this.row.id
@@ -244,6 +270,10 @@ export default {
     text-align: left;
   }
 
+
+  .image-uploader {
+	z-index: 10;
+  }
   .story-excerpt {
   }
 

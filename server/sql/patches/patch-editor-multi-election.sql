@@ -48,6 +48,7 @@ alter table application.user_elections add constraint user_elections_election_id
 create table application.media (
 	id  bigserial primary key,
 	name  character varying,
+	type character varying,
 	attributes  json,
 	data  bytea,
 	creation_date timestamp,

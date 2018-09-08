@@ -31,6 +31,12 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
 
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION set_story_thumbnail ( id bigint,  url varchar) returns jsonb AS $$
+
+	plv8.execute('update application.stories set attributes = jsonb_set(attributes, $1, $2) where id = $3', [['image'], '"' + url + '"', id])
+
+$$ LANGUAGE plv8;
+
 CREATE OR REPLACE FUNCTION create_row(session jsonb,  params jsonb) returns jsonb AS $$
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)

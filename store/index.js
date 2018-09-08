@@ -132,7 +132,7 @@ export default new Vuex.Store({
           return context.dispatch('fetchData', { 
             url: '/stories',
             payload: {
-              mutation: [/*'ranksInitData'*/, 'storiesSetData']
+              mutation: [/*'ranksInitData',*/ 'storiesSetData']
             }
           })
         })

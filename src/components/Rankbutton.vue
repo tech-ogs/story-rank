@@ -43,7 +43,8 @@ export default {
   },
   methods: {
       getImg: (url) => { 
-        return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
+        // return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
+        return url != null ? url : '/assets/thumbs/placeholder.jpg'
       },
 
       handleClick: function () { 

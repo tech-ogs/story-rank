@@ -51,6 +51,30 @@ async function createRow(context, row) {
 
 }
 
+async function uploadImage(context, id, fileObj) {
+	console.log ('uploadImage', id, fileObj)
+    var formData = new FormData()
+    formData.append('imgfile', fileObj)
+	formData.append('storyId', id)
+	var headers = new Headers();
+	//headers.append('Content-Type', undefined);
+	var response;
+	try {
+		response = await window.fetch('/media/upload', {
+		  method: 'post',
+		  credentials: 'same-origin',
+		  headers: headers,
+		  body: formData
+		}) 
+		var jsonData = await response.json()
+		jsonData.storyId = id
+		context.commit('storySetImage', jsonData)
+	}
+	catch (err) {
+		throw (new Error ('error uploading image: ' + err.message) )
+	}
+
+}
 function reindex () { 
     var byId = {}
     var indexById = {}
@@ -140,7 +164,11 @@ const actions = {
 	},
 	storiesCreateRow(context, row) {
 		return createRow(context, row)
-	}
+	},
+    storyImageUpload (context, params) {
+        return uploadImage(context, params.id, params.fileObj)
+    }
+
 }
 
 // mutations
@@ -168,6 +196,9 @@ const mutations = {
   */
 	state.items.splice(0, 0, row)
 	reindex()
+  },
+  storySetImage: (state, params) => {
+	state.byId[params.storyId].attributes.image = params.thumbUrl
   }
 }
 
