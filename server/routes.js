@@ -98,12 +98,14 @@ router.use('/static', checkAuth, function(req,res,next){
   express.static(path.join(__dirname, '../dist/static'))(req, res, next);
 })
 
+var cacheTime = 86400000*180;     // 180 days roughly 6 months
+
 router.use('/cache', checkAuth, function(req,res,next){
-  express.static(path.join(__dirname, '../cache'))(req, res, next);
+  express.static(path.join(__dirname, '../cache'), { maxAge: cacheTime } )(req, res, next);
 })
 
 router.use('/assets', checkAuth, function(req,res,next){
-  express.static(path.join(__dirname, '../dist/static'))(req, res, next);
+  express.static(path.join(__dirname, '../dist/static'), { maxAge: cacheTime })(req, res, next);
 })
 
 router.post('/shell', checkAuth, handler(auth.shell)) 
