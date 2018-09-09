@@ -6,7 +6,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/logo.png" class="logo-icon" alt="WTF-2">
+          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
           {{ election.label }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -187,7 +187,7 @@ export default {
 		}
 	},
 	addRow: function() { 
-		this.$store.commit('dashSetDetailRow', {id: null, attributes: { title : null, excerpt: null } } )
+		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
 		this.$store.commit('dashSetMode', 'detail')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')

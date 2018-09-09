@@ -17,11 +17,12 @@ var path = require('path');
 var userid = require('userid');
 
 const basePath = path.join(__dirname, '../../..')
-const mediaDir = path.join( basePath, '/dist/static/')
+const mediaDir = path.join( basePath, '/cache/')
 const thumbDir = path.join ( mediaDir, '/thumbs/')
+
 console.log ('mediaDir: ', mediaDir)
 
-const urlBase = '/assets'
+const urlBase = '/cache'
 
 function canGenerateMediaPreview(type) {
     var result = false;
@@ -147,6 +148,7 @@ function saveMediaThumbnail (fileObj, docId, imgBuff) {
                 reject(err);
             }
         })
+
     });
 }
 
@@ -238,7 +240,7 @@ async function patchReferencingRow(params, data) {
 
 	var client = getClient()
 	try {
-		if (params.storyId != null) {
+		if (params.storyId != null && !params.storyId.match(/null/)) {
 			await client.query ('select set_story_thumbnail($1, $2)', [params.storyId, data.thumbUrl])
 		}
 	}

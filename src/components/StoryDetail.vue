@@ -232,16 +232,27 @@ export default {
 		// async ..
 		console.log ('StoryDetail fileChange', fileObj, this.row.id)
 		this.$store.dispatch('storyImageUpload', { fileObj : fileObj, id : this.row.id })
+		.then((ret) => {
+			if (this.row.id == null) { 
+				this.editRow.attributes.image = ret.thumbUrl
+				this.row.attributes.image = ret.thumbUrl
+			}
+		})
+		.catch((err) => {
+			throw (err)
+		})
+			
 	}
   },
   created() {
 	this.editRow.id = this.row.id
 	this.editRow.submitter_id = this.row.submitter_id || this.user.id
 	this.editRow.election_id = this.row.election_id || this.election.id
-	this.editRow.attributes.shortTitle = this.row.attributes.shortTitle
-	this.editRow.attributes.title = this.row.attributes.title
-	this.editRow.attributes.excerpt = this.row.attributes.excerpt
-	this.editRow.attributes.url = this.row.attributes.url
+	this.editRow.attributes.shortTitle = this.row.attributes.shortTitle || ''
+	this.editRow.attributes.title = this.row.attributes.title || ''
+	this.editRow.attributes.excerpt = this.row.attributes.excerpt || ''
+	this.editRow.attributes.url = this.row.attributes.url || ''
+	this.editRow.attributes.image = this.row.attributes.image || ''
   },
   mounted () { 
   }

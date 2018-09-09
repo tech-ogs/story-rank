@@ -101,21 +101,27 @@ var webpackConfig = merge(baseWebpackConfig, {
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
+	
       {
         from: path.resolve(__dirname, '../src/assets'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       },
+	  
+	  
       {
         from: path.resolve(__dirname, '../node_modules/socket.io-client/dist/socket.io.js'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       },
+	  
+	  
       {
         from: path.resolve(__dirname, '../static/'),
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       },
+	  
 
     ])
   ]

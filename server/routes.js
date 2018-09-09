@@ -98,6 +98,10 @@ router.use('/static', checkAuth, function(req,res,next){
   express.static(path.join(__dirname, '../dist/static'))(req, res, next);
 })
 
+router.use('/cache', checkAuth, function(req,res,next){
+  express.static(path.join(__dirname, '../cache'))(req, res, next);
+})
+
 router.use('/assets', checkAuth, function(req,res,next){
   express.static(path.join(__dirname, '../dist/static'))(req, res, next);
 })

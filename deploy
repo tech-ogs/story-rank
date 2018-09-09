@@ -9,3 +9,11 @@ psql -U postgres stories < server/modules/media/sql/media.sql
 #./makethumbs
 yarn run build
 cp node_modules/socket.io-client/dist/socket.io.js dist/static/
+
+mkdir uploads
+mkdir uploads/thumbs
+chown -R postgres:postgres uploads
+
+mkdir cache
+mkdir cache/thumbs
+chown -R postgres:postgres cache

@@ -43,15 +43,8 @@ module.exports = {
         include: [resolve('src'), resolve('store'),resolve('test')]
       },
 /*
-      {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: utils.assetsPath('/[name].[hash:7].[ext]')
-        }
-      },
-*/
+removing this experimentally, want to do dynamic downloads to support authoring, hopefully with caching help from browser
+if possible we will explore file-loader
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
@@ -60,6 +53,7 @@ module.exports = {
           name: utils.assetsPath('thumbs/[name].[hash:7].[ext]')
         }
       },
+*/
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
         loader: 'url-loader',

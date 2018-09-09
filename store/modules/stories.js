@@ -57,24 +57,26 @@ async function uploadImage(context, id, fileObj) {
     formData.append('imgfile', fileObj)
 	formData.append('storyId', id)
 	var headers = new Headers();
-	//headers.append('Content-Type', undefined);
-	var response;
+	var result;
 	try {
-		response = await window.fetch('/media/upload', {
+		var response = await window.fetch('/media/upload', {
 		  method: 'post',
 		  credentials: 'same-origin',
 		  headers: headers,
 		  body: formData
 		}) 
-		var jsonData = await response.json()
-		jsonData.storyId = id
-		context.commit('storySetImage', jsonData)
+		var result = await response.json()
+		result.storyId = id
+        if (id != null) { 
+		    context.commit('storySetImage', result)
+        }
 	}
 	catch (err) {
 		throw (new Error ('error uploading image: ' + err.message) )
 	}
-
+    return result
 }
+
 function reindex () { 
     var byId = {}
     var indexById = {}
