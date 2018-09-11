@@ -59,3 +59,6 @@ alter table application.stories drop column image_id;
 alter table application.stories add column image_id bigint;
 alter table application.stories add constraint stories_media_id foreign key (image_id) references application.media(id);
 
+alter table application.ranks add column election_id bigint;
+alter table application.ranks add constraint ranks_election_id foreign key (election_id) references application.elections(id);
+

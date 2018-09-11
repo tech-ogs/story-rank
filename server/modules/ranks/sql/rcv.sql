@@ -1,0 +1,126 @@
+CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
+
+	var result = {
+	}
+
+	var tally = plv8.execute ('with x as ( select count(1) as total from ranktable where rank  = 1 ) , y as (select story_id, count(1) as tally from ranktable where rank = 1 group by story_id) select y.story_id, y.tally, x.total, y.tally::float / x.total::float as percentage from x, y order by tally desc')
+
+	if (tally[0].percentage > 0.5) {
+		result.winner = tally[0]
+	}
+	else {
+		result.loser = tally[tally.length-1]
+	}
+	result.tally = tally;
+
+	return result
+	
+$$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION rcv_redistribute_votes(loser jsonb) returns jsonb AS $$
+	
+	plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])
+
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jsonb AS $$
+
+	var winner = null
+	plv8.execute('create temp table ranktable as select * from application.ranks where election_id = $1', [election_id])
+	var ctr = 1
+	while (winner == null) {
+		plv8.elog(NOTICE, '\n\n round: ', ctr++ , '\n---------------\n')
+		plv8.find_function('dump_rankdata')()
+		var ret = plv8.find_function('rcv_round')();
+		plv8.find_function('dump_round_results')(ret)
+		if (ret.loser != null) {
+			plv8.find_function('rcv_redistribute_votes')(ret.loser)
+		}
+		else {
+			winner = ret.winner
+		}
+	}
+	return winner
+
+$$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION dump_round_results(result jsonb) returns jsonb AS $$
+	var table = 'tally: \n'
+	var table = 'story   count    percent\n'
+	result.tally.map((x) => {
+		table += x.story_id
+		table += '      '
+		table += x.tally
+		table += '      '
+		table += parseFloat(Math.round(x.percentage * 100) / 100).toFixed(2);
+		table += '\n'
+	})
+	table += '\n\n'
+	table += result.loser ? 'loser: ' + result.loser.story_id : 'winner: ' + result.winner.story_id
+	plv8.elog(NOTICE, table)
+$$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION dump_rankdata() returns jsonb AS $$
+	var ret = plv8.execute('with x as (select * from ranktable where rank >= 1 order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')
+	var table = 'user   ballot\n'
+	ret.map((x) => {
+		table += x.user_id
+		table += '      '
+		table += JSON.stringify(x.ballot)
+		table += '\n'
+	})
+	plv8.elog(NOTICE, table)
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION test_random_rcv() returns jsonb AS $$
+
+	var stmt = plv8.prepare('insert into application.ranks (election_id, user_id, story_id, rank) values ($1, $2, $3, $4)')
+
+	var election_id = plv8.execute('insert into application.elections (name, active) values ($1, $2) returning id', ['test_random_rcv', true]) [0].id
+
+	/* begin : unused, Math.ceil generates id 1 thru 10, for reference only */
+	var users = [1,2,3,4,5,6,7,8,9,10]
+	var candidates = [1,2,3,4,5,6,7,8,9,10]
+	/* end : unused */
+
+	var numUsers = Math.ceil(Math.random()*10)
+	var numChoices = Math.ceil(Math.random()*10)
+	var testData = []
+	var ballot
+	var choice
+	plv8.elog(NOTICE , 'numUsers, numChoices', numUsers, numChoices)
+	for (var i = 1; i<= numUsers; i++) {
+		ballot = []
+		for (var j = 1; j <= numChoices; j++) {
+			choice = Math.ceil(Math.random()*10)
+			if (ballot.indexOf(choice) < 0) {
+				ballot.push(choice)
+			}
+		}
+		testData.push(ballot)
+		ballot.forEach( (x, idx) => {
+			stmt.execute([election_id, i, x, idx+1])
+		})
+	} 
+	
+	var result = plv8.find_function('calculate_results_rcv')(election_id)
+
+	return {
+		winner : result.story_id
+	}
+	
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION remove_testdata_rcv() returns jsonb AS $$
+	var ids = plv8.execute('select id from application.elections where name = $1', ['test_random_rcv'])
+	ids.forEach( (election) => {
+		plv8.execute('delete from application.ranks where election_id = $1', [election.id])
+		plv8.execute('delete from application.stories where election_id = $1', [election.id])
+		plv8.execute('delete from application.elections where id = $1', [election.id])
+		plv8.execute('drop table if exists ranktable');
+	})
+$$ LANGUAGE plv8;
+
