@@ -26,9 +26,9 @@ CREATE OR REPLACE FUNCTION process_events() returns jsonb as $$
 
   var noop = function () {}
 
-  function broadcast(debugInfo, flagstr) {
+  function broadcast(debugInfo, flagstr, params) {
     plv8.find_function('set_flags')(flagstr)
-    var results = plv8.find_function('results')()
+    var results = plv8.find_function('results')(params)
     var dobj = {
       debugInfo : debugInfo,
       timestamp : (new Date()).getTime(),
@@ -39,7 +39,7 @@ CREATE OR REPLACE FUNCTION process_events() returns jsonb as $$
 
   function recalc(flagstr, params) {
     plv8.find_function('set_flags')(flagstr)
-    plv8.execute('select calculate_results_rcv(params.electionId)')
+    plv8.execute('select calculate_results_rcv($1)', [params.electionId])
     plv8.execute('update application.flags set value = $2 where name = $1', ['inprogress_recalc', false])
     plv8.execute('update application.flags set value = $2 where name = $1', ['done_recalc', true])
     result = 1 /* request another call into process_events */
@@ -68,13 +68,13 @@ request_recalc    inprogress_recalc   done_recalc   code
 
   var dispatch = { 
     000 : noop,
-    001 : function() { broadcast('001', '000') },
+    001 : function() { broadcast('001', '000', params.request_recalc) },
     010 : noop,
-    011 : function() { broadcast('011', '000') },
-    100 : function() { recalc ('010', params) },
-    101 : function() { recalc ('010', params) },
+    011 : function() { broadcast('011', '000', params.request_recalc) },
+    100 : function() { recalc ('010', params.request_recalc) },
+    101 : function() { recalc ('010', params.request_recalc) },
     110 : noop,
-    111 : function() { recalc ('010', params) }
+    111 : function() { recalc ('010', params.request_recalc) }
   } 
 
   dispatch[flagstr]()
