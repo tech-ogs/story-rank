@@ -24,7 +24,7 @@ function results (req, res) {
   var promise = new Promise(function(resolve, reject) {
     var session = req.session
     console.log('results:', session.id)
-    client.query('select results()', [], function (err, ret) {
+    client.query('select results($1)', [req.body], function (err, ret) {
       client.end()
       console.log('pg callback', err)
       if (err == null) {

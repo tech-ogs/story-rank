@@ -1,5 +1,8 @@
 CREATE OR REPLACE FUNCTION stories(params jsonb, control jsonb) returns jsonb AS $$
-  var result = plv8.execute('with election as ( select * from active_election()) select stories.* from application.stories, election where election_id = (election.active_election->>\'id\')::bigint order by id desc')
+  if (params.electionId == null) { 
+	throw ('stories retrieval failed, no electionId ')
+  }
+  var result = plv8.execute('select stories.* from application.stories where election_id = $1', [params.electionId])
   return result
 $$ LANGUAGE plv8;
 
@@ -24,7 +27,7 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
 
   /*update the flags to request a recalc*/
 
-  plv8.execute('update application.flags set value =  $2 where name = $1', ['request_recalc', true])
+  plv8.execute('update application.flags set value =  $2, params = $3  where name = $1', ['request_recalc', true, { electionId : params.election_id } ])
   
   var ret = plv8.execute('select * from application.stories where id = $1', [params.id])[0]
   return ret
@@ -45,7 +48,7 @@ CREATE OR REPLACE FUNCTION create_row(session jsonb,  params jsonb) returns json
   var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, attributes) values ($1, $2, $3) returning *', [params.submitter_id, params.election_id, params.attributes])[0]
   /*update the flags to request a recalc*/
 
-  plv8.execute('update application.flags set value =  $2 where name = $1', ['request_recalc', true])
+  plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election_id}])
 
   return ret
 $$ LANGUAGE plv8;

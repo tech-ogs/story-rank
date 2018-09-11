@@ -62,3 +62,10 @@ alter table application.stories add constraint stories_media_id foreign key (ima
 alter table application.ranks add column election_id bigint;
 alter table application.ranks add constraint ranks_election_id foreign key (election_id) references application.elections(id);
 
+alter table application.results add column election_id bigint;
+alter table application.results add constraint results_election_id foreign key (election_id) references application.elections(id);
+alter table application.results add constraint results_election_id_unique unique (election_id);
+update application.results set election_id = (select id from application.elections where name = 'wtf-q1');
+delete from application.results where id not in ( select id from application.results order by id desc limit 1);
+
+alter table application.flags add column params jsonb;

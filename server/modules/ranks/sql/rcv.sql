@@ -20,13 +20,16 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION rcv_redistribute_votes(loser jsonb) returns jsonb AS $$
 	
-	plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])
+	/*plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])*/
+	plv8.execute ('delete from ranktable where story_id = $1', [loser.story_id])
 
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jsonb AS $$
 
+	var results = [];
 	var winner = null
+	plv8.execute('drop table if exists ranktable');
 	plv8.execute('create temp table ranktable as select * from application.ranks where election_id = $1', [election_id])
 	var ctr = 1
 	while (winner == null) {
@@ -35,12 +38,15 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		var ret = plv8.find_function('rcv_round')();
 		plv8.find_function('dump_round_results')(ret)
 		if (ret.loser != null) {
+			results.unshift(ret.loser.story_id)
 			plv8.find_function('rcv_redistribute_votes')(ret.loser)
 		}
 		else {
+			results.unshift(ret.winner.story_id)
 			winner = ret.winner
 		}
 	}
+	plv8.execute('insert into application.results (ranks, election_id) values ($1::jsonb, $2) on conflict (election_id) do update set rank_date = now(), ranks = $1::jsonb', [results, election_id])
 	return winner
 
 $$ LANGUAGE plv8;
@@ -119,6 +125,7 @@ CREATE OR REPLACE FUNCTION remove_testdata_rcv() returns jsonb AS $$
 	ids.forEach( (election) => {
 		plv8.execute('delete from application.ranks where election_id = $1', [election.id])
 		plv8.execute('delete from application.stories where election_id = $1', [election.id])
+		plv8.execute('delete from application.results where election_id = $1', [election.id])
 		plv8.execute('delete from application.elections where id = $1', [election.id])
 		plv8.execute('drop table if exists ranktable');
 	})

@@ -29,6 +29,7 @@ export default new Vuex.Store({
 
 
     fetchData(context, params) { 
+		console.log ('fetchData', params)
       var promise = new Promise( (resolve, reject) => {
         var headers = new Headers();
         headers.append('Content-Type', 'application/json');
@@ -69,11 +70,10 @@ export default new Vuex.Store({
     },
 
     initStore(context, params) {
-
       var promise = new Promise((resolve, reject) => {
-        context.dispatch('initSockets', params)
+	    context.dispatch('initSockets', params)
         .then( () => {
-          context.dispatch('fetchData',{ 
+          return context.dispatch('fetchData',{ 
             url: '/shell',
             payload: {
               schema: 'application',
@@ -81,6 +81,8 @@ export default new Vuex.Store({
               mutation: 'dashInitialize'
             }
           })
+		})
+		.then( (shell) => {
           context.dispatch('fetchData',{ 
             url: '/list',
             payload: {
@@ -124,7 +126,8 @@ export default new Vuex.Store({
           return context.dispatch('fetchData', { 
             url: '/results',
             payload: {
-              mutation: 'resultsSetData'
+              mutation: 'resultsSetData',
+			  electionId: context.rootState.dashboard.election.id
             }
           })
         })
@@ -132,6 +135,7 @@ export default new Vuex.Store({
           return context.dispatch('fetchData', { 
             url: '/stories',
             payload: {
+			  electionId: context.rootState.dashboard.election.id,
               mutation: [/*'ranksInitData',*/ 'storiesSetData']
             }
           })

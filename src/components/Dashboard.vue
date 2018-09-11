@@ -220,7 +220,8 @@ export default {
       this.$store.dispatch('initStore', {socket: socket})
       .then(() => {
         //console.log('checking state stories', this.items)
-        //console.log('checking state results', JSON.stringify(this.results))
+        console.log('checking state election', JSON.stringify(this.election))
+        console.log('checking state results', JSON.stringify(this.results))
       })
     }
 
