@@ -2,7 +2,7 @@
   <b-container small ref="trow">
 		<b-row :class="rowClass(row)" v-touch:swipe.left="swipeHandler"  v-touch:swipe.right="swipeHandler">
 					<b-col cols="4"> 
-						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
+						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" @click.stop="handleThumbClick(row.attributes.url)"> </b-img>
 					</b-col>
 					<b-col class="story-title-container">
 						<span class="story-title">
@@ -64,6 +64,11 @@ export default {
 		console.log ('swipe handler in row', this.row)
 		this.$store.commit('dashSetDetailRow', this.row)
 		this.$store.commit('dashSetMode', 'detail')
+	},
+	handleThumbClick:  (url) => {
+		console.log ('handleThumbClick: ', 	url)
+  		var win = window.open(url, '_blank');
+  		win.focus();
 	}
   },
   mounted () { 
