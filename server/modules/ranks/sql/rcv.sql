@@ -6,7 +6,7 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 /*
 	var tally = plv8.execute ('with x as ( select count(1) as total from ranktable where rank  = 1 ) , y as (select story_id, count(1) as tally from ranktable where rank = 1 group by story_id) select y.story_id, y.tally, x.total, y.tally::float / x.total::float as percentage from x, y order by tally desc')
 */
-	var tally = plv8.execute('with t as (select count(1) as total from ranktable), s as (select distinct story_id from ranktable), x as ( select story_id, count(1) as tally from ranktable where ranktable.rank = 1 group by story_id) select s.story_id, coalesce(x.tally,0) as tally , t.total , coalesce(x.tally,0)::float / t.total::float as percentage from s left join x on s.story_id = x.story_id , t order by tally desc')
+	var tally = plv8.execute('with t as (select count(1) as total from ranktable where rank = 1), s as (select distinct story_id from ranktable), x as ( select story_id, count(1) as tally from ranktable where ranktable.rank = 1 group by story_id) select s.story_id, coalesce(x.tally,0) as tally , t.total , coalesce(x.tally,0)::float / t.total::float as percentage from s left join x on s.story_id = x.story_id , t order by tally desc')
 
 	if (tally[0].percentage > 0.5) {
 		result.winner = tally[0]
@@ -24,8 +24,17 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 		}
 
 	}
-	result.tally = tally;
 
+	/* force ballot order if there was only one ballot */
+
+	if (tally[0].percentage === 1.0 && tally[0].tally === 1) { 
+		var ballot = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')[0].ballot
+		ballot.forEach( (storyId, idx) => {
+			tally[idx].story_id = storyId
+		})
+	}
+
+	result.tally = tally;
 	return result
 	
 $$ LANGUAGE plv8;
@@ -33,8 +42,9 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION rcv_redistribute_votes(loser jsonb) returns jsonb AS $$
 	
-	plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])
+	/*plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])*/
 	plv8.execute ('delete from ranktable where story_id = $1', [loser.story_id])
+	plv8.execute('with y as ( with x as ( select * from ranktable order by user_id, rank ) select row_number() over (partition by user_id), * from x ) update ranktable set rank = y.row_number from y where ranktable.id = y.id');
 
 $$ LANGUAGE plv8;
 
@@ -57,7 +67,12 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		else {
 			ret.tally.forEach( (x) => {
 				if (x.story_id !== ret.winner.story_id) {
-					results.unshift(x.story_id)
+					if (x.tally > 0) { 
+						results.unshift(x.story_id)
+					}
+					else {
+						results.push(x.story_id)
+					}
 				}
 			})
 			results.unshift(ret.winner.story_id)
@@ -66,18 +81,20 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 	}
 	plv8.elog (LOG, 'going to insert results:', election_id, results)
 	plv8.execute('insert into application.results (ranks, election_id) values ($1::jsonb, $2) on conflict (election_id) do update set rank_date = now(), ranks = $1::jsonb', [results, election_id])
-	return winner
+	return results
 
 $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION dump_round_results(result jsonb) returns jsonb AS $$
 	var table = 'tally: \n'
-	var table = 'story   count    percent\n'
+	var table = '\nstory   count   total     percent\n'
 	result.tally.map((x) => {
 		table += x.story_id
 		table += '      '
 		table += x.tally
+		table += '      '
+		table += x.total
 		table += '      '
 		table += parseFloat(Math.round(x.percentage * 100) / 100).toFixed(2);
 		table += '\n'
@@ -89,7 +106,7 @@ $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION dump_rankdata() returns jsonb AS $$
-	var ret = plv8.execute('with x as (select * from ranktable where rank >= 1 order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')
+	var ret = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')
 	var table = 'user   ballot\n'
 	ret.map((x) => {
 		table += x.user_id
@@ -133,9 +150,7 @@ CREATE OR REPLACE FUNCTION test_random_rcv() returns jsonb AS $$
 	
 	var result = plv8.find_function('calculate_results_rcv')(election_id)
 
-	return {
-		winner : result.story_id
-	}
+	return result
 	
 $$ LANGUAGE plv8;
 
