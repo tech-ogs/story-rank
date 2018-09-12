@@ -33,9 +33,9 @@
               </div>
               </div>
             </b-nav-item>
-            <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> New Story </b-button>
+            <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> <b>NEW STORY</b> </b-button>
 			<br>
-            <b-button size="sm" @click="doLogout"> Sign out </b-button>
+            <b-button size="sm" @click="doLogout"> <b>SIGN OUT</b> </b-button>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
