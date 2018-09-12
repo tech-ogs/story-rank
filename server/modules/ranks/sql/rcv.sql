@@ -3,13 +3,26 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 	var result = {
 	}
 
+/*
 	var tally = plv8.execute ('with x as ( select count(1) as total from ranktable where rank  = 1 ) , y as (select story_id, count(1) as tally from ranktable where rank = 1 group by story_id) select y.story_id, y.tally, x.total, y.tally::float / x.total::float as percentage from x, y order by tally desc')
+*/
+	var tally = plv8.execute('with t as (select count(1) as total from ranktable), s as (select distinct story_id from ranktable), x as ( select story_id, count(1) as tally from ranktable where ranktable.rank = 1 group by story_id) select s.story_id, coalesce(x.tally,0) as tally , t.total , coalesce(x.tally,0)::float / t.total::float as percentage from s left join x on s.story_id = x.story_id , t order by tally desc')
 
 	if (tally[0].percentage > 0.5) {
 		result.winner = tally[0]
 	}
 	else {
-		result.loser = tally[tally.length-1]
+		for (let i=tally.length-1; i>=0; i--) {
+			if (tally[i].tally > 0) {
+				result.loser = tally[i]
+				break;
+			}
+		}
+
+		if (result.loser == null) {
+			throw ('rcv round tally error, cannot find loser')
+		}
+
 	}
 	result.tally = tally;
 
@@ -42,6 +55,11 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 			plv8.find_function('rcv_redistribute_votes')(ret.loser)
 		}
 		else {
+			ret.tally.forEach( (x) => {
+				if (x.story_id !== ret.winner.story_id) {
+					results.unshift(x.story_id)
+				}
+			})
 			results.unshift(ret.winner.story_id)
 			winner = ret.winner
 		}
