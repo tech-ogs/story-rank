@@ -15,6 +15,17 @@
 	  </b-row>
 	  <br>
 	  <br>
+	  <b-row v-if="mode === 'edit'" >
+		<b-col>
+	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
+				style="width: 300px;"
+				@change="fileChange($event.target.name, $event.target.files)"
+				accept="image/jpeg, image/png, image/gif"
+				placeholder="Image file..." >
+		  </b-form-file>
+		  </b-form>
+		</b-col>
+      </b-row>
 
       <b-row>
         <b-col cols="4"> 
@@ -22,14 +33,6 @@
 		  <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
 		  <b-form enctype="multipart/form-data">
 
-		  <b-form-file v-model="imageFile" state="true" name="imgfile" v-if="mode === 'edit'" 
-  			style="width: 300px;"
-			@change="fileChange($event.target.name, $event.target.files)"
-			accept="image/jpeg, image/png, image/gif"
-			placeholder="Image file..." >
-		  </b-form-file>
-	
-		  </b-form>
 
           <span v-if="mode === 'view'" class="story-title">
             {{ row.attributes.shortTitle }}
