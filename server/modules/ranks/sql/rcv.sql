@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 		result.winner = tally[0]
 	}
 	else {
-		for (let i=tally.length-1; i>=0; i--) {
+		for (var i=tally.length-1; i>=0; i--) {
 			if (tally[i].tally > 0) {
 				result.loser = tally[i]
 				break;
@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 
 	if (tally[0].percentage === 1.0 && tally[0].tally === 1) { 
 		var ballot = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')[0].ballot
-		ballot.forEach( (storyId, idx) => {
+		ballot.forEach( function (storyId, idx)  {
 			tally[idx].story_id = storyId
 		})
 	}
@@ -65,7 +65,7 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 			plv8.find_function('rcv_redistribute_votes')(ret.loser)
 		}
 		else {
-			ret.tally.forEach( (x) => {
+			ret.tally.forEach( function (x)  {
 				if (x.story_id !== ret.winner.story_id) {
 					if (x.tally > 0) { 
 						results.unshift(x.story_id)
@@ -89,7 +89,7 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION dump_round_results(result jsonb) returns jsonb AS $$
 	var table = 'tally: \n'
 	var table = '\nstory   count   total     percent\n'
-	result.tally.map((x) => {
+	result.tally.map( function (x)  {
 		table += x.story_id
 		table += '      '
 		table += x.tally
@@ -108,7 +108,7 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION dump_rankdata() returns jsonb AS $$
 	var ret = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')
 	var table = 'user   ballot\n'
-	ret.map((x) => {
+	ret.map( function (x)  {
 		table += x.user_id
 		table += '      '
 		table += JSON.stringify(x.ballot)
@@ -143,7 +143,7 @@ CREATE OR REPLACE FUNCTION test_random_rcv() returns jsonb AS $$
 			}
 		}
 		testData.push(ballot)
-		ballot.forEach( (x, idx) => {
+		ballot.forEach( function (x, idx)  {
 			stmt.execute([election_id, i, x, idx+1])
 		})
 	} 
@@ -156,7 +156,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION remove_testdata_rcv() returns jsonb AS $$
 	var ids = plv8.execute('select id from application.elections where name = $1', ['test_random_rcv'])
-	ids.forEach( (election) => {
+	ids.forEach( function (election)  {
 		plv8.execute('delete from application.ranks where election_id = $1', [election.id])
 		plv8.execute('delete from application.stories where election_id = $1', [election.id])
 		plv8.execute('delete from application.results where election_id = $1', [election.id])
