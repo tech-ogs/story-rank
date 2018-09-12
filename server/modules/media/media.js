@@ -116,7 +116,7 @@ async function addMedia (fileObj, attributes, sessionParams, client ) {
 function renameMediaFile (fileObj, docId) {
     return new Promise(function(resolve, reject) { 
         var path = fileObj.path;
-        var newPath = getMediaFilePath({id : docId, name : fileObj.path});
+        var newPath = getMediaFilePath({id : docId, name : fileObj.originalname});
         fs.rename(path, newPath,
         function(err) {
             if (err == null) {
@@ -241,7 +241,7 @@ async function patchReferencingRow(params, data) {
 	var client = getClient()
 	try {
 		if (params.storyId != null && !params.storyId.match(/null/)) {
-			await client.query ('select set_story_thumbnail($1, $2)', [params.storyId, data.thumbUrl])
+			await client.query ('select set_story_thumbnail($1, $2, $3)', [params.storyId, data.thumbUrl, data.url])
 		}
 	}
 	catch(err) {

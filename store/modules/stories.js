@@ -56,6 +56,7 @@ async function uploadImage(context, id, fileObj) {
     var formData = new FormData()
     formData.append('imgfile', fileObj)
 	formData.append('storyId', id)
+	formData.append('name', fileObj.name)
 	var headers = new Headers();
 	var result;
 	try {
@@ -215,7 +216,10 @@ const mutations = {
 	reindex()
   },
   storySetImage: (state, params) => {
-	state.byId[params.storyId].attributes.image = params.thumbUrl
+    if (params.storyId != null) {
+	    state.byId[params.storyId].attributes.image = params.thumbUrl
+	    state.byId[params.storyId].attributes.full_image = params.url
+    }
   }
 }
 

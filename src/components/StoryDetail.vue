@@ -23,6 +23,9 @@
 				accept="image/jpeg, image/png, image/gif"
 				placeholder="Image file..." >
 		  </b-form-file>
+			<span v-if="editRow.attributes.full_image != null"> 
+				{{ editRow.attributes.full_image}} <b-button size="sm" @click="useImage(editRow.attributes.full_image)">use</b-button>
+			</span>
 		  </b-form>
 		</b-col>
       </b-row>
@@ -204,6 +207,8 @@ export default {
 		submitter_id: '',
 		creation_date: '',
 		attributes: {
+			image: '',
+			full_image: '',
 			shortTitle: '',
 			title: '',
 			excerpt: '',
@@ -252,6 +257,9 @@ export default {
 
 	saveFile(formData) {
 	},
+	useImage (x) {
+		this.editRow.attributes.url = x 
+	},
 
 	fileChange(fieldName, fileList) {
 
@@ -263,7 +271,7 @@ export default {
 		.then((ret) => {
 			//if (this.row.id == null) { 
 				this.editRow.attributes.image = ret.thumbUrl
-				this.row.attributes.image = ret.thumbUrl
+				this.editRow.attributes.full_image = ret.url
 			//}
 		})
 		.catch((err) => {
@@ -283,6 +291,7 @@ export default {
 	this.editRow.attributes.excerpt = this.row.attributes.excerpt || ''
 	this.editRow.attributes.url = this.row.attributes.url || ''
 	this.editRow.attributes.image = this.row.attributes.image || ''
+	this.editRow.attributes.full_image = this.row.attributes.full_image || ''
   },
   mounted () { 
   }
