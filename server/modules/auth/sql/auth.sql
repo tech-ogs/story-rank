@@ -7,13 +7,13 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 	var election = plv8.find_function('active_election')()
 
 	var userElectionDetails = plv8.execute ('select * from application.user_elections where election_id = $1  and user_id = (select user_id from application.sessions where id = $2)', [election.id, cookie])[0] || {}
-    var ranks = plv8.execute('with x as (select story_id from application.ranks where user_id = (select user_id from application.sessions where id = $1) order by rank asc) select jsonb_agg(x.story_id) as ranks from x', [cookie])[0] || {}
+    var ranks = plv8.execute('with x as (select story_id from application.ranks where election_id = $1 and user_id = (select user_id from application.sessions where id = $2) order by rank asc) select jsonb_agg(x.story_id) as ranks from x', [election.id, cookie])[0]
 
 	result.user = userDetails
 	result.user.sessionId = cookie
 	result.election = election;
 	result.userElectionDetails = userElectionDetails
-    result.myranks = ranks.ranks
+    result.myranks = ranks.ranks != null ? ranks.ranks : []
     
     return result
 
@@ -26,16 +26,6 @@ CREATE OR REPLACE FUNCTION active_election() returns jsonb AS $$
 	return election
 
 $$ LANGUAGE plv8;
-
-CREATE OR REPLACE FUNCTION myranks(cookie bigint) returns jsonb AS $$
-  var favorites = plv8.execute('select jsonb_object_agg(story_id, true) as favorites from application.ranks where favorite = true and user_id = (select user_id from application.sessions where id = $1)', [cookie])[0].favorites || {}
-
-  return {
-    ranks : ranks,
-    favorites: favorites
-  }
-$$ LANGUAGE plv8;
-
 
 
 CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$

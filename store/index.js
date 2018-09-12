@@ -113,30 +113,22 @@ export default new Vuex.Store({
             }
           })
         })
-        .then( () => {
-          return context.dispatch('fetchData', { 
-            url: '/myranks',
-            payload: {
-              mutation: 'ranksSetData'
-            }
-          })
-        })
 */
-        .then( () => {
-          return context.dispatch('fetchData', { 
-            url: '/results',
-            payload: {
-              mutation: 'resultsSetData',
-			  electionId: context.rootState.dashboard.election.id
-            }
-          })
-        })
         .then( () => {
           return context.dispatch('fetchData', { 
             url: '/stories',
             payload: {
 			  electionId: context.rootState.dashboard.election.id,
               mutation: [/*'ranksInitData',*/ 'storiesSetData']
+            }
+          })
+        })
+        .then( () => {
+          return context.dispatch('fetchData', { 
+            url: '/results',
+            payload: {
+              action: 'resultsSetData',
+			  electionId: context.rootState.dashboard.election.id
             }
           })
         })
@@ -149,7 +141,7 @@ export default new Vuex.Store({
 
 
     initStoreTest(context, params) {
-
+		/* need shell here, retire myranks */
       context.commit('usersSetData', require('./testdata/users.json'))
       context.commit('commentsSetData', require('./testdata/comments.json'))
       context.commit('ranksSetData', require('./testdata/myranks.json'))

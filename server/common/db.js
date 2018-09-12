@@ -22,9 +22,11 @@ function query(client, params) {
   var promise = new Promise(function(resolve, reject) {
     client.query(params.cmd,params.params, function(err, ret) {
       if (err == null) {
+	  	console.log ('commit ok')
         resolve(ret)
       }
       else {
+	  	console.log ('commit failed')
         reject(err)
       }
     })
@@ -32,7 +34,7 @@ function query(client, params) {
   return promise
 }
 
-function processEvents() {
+function processEventsOld() {
   console.log ('processEvents 0')
   var promise = new Promise(function(resolve, reject) {
     var client = getClient()   
@@ -62,6 +64,24 @@ function processEvents() {
   })
   return promise
 }
+
+async function processEvents() {
+	console.log ('processEvents')
+	try {
+		do {
+			var client = getClient()
+			var ret = await query(client, {cmd: 'select process_events()', params: []})
+			await query(client, {cmd: 'commit', params: []})
+			await endClient(client)
+			console.log ('process Events ret: ', ret)
+		} while (ret.rows != null && ret.rows[0] != null && ret.rows[0].process_events != null) 
+	}
+	catch(err) {
+		throw(err)
+	}
+	return null
+}
+
 
 /*  commit wrapper
     forces an event processing call after each commit

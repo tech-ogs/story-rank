@@ -102,7 +102,7 @@ const getters = {
   },
   storiesGetItems: (state, getters) => {
     //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
-    var ranks = getters.ranks
+    //var ranks = getters.ranks
 	/*
     var filtered = state.items.filter( (story) => {
       var result = true
@@ -122,6 +122,8 @@ const getters = {
 	}
 
     console.log('filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
+	return filtered
+	/*
     console.log('ranks', ranks)
     var ranks = getters.ranks
     var sorted = filtered.sort ( (a ,b) => {
@@ -130,6 +132,7 @@ const getters = {
 
     console.log('sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     return sorted
+	*/
   },
 
 
@@ -185,6 +188,12 @@ const mutations = {
     Object.assign(state.filters, params)
     //console.log('filters:', state.filters)
   },
+  storiesSort: (state, ranks) => {
+    state.items.sort( (a ,b) => {
+      return ranks.indexOf(b.id) - ranks.indexOf(a.id)
+    })
+  },
+
   storiesEditRow: (state, row) => {
     var idx = state.indexById[row.id]
     delete state.items[idx]

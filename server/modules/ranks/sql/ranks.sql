@@ -1,25 +1,15 @@
-CREATE OR REPLACE FUNCTION myranks(cookie bigint) returns jsonb AS $$
-  var ranks = plv8.execute('select jsonb_object_agg(story_id, rank) as ranks from application.ranks where user_id = (select user_id from application.sessions where id = $1)', [cookie])[0].ranks || {}
-  var favorites = plv8.execute('select jsonb_object_agg(story_id, true) as favorites from application.ranks where favorite = true and user_id = (select user_id from application.sessions where id = $1)', [cookie])[0].favorites || {}
-
-  return {
-    ranks : ranks,
-    favorites: favorites
-  }
-$$ LANGUAGE plv8;
-
 CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jsonb AS $$
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)
   }
   plv8.execute('delete from application.ranks where user_id = $1', [session.user_id])
 
-  plv8.elog(LOG, JSON.stringify(params)) 
-  var insertStmt = plv8.prepare('insert into application.ranks (user_id, story_id, rank) values ($1, $2, $3)')
+  plv8.elog(LOG, ['rank_update params:', JSON.stringify(params)]) 
+  var insertStmt = plv8.prepare('insert into application.ranks (user_id, story_id, rank, election_id) values ($1, $2, $3, $4)')
   params.myranks.forEach(function(storyId, pos) {
     plv8.elog(LOG, [ session.user_id, storyId, pos+1]) 
 	if (storyId != null) {
-    	insertStmt.execute([ session.user_id, storyId, pos+1])
+    	insertStmt.execute([ session.user_id, storyId, pos+1, params.election.id])
 	}
   })
   insertStmt.free()
@@ -29,7 +19,7 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
 
   /*update the flags to request a recalc*/
 
-  plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election_id}])
+  plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election.id}])
 
 $$ LANGUAGE plv8;
 
@@ -38,7 +28,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION results(params jsonb) returns jsonb AS $$
 	if (params.electionId == null) {
-		throw ('error getting results, no electionId specified')
+		throw ('error getting results, no electionId specified: ' + JSON.stringify(params))
 	}
   var ret = plv8.execute('select ranks  from application.results where election_id = $1', [params.electionId]);
   if (ret == null || ret.length === 0) {

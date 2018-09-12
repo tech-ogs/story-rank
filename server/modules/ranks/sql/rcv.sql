@@ -20,7 +20,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION rcv_redistribute_votes(loser jsonb) returns jsonb AS $$
 	
-	/*plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])*/
+	plv8.execute ('update ranktable set rank = rank -1 where user_id in (select user_id from ranktable where story_id = $1 and rank = 1)', [loser.story_id])
 	plv8.execute ('delete from ranktable where story_id = $1', [loser.story_id])
 
 $$ LANGUAGE plv8;
@@ -46,6 +46,7 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 			winner = ret.winner
 		}
 	}
+	plv8.elog (LOG, 'going to insert results:', election_id, results)
 	plv8.execute('insert into application.results (ranks, election_id) values ($1::jsonb, $2) on conflict (election_id) do update set rank_date = now(), ranks = $1::jsonb', [results, election_id])
 	return winner
 

@@ -7,7 +7,7 @@ const registerHandlers = (context, socket) => {
 
     socket.on('broadcast', function (data) {
       console.log('broadcast: ', this.id, data);
-      context.commit('resultsSetData', JSON.parse(data).results)
+      context.dispatch('resultsSetData', JSON.parse(data).results)
     });
     socket.on('ack1', function (data) {
       console.log('ack1: ', this.id, data);
