@@ -113,7 +113,7 @@
         </b-col>
         <b-col class="story-submitter-container">
           <span v-if="mode === 'view'" class="story-submitter">
-            {{ users[row.submitter_id] != null ? users[row.submitter_id].name : 'xxx' }}
+            {{ users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx' }}
           </span>
 		  <div>
 			<b-form-select v-if="mode === 'edit'"  placeholder="Submitter"
@@ -261,10 +261,10 @@ export default {
 		console.log ('StoryDetail fileChange', fileObj, this.row.id)
 		this.$store.dispatch('storyImageUpload', { fileObj : fileObj, id : this.row.id })
 		.then((ret) => {
-			if (this.row.id == null) { 
+			//if (this.row.id == null) { 
 				this.editRow.attributes.image = ret.thumbUrl
 				this.row.attributes.image = ret.thumbUrl
-			}
+			//}
 		})
 		.catch((err) => {
 			throw (err)

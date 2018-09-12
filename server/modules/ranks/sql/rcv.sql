@@ -8,6 +8,7 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 */
 	var tally = plv8.execute('with t as (select count(1) as total from ranktable where rank = 1), s as (select distinct story_id from ranktable), x as ( select story_id, count(1) as tally from ranktable where ranktable.rank = 1 group by story_id) select s.story_id, coalesce(x.tally,0) as tally , t.total , case when  t.total > 0 then coalesce(x.tally,0)::float / t.total::float else 0 end as percentage from s left join x on s.story_id = x.story_id , t order by tally desc')
 
+	if (tally != null && tally.length > 0) {
 	if (tally[0].percentage > 0.5) {
 		result.winner = tally[0]
 	}
@@ -33,8 +34,8 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 			tally[idx].story_id = storyId
 		})
 	}
-
 	result.tally = tally;
+	}
 	return result
 	
 $$ LANGUAGE plv8;
@@ -59,6 +60,9 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		plv8.elog(NOTICE, '\n\n round: ', ctr++ , '\n---------------\n')
 		plv8.find_function('dump_rankdata')()
 		var ret = plv8.find_function('rcv_round')();
+		if (ret == null || Object.keys(ret).length === 0) {
+			break;
+		}
 		plv8.find_function('dump_round_results')(ret)
 		if (ret.loser != null) {
 			results.unshift(ret.loser.story_id)
