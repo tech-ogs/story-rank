@@ -21,8 +21,14 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
   })
 */
   var attributes = plv8.execute('select attributes from application.stories where id = $1', [params.id])[0].attributes
-  Object.assign(attributes, params.attributes)
 
+  /*Object.assign(attributes, params.attributes)*/
+
+  Object.keys(attributes).forEach(function(x) {
+	if (params.attributes[x] != null) {
+		attributes[x] = params[x]
+	}
+  })
   plv8.execute('update application.stories set attributes = $1, submitter_id = $2, creation_date = $3 where id = $4', [attributes, params.submitter_id, params.creation_date, params.id])
 
   /*update the flags to request a recalc*/
