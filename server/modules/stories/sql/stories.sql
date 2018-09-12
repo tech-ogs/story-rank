@@ -23,7 +23,7 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
   var attributes = plv8.execute('select attributes from application.stories where id = $1', [params.id])[0].attributes
   Object.assign(attributes, params.attributes)
 
-  plv8.execute('update application.stories set attributes = $1, submitter_id = $2 where id = $3', [attributes, params.submitter_id, params.id])
+  plv8.execute('update application.stories set attributes = $1, submitter_id = $2, creation_date = $3 where id = $4', [attributes, params.submitter_id, params.creation_date, params.id])
 
   /*update the flags to request a recalc*/
 
@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION create_row(session jsonb,  params jsonb) returns json
     throw Error ('missing user_id in session ' + session.id)
   }
 
-  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, attributes) values ($1, $2, $3) returning *', [params.submitter_id, params.election_id, params.attributes])[0]
+  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, creation_date, attributes) values ($1, $2, $3, $4) returning *', [params.submitter_id, params.election_id, params.creation_date, params.attributes])[0]
   /*update the flags to request a recalc*/
 
   plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election_id}])

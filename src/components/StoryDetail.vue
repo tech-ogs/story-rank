@@ -127,6 +127,19 @@
         </b-col>
       </b-row>
 
+      <b-row class="story-footer">
+        <b-col class="story-date-container">
+          <span v-if="mode === 'view'" class="story-date">
+            {{ row.creation_date }}
+          </span>
+		  <div>
+			<b-form-input type="date" v-if="mode === 'edit'"  placeholder="Submission Date"
+				v-model="editRow.creation_date" 
+			>
+		  </div>
+        </b-col>
+      </b-row>
+
       <b-row v-if="isEditor || isAdmin">
         <b-col class="flex-perfect-center">
 		  <b-button-toolbar v-if="mode === 'view'" key-nav>
@@ -161,6 +174,17 @@
 </template>
 
 <script>
+ function  dateString(d) {
+	var x = new Date(d)
+	var y = (x.getYear() + 1900).toString()
+	var m = (x.getMonth() + 1).toString()
+	var d = (x.getDate()).toString()
+	if (m.length === 1) { m = '0' + m }
+	if (d.length === 1) { d = '0' + d }
+	var ret =  y + '-' + m + '-' + d
+	console.log ('dateString returning ', ret)
+	return ret
+  }
 
 export default {
   props: [],
@@ -175,6 +199,7 @@ export default {
 		id: '',
 		election_id: '',
 		submitter_id: '',
+		creation_date: '',
 		attributes: {
 			shortTitle: '',
 			title: '',
@@ -244,10 +269,12 @@ export default {
 			
 	}
   },
+
   created() {
 	this.editRow.id = this.row.id
 	this.editRow.submitter_id = this.row.submitter_id || this.user.id
 	this.editRow.election_id = this.row.election_id || this.election.id
+	this.editRow.creation_date = this.row.creation_date ? dateString(this.row.creation_date) : '2018-09-01'
 	this.editRow.attributes.shortTitle = this.row.attributes.shortTitle || ''
 	this.editRow.attributes.title = this.row.attributes.title || ''
 	this.editRow.attributes.excerpt = this.row.attributes.excerpt || ''
@@ -305,7 +332,15 @@ export default {
     text-align: left;
   }
 
+  .story-date-container {
+	float: right;
+    text-align: right;
+  }
   .story-data {
+    font-size: x-small;
+  }
+
+  .story-date {
     font-size: x-small;
   }
 
