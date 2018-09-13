@@ -193,7 +193,8 @@ const mutations = {
   },
   storiesSort: (state, ranks) => {
   	var apos, bpos, result
-	var maxnum = 999999
+	//var shallowCopy = state.items.map( (x) => x )
+    //shallowCopy.sort( (a ,b) => {
     state.items.sort( (a ,b) => {
 		apos = ranks.indexOf(a.id)
 		bpos = ranks.indexOf(b.id)
@@ -207,10 +208,11 @@ const mutations = {
 			result = 1
 		}
 		else {
-			result = b.id = a.id
+			result = b.id - a.id
 		}
 		return result
     })
+	//state.items = shallowCopy // vue wants a new array
   },
 
   storiesEditRow: (state, row) => {
