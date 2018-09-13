@@ -11,6 +11,7 @@ async function editRow(context, row) {
 	var headers = new Headers();
 	headers.append('Content-Type', 'application/json');
 	var response;
+    var result;
 	try {
 		response = await window.fetch('/edit_row', {
 		  method: 'post',
@@ -18,21 +19,22 @@ async function editRow(context, row) {
 		  headers: headers,
 		  body: JSON.stringify(row || {})
 		}) 
-		var jsonData = await response.json()
+		result = await response.json()
 		context.commit('dashSetDetailMode', 'view')
-		context.commit('storiesEditRow', jsonData)
-		context.commit('dashSetDetailRow', jsonData)
+		context.commit('storiesEditRow', result)
+		context.commit('dashSetDetailRow', result)
 	}
 	catch (err) {
 		throw (new Error ('error editing row: ' + err.message) )
 	}
-
+    return result
 }
 
 async function createRow(context, row) {
 	var headers = new Headers();
 	headers.append('Content-Type', 'application/json');
 	var response;
+    var result
 	try {
 		response = await window.fetch('/create_row', {
 		  method: 'post',
@@ -40,15 +42,15 @@ async function createRow(context, row) {
 		  headers: headers,
 		  body: JSON.stringify(row || {})
 		}) 
-		var jsonData = await response.json()
+		result = await response.json()
 		context.commit('dashSetDetailMode', 'view')
-		context.commit('storiesCreateRow', jsonData)
-		context.commit('dashSetDetailRow', jsonData)
+		context.commit('storiesCreateRow', result)
+		context.commit('dashSetDetailRow', result)
 	}
 	catch (err) {
 		throw (new Error ('error creating row: ' + err.message) )
 	}
-
+    return result
 }
 
 async function uploadImage(context, id, fileObj) {

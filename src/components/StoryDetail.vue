@@ -253,6 +253,12 @@ export default {
 	},
 	doSave: function( action, editRow ) {
 		this.$store.dispatch(action, editRow)
+		.then( (result) => {
+			Object.assign(this.editRow, result)
+		})
+		.catch( (err) => {
+			throw err
+		})
 	},
 
 	saveFile(formData) {
