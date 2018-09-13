@@ -192,14 +192,24 @@ const mutations = {
     //console.log('filters:', state.filters)
   },
   storiesSort: (state, ranks) => {
-  	var apos, bpos
+  	var apos, bpos, result
 	var maxnum = 999999
     state.items.sort( (a ,b) => {
 		apos = ranks.indexOf(a.id)
 		bpos = ranks.indexOf(b.id)
-
-      return (apos >= 0 ? apos : maxnum)  - (bpos >= 0 ? bpos : maxnum)
-
+		if (apos >= 0 && bpos >= 0) {
+			result = apos-bpos
+		}
+		else if (apos >= 0) {
+			result = -1
+		}
+		else if (bpos >= 0) {
+			result = 1
+		}
+		else {
+			result = b.id = a.id
+		}
+		return result
     })
   },
 
