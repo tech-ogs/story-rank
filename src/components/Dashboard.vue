@@ -49,9 +49,9 @@
 		<div class="leaderboard-text">Leaderboard</div>
 		<div class="blinkenlights-container">
 			<span class="blinkenlights">  
-				<icon name="circle" :class="blinkenClass(networkTxnStatus)[0]" /> 
-				<icon name="circle" :class="blinkenClass(networkTxnStatus)[1]" /> 
-				<icon name="circle" :class="blinkenClass(networkTxnStatus)[2]" /> 
+				<icon name="square" :class="blinkenClass(networkTxnStatus)[0]" /> 
+				<icon name="square" :class="blinkenClass(networkTxnStatus)[1]" /> 
+				<icon name="square" :class="blinkenClass(networkTxnStatus)[2]" /> 
 			</span> 
 		</div>
 		</div>
