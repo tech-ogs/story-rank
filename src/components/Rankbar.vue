@@ -12,11 +12,11 @@
 		</b-nav>
 	</b-navbar>
 	<b-navbar v-if="mode === 'list'">
-		<b-nav pills class="width100 flex-left-right">
-		  <b-btn  class="tool-button" @click="toggleFilterShortlist">
+		<b-nav pills class="width100 flex-left-right rank-actions-bar">
+		  <b-btn  size="sm" class="tool-button" @click="toggleFilterShortlist">
 			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
-		  <b-btn class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
+		  <b-btn size="sm" class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
 			<span class="tool-text" >SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
 		  </b-btn>
 		</b-nav>
@@ -113,9 +113,18 @@ export default {
 	border-bottom-color: rgba(0, 0, 0, 0.05);
 	border-bottom-thickness: 1px;
 	border-bottom-style: solid;
-    padding: 0.0rem 1rem;
 }
+
 .rank-buttons-bar {
+	width: 100%;
+    padding: 0.0 1.0rem;
+}
+
+.navbar {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
 }
 
 </style>
