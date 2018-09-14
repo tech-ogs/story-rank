@@ -227,7 +227,7 @@ const mutations = {
 			state.items.push.apply(state.items, state.items.splice(0,1))
 		}
 	}
-
+	reindex()
   },
 
   storiesEditRow: (state, row) => {
