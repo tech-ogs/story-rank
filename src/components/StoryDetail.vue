@@ -26,7 +26,6 @@
 			<span v-if="editRow.attributes.full_image != null"> 
 				{{ editRow.attributes.full_image}} <b-button size="sm" @click="useImage(editRow.attributes.full_image)">use</b-button>
 			</span>
-		  </b-form>
 		</b-col>
       </b-row>
 
@@ -34,7 +33,6 @@
         <b-col cols="4"> 
 
 		  <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
-		  <b-form enctype="multipart/form-data">
 
 
           <span v-if="mode === 'view'" class="story-title">
@@ -53,6 +51,7 @@
 			<b-form-invalid-feedback id="inputShortTitle">
 			 	Maximum 10 characters!
 			</b-form-invalid-feedback>
+		  
 		  </div>
 
         </b-col>
@@ -142,6 +141,7 @@
 			<b-form-input type="date" v-if="mode === 'edit'"  placeholder="Submission Date"
 				v-model="editRow.creation_date" 
 			>
+			</b-form-input>
 		  </div>
         </b-col>
       </b-row>

@@ -62,15 +62,15 @@ export default {
     .rank-button-image{
         display: inline-flex;
         align: top;
-        height: 80px;
-        width: 80px;            
+        height: 50px;
+        width: 50px;            
     }
 	.rank-button-placeholder{
 		font-size: x-large;
         display: inline-flex;
         align: top;
-        height: 80px;
-        width: 80px;
+        height: 50px;
+        width: 50px;
 		-moz-border-radius: 40px; 
 		-webkit-border-radius: 40px; 
 		border-radius: 40px;
