@@ -1,4 +1,6 @@
 import socketEvents from '../socketEvents'
+const crypto = require('crypto')
+
 // initial state
 // shape: [{ id, quantity }]
 const state = {
@@ -9,6 +11,12 @@ const state = {
 	mode: 'view', /* ['view', 'edit'] */
   	row: null,
 	action: ''
+  },
+  showInfoModal: false,
+  info: {
+  	message: '',
+	handler: null,
+	cancel: null
   },
 
   list: {
@@ -43,7 +51,6 @@ const state = {
   	id: null,
   	name : '',
   	label: '',
-    locked: false,
     days_to_close: 0,
   },
   userElectionDetails : {
@@ -51,7 +58,7 @@ const state = {
 	locked: false
   },
   myranks: [null, null, null],
-
+  userHash: 0
 
 }
 
@@ -70,6 +77,7 @@ const postData = (state) => {
 const getters = {
 
   user: state => state.user,
+  userHash: state => state.userHash,
   election: state => state.election,
   userElectionDetails: state => state.userElectionDetails,
   isAdmin: state => state.user.groups.indexOf('admin') >= 0,
@@ -89,6 +97,8 @@ const getters = {
   dashListFilters: state => state.list.filters,
   dashFilterShortlist: state => state.list.filterShortlist,
 
+  dashShowInfoModal: state => state.showInfoModal,
+  info: state=>state.info,
   /* network related */
   networkTxnStatus: state => state.network.txnStatus
   
@@ -118,6 +128,10 @@ const mutations = {
 	Object.assign(state.election, params.election)
 	Object.assign(state.userElectionDetails, params.userElectionDetails.attributes)
 	state.myranks = params.myranks
+
+	/* compute a random integer hash to randomly shuffle sort order on a per user basis. Use md5 to obtain a stable hash */
+	/* modulo the hash by length of list to obtain a random shuffle */
+	state.userHash = Number('0x' + (crypto.createHash('md5').update(params.user.login).digest('hex').substr(0,8)))
   },
 
   dashSetMode (state, params) {
@@ -198,15 +212,7 @@ const mutations = {
   dashClearSelection: (state) => {
     state.selected = null
   },
-  dashSetDetailRow: (state,row) => { 
-  	state.detail.row = row 
-  },
-  dashSetDetailMode: (state, mode) => {
-    state.detail.mode = mode
-  },
-  dashSetDetailAction: (state, action) => {
-  	state.detail.action = action
-  },
+  
   /* we use splice operations to add and remove shortlist entries to force vue to "react" */
   dashAddShortlist: (state, id) => {
   	if (state.userElectionDetails.shortlist.indexOf(id) < 0) {
@@ -228,7 +234,38 @@ const mutations = {
 	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
+  dashLockElection: (state) => {
+		state.userElectionDetails.locked = true
+		state.network.txnStatus = 2;
+  		state.socket.emit('rank_update', postData(state))
+  },
 
+  /* detail related */
+
+  dashSetDetailRow: (state,row) => { 
+  	state.detail.row = row 
+  },
+  dashSetDetailMode: (state, mode) => {
+    state.detail.mode = mode
+  },
+  dashSetDetailAction: (state, action) => {
+  	state.detail.action = action
+  },
+
+  /* info related */
+
+  dashSetInfoModalShow: (state, value) => {
+  	state.showInfoModal = value
+  },
+  dashSetInfoMessage: (state, value) => {
+  	state.info.message = value
+  },
+  dashSetInfoCancel: (state, cancel) => {
+	state.info.cancel = cancel
+  },
+  dashSetInfoHandler: (state, handler) => {
+	state.info.handler = handler
+  },
   /* network related */
 
   netProcessHandshake: (state) => {

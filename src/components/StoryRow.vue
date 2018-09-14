@@ -15,7 +15,7 @@
 				<b-row class="story-footer">
 					<b-col class="story-submitter-container">
 						<span class="story-submitter">
-							 [{{row.id}}] 
+							 <!-- [{{row.id}}]  -->
             {{ users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx' }}
 						</span>
 					</b-col>

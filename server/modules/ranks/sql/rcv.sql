@@ -54,7 +54,7 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 	var results = [];
 	var winner = null
 	plv8.execute('drop table if exists ranktable');
-	plv8.execute('create temp table ranktable as select * from application.ranks where election_id = $1', [election_id])
+	plv8.execute('create temp table ranktable as select * from application.ranks where election_id = $1 and user_id in ( select user_id from application.user_elections where election_id = $1 and (attributes->>\'locked\')::boolean = true)', [election_id])
 	var ctr = 1
 	while (winner == null) {
 		plv8.elog(NOTICE, '\n\n round: ', ctr++ , '\n---------------\n')

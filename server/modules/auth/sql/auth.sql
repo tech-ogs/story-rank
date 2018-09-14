@@ -22,7 +22,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION active_election() returns jsonb AS $$
 
-	var election = plv8.execute ('select *, (close_date::date - open_date::date)::int as days_to_close  from application.elections where active = true')[0] || {}
+	var election = plv8.execute ('select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where active = true')[0] || {}
 	return election
 
 $$ LANGUAGE plv8;

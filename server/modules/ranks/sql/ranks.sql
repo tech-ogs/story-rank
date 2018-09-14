@@ -15,7 +15,7 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
   insertStmt.free()
 
   plv8.execute ('delete from application.user_elections where user_id = $1', [session.user_id])
-  plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ($1, $2, $3)', [session.user_id, params.election_id, params.userElectionDetails])
+  plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ($1, $2, $3)', [session.user_id, params.election.id, params.userElectionDetails])
 
   /*update the flags to request a recalc*/
 
@@ -23,7 +23,12 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
 
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION unlock (login varchar) returns jsonb AS $$
 
+	var ret = plv8.execute('update application.user_elections set attributes = jsonb_set(attributes, $1, $2) where user_id = (select id from application.users where login = $3)', [ ['locked'], false, login])
+	return ret
+
+$$ LANGUAGE plv8;
 /* results related */
 
 CREATE OR REPLACE FUNCTION results(params jsonb) returns jsonb AS $$

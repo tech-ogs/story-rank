@@ -191,11 +191,13 @@ const mutations = {
     Object.assign(state.filters, params)
     //console.log('filters:', state.filters)
   },
-  storiesSort: (state, ranks) => {
+  storiesSort: (state, params) => {
+  	var locked = params.locked
+	var userHash = params.userHash % state.items.length
+	var ranks = params.ranks
   	var apos, bpos, result
-	//var shallowCopy = state.items.map( (x) => x )
-    //shallowCopy.sort( (a ,b) => {
-    state.items.sort( (a ,b) => {
+
+    const fnLocked = (a ,b) => {
 		apos = ranks.indexOf(a.id)
 		bpos = ranks.indexOf(b.id)
 		if (apos >= 0 && bpos >= 0) {
@@ -211,8 +213,21 @@ const mutations = {
 			result = b.id - a.id
 		}
 		return result
-    })
-	//state.items = shallowCopy // vue wants a new array
+    }
+	const fnUnlocked = (a,b) => {
+		return b.id - a.id 
+	}
+
+	var sortFn = locked ? fnLocked: fnUnlocked
+
+	state.items.sort(sortFn)
+	/* and then shuffle if unlocked */
+	if (!locked) { 
+		for (let i=1; i <= userHash; i++) {
+			state.items.push.apply(state.items, state.items.splice(0,1))
+		}
+	}
+
   },
 
   storiesEditRow: (state, row) => {

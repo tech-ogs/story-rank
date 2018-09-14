@@ -38,7 +38,10 @@ const actions = {
   resultsSetData: (context, params) => {
     console.log('resultsSetData', JSON.stringify(params))
     state.results = params.ranks
-	context.commit('storiesSort', state.results)
+	
+	console.log ('resultsSetData, election lock:', context.rootState.dashboard.election.locked)
+
+	context.commit('storiesSort', {locked: context.rootState.dashboard.userElectionDetails.locked, userHash: context.rootState.dashboard.userHash, ranks: state.results})
   },
 
 }

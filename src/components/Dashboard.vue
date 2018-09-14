@@ -69,6 +69,13 @@
     </b-row>
     <b-row class="app-footer">
     </b-row>
+	<b-row>
+		<b-col>
+			<b-modal v-model="showInfoModal" @ok="info.handler" @cancel="info.cancel" ok-title="YES" cancel-title="NO">
+					{{info.message}}
+			</b-modal>
+		</b-col>
+	</b-row>
   </b-container>
 </template>
 
@@ -125,7 +132,20 @@ export default {
     results() { return this.$store.getters.getResults},
     selectedRow() { return this.$store.getters.dashSelectedRow},
     scrollTop() { return this.$store.getters.dashScrollTop },
-	networkTxnStatus() {return this.$store.getters.networkTxnStatus}
+	networkTxnStatus() {return this.$store.getters.networkTxnStatus},
+	info()  { return this.$store.getters.info },
+	showInfoModal: { 
+		get() { 
+			return this.$store.getters.dashShowInfoModal
+			//var ret = this.$store.getters.dashShowInfoModal
+			//console.log ('showInfoModal getter ret:', ret)
+			//return ret
+		},
+		set(x) { 
+			//console.log ('showInfoModal setter', x)
+			this.$store.commit('dashSetInfoModalShow', x) 
+		}
+	}
   },
   methods: {
     doLogout: () => {

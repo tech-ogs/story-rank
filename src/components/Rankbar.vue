@@ -16,8 +16,8 @@
 		  <b-btn  class="tool-button" @click="toggleFilterShortlist">
 			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
-		  <b-btn class="tool-button" @click="">
-			<span class="tool-text" :disabled="userElectionDetails.locked">SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
+		  <b-btn class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
+			<span class="tool-text" >SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
 		  </b-btn>
 		</b-nav>
 	</b-navbar>
@@ -49,7 +49,9 @@ export default {
     selectedRow() { return this.$store.getters.dashSelectedRow},
 	shortlist() { return this.$store.getters.shortlist},
 	filterShortlist() { return this.$store.getters.dashFilterShortlist },
-	mode() { return this.$store.getters.dashMode }
+	mode() { return this.$store.getters.dashMode },
+	userHash() { return this.$store.getters.userHash },
+	results() { return this.$store.getters.results }
   },
   methods: {
 		handleRankBtnClick (val)  {
@@ -57,6 +59,15 @@ export default {
 		},
         toggleFilterShortlist ()  {
 			this.$store.commit('dashToggleFilterShortlist')
+		},
+		handleLock() {
+			var fn = () => {
+				this.$store.commit('dashLockElection')
+				this.$store.commit('storiesSort', {locked : true, userHash: this.userHash, ranks: this.results})
+			}
+			this.$store.commit('dashSetInfoMessage', 'Are you sure? This cannot be undone')
+			this.$store.commit('dashSetInfoHandler', fn)
+			this.$store.commit('dashSetInfoModalShow', true)
 		}
 				
   },
