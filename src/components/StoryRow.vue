@@ -15,7 +15,7 @@
 				<b-row class="story-footer">
 					<b-col class="story-submitter-container">
 						<span class="story-submitter">
-							 <!-- [{{row.id}}]  -->
+							  [{{row.id}}] 
             {{ users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx' }}
 						</span>
 					</b-col>
@@ -73,7 +73,15 @@ export default {
   },
   mounted () { 
 	this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
-  }
+  },
+  watch: {
+	/* the watch is required to accommodate the reshuffle done for individuals. This watch is expected to be triggered just once for each row after load */
+    'row': function(newValue, oldValue)  {
+		//console.log ('row changed:', oldValue.id, newValue.id, this.row.id)
+		this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
+    }
+  },
+
 }
 </script>
 
