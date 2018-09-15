@@ -111,59 +111,72 @@ var result = `
 Frequently Asked Questions
 <br><br>
 1.	What is the full form of WTF? 
-<br>
+
+<br><br>
 Fellow WIMWIans, you belong to the pioneering batch of 1989. If you cannot crack this simple acronym, we cannot help you. In fact, if you let us know your name, we shall actively send death threats to you. No, nada, nyet, nein, non, nahin, you will never get to know this from us.
 <br><br>
 2.	Do you really have so much time on your hands that you do all this? 
-<br>
+
+<br><br>
 Yes. We do.
 <br><br>
 3.	Now that I am here what am I supposed to do?
-<br>
-Good.
-<br> 
-Have you registered on the site? If yes skip point 1.0 below and go to point 2.0 
-<br>
-				  If no go to point 1.0
-<br>
-1. First register on the app. Go to www.story-rank.com. There screen looks like this. Please enter a username that you like and most important that you can remember, post that press the Register/Reset button and send the string generated "userid:XXXX" to Kavi privately on Whatsapp. Kavi will activate your account.
-<br>
-2. Login to www.story-rank.com using your own id and password. You can then type a password in and mess with the stories and become part of the glorious sisterhood of guinea pigs.
-<br>
-3. Stories will appear in a random order for each voter. This order shall remain stable. You are faced with a lot of choices given the high amount of CP our batch is capable of. Therefore, just keep selecting stories that catch your fancy by clicking on them. These will go into a shortlist and that has a counter. 
-<br>
-4. If you want to read the story at length from its original source, click on the picture that accompanies the story. It will take you to the original video, photo or newsfeed from where the story was sourced.  
-<br>
-5. Once you have shortlisted the lot, you can at your leisure but before the cutoff date decide to rank them. If you think a story submitted deserves a rank hit the appropriate rank button. Do NOT I repeat DO NOT hit the submit button. That is like a nuclear option for future use.
-<br>
-6. Once you have selected the three ranks as per you, take a deep breath because you can still retreat from this position. If you think you want to change just go to the story you wish to upgrade and select the appropriate rank. 
-<br>
-7. Now you are ready to use your nuclear option the submit button. Once you hit this button, this wonderful app will record your vote and will not allow you to do anything further. 
-<br><br>
 
+<br><br>
+Good. 
+<br>
+Have you registered on the site? If YES skip point a) below and go to point b) 
+<br>
+				  If NO go to point a)
+<br>
+a) First register on the app. Go to www.story-rank.com. Please enter a username that you like and most important that you can remember, post that press the Register/Reset button and send the string generated "userid:XXXX" to Kavi privately on Whatsapp. Kavi will activate your account.
+<br>
+b) Login to www.story-rank.com using your own id and password. You can then type a password in and mess with the stories and become part of the glorious sisterhood of guinea pigs.
+<br>
+c) Stories will appear in a random order for each voter. This order shall remain stable. You are faced with a lot of choices given the high amount of CP our batch is capable of. Therefore, just keep selecting stories that catch your fancy by clicking on them. These will go into a shortlist and that has a counter. 
+<br>
+d) If you want to read the story at length from its original source, click on the picture that accompanies the story. It will take you to the original video, photo or newsfeed from where the story was sourced.  
+<br>
+e) Once you have shortlisted the lot, you can at your leisure but before the cutoff date decide to rank them. If you think a story submitted deserves a rank hit the appropriate rank button. Do NOT I repeat DO NOT hit the submit button. That is like a nuclear option for future use.
+<br>
+f) Once you have selected the three ranks, take a deep breath because you can still retreat from this position. If you think you want to change just go to the story you wish to upgrade and select the appropriate rank. 
+<br>
+g) Now you are ready to use your nuclear option the submit button. Once you hit this button, this wonderful app will record your vote and will not allow you to do anything further. 
+<br>
+<br>
 4.	What is the process you guys follow on ranking? 
-<br>
-We are trying out the ranked choice voting algorithm this round. See : 
+
 <br><br>
-https://en.wikipedia.org/wiki/Ranked_voting 
-<br>
-https://www.economist.com/united-states/2018/06/14/in-praise-of-ranked-choice-voting
-<br><br>
-We acknowledge Mr bix's prescient advocacy of this method even before it became popular in election wonk circles this year. This method is used for the election of the Indian President, as well as for all elections in Australia, among others. The US State of Maine started using this method very recently...
-<br>
-The method helps reduce "vote splitting", since people can vote for a second candidate of a similar nature who may have been their first choice except for someone splitting the vote.
+We follow the same system that is used to select the Indian President. 
+
 <br><br>
 5.	When you say I have to rank, do I press the buttons that have 1,2, 3 written on it or the little red blue green buttons that my fat fingers have major problems reaching?
-<br>
+<br><br>
 Please press buttons with 1, 2, 3 written on them. Please ignore the coloured buttons. We have put those buttons for aliens with tiny digits.
 <br><br>
 6.	Do you guys really have nothing better to do?
-<br>
+<br><br>
 No.
 <br><br>
 7.	I have ranked the stories but I have not submitted the ranking. I have suddenly seen a story that is a true wtf. What do I do?
+<br><br>
+First, thank you for not pressing the submit button because then we cannot help you. Second, select the story by clicking on it and press the rank you wish to elevate it to. The existing story will be replaced by the new story. 
+<br><br>
+8.	I want to add this wonderful life saving app to my home screen. How do I do that?
+<br><br>
+First determine if your cellphone has an iOS or Android as your operating system. If it is Kaizen we still have not released on that yet so you may not be able to see it on your cellphone. 
+<br><br>
+For Android
 <br>
-First, thank you for not pressing the submit button because then we cannot help you. Second, select the story by clicking on it and press the rank you wish to elevate it to. The existing story will be replaced by the new story.
+ Click on the 3 vertical dots on the right hand top corner of your screen. There is a drop down menu there. It has an option to add to the home screen. Please do so. Voila!
+<br><br>
+For iOS
+<br>
+At the bottom of the screen you'll see the sharing icon depicting an arrow that looks like it's trying to get away from a square. Tap this button.
+<br>
+Scroll to the right to find the + sign option that says: "Add to Home Screen". Tap that
+<br>
+Hit done. Voila!
 `
 return result
 
