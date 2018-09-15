@@ -11,6 +11,12 @@
           </span>
         </b-navbar-brand>
 
+		<b-navbar-nav>
+		<b-nav-item>
+			 <b-badge @click="showHelp"><h4> &nbsp; ? &nbsp;</h4> </b-badge>
+		</b-nav-item>
+		</b-navbar-nav>
+
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
         <b-collapse is-nav size="small" id="nav_collapse">
@@ -35,7 +41,7 @@
 
               <div style="float:left; width: 80%;">
               <b-form-input type="text" v-model="filterPattern" placeholder="Search text" class="mb-3">
-              </b-form-select>
+              </b-form-input>
               </div>
               <div style="float:left;">
               <b-nav-item @click="filterPattern = null">
@@ -85,9 +91,7 @@
     </b-row>
 	<b-row>
 		<b-col>
-			<b-modal v-model="showInfoModal" @ok="info.handler" @cancel="info.cancel" ok-title="YES" cancel-title="NO">
-					{{info.message}}
-			</b-modal>
+			<modal-dialog> </modal-dialog>
 		</b-col>
 	</b-row>
   </b-container>
@@ -139,19 +143,6 @@ export default {
     selectedRow() { return this.$store.getters.dashSelectedRow},
     scrollTop() { return this.$store.getters.dashScrollTop },
 	networkTxnStatus() {return this.$store.getters.networkTxnStatus},
-	info()  { return this.$store.getters.info },
-	showInfoModal: { 
-		get() { 
-			return this.$store.getters.dashShowInfoModal
-			//var ret = this.$store.getters.dashShowInfoModal
-			//console.log ('showInfoModal getter ret:', ret)
-			//return ret
-		},
-		set(x) { 
-			//console.log ('showInfoModal setter', x)
-			this.$store.commit('dashSetInfoModalShow', x) 
-		}
-	},
 	filterSubmitterId: {
 		get() {
 			return this.$store.getters.dashListFilters.submitter_id
@@ -237,6 +228,14 @@ export default {
 		this.$store.commit('dashSetMode', 'detail')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
+	},
+	showHelp: function() { 
+		this.$store.commit('dashInfoSetProps', {
+			message: 'xyz',
+			okOnly: true,
+			okTitle: 'OK'
+		})
+		this.$store.commit('dashSetInfoModalShow', true) 
 	}
   },
   watch: {

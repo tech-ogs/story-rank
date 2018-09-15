@@ -65,9 +65,17 @@ export default {
 				this.$store.commit('dashLockElection')
 				this.$store.commit('storiesSort', {locked : true, userHash: this.userHash, ranks: this.results})
 			}
-			this.$store.commit('dashSetInfoMessage', 'Are you sure? This cannot be undone')
-			this.$store.commit('dashSetInfoHandler', fn)
+			//this.$store.commit('dashSetInfoMessage', 'Are you sure? This cannot be undone')
+			//this.$store.commit('dashSetInfoHandler', fn)
+			this.$store.commit('dashInfoSetProps', { 
+				message : 'Are you sure ? This cannot be undone',
+				handler : fn,
+				okTitle: 'YES',
+				cancelTitle: 'NO',
+				okOnly : false
+			})
 			this.$store.commit('dashSetInfoModalShow', true)
+				
 		}
 				
   },

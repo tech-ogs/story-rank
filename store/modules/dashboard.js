@@ -16,7 +16,10 @@ const state = {
   info: {
   	message: '',
 	handler: null,
-	cancel: null
+	cancel: null,
+	okTitle: 'OK',
+	cancelTitle: 'Cancel',
+	okOnly: false
   },
 
   list: {
@@ -277,6 +280,7 @@ const mutations = {
   dashSetInfoModalShow: (state, value) => {
   	state.showInfoModal = value
   },
+/*
   dashSetInfoMessage: (state, value) => {
   	state.info.message = value
   },
@@ -285,6 +289,10 @@ const mutations = {
   },
   dashSetInfoHandler: (state, handler) => {
 	state.info.handler = handler
+  },
+ */
+  dashInfoSetProps: (state, props) => {
+	Object.assign(state.info, props)
   },
   /* network related */
 
