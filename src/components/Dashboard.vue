@@ -6,7 +6,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
+          <img src="assets/thumbs/logo-bird.jpg" class="logo-icon" alt="WTF-2">
           {{ election.label }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -202,7 +202,10 @@ export default {
 		}
 		else {
 			if (this.myranks[val] != null) { 
-				document.getElementById('row_' + this.myranks[val]).scrollIntoView()
+            	this.$store.commit('dashRemoveFilterShortlist')
+				setTimeout( () => {
+					document.getElementById('row_' + this.myranks[val]).scrollIntoView()
+				},0)
 			}
 		}
 	},

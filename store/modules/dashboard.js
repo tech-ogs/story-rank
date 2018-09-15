@@ -234,6 +234,12 @@ const mutations = {
 	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
+  dashRemoveFilterShortlist: (state) => {
+  	state.list.filterShortlist = false
+	state.network.txnStatus = 2;
+  	state.socket.emit('rank_update', postData(state))
+  },
+
   dashLockElection: (state) => {
 		state.userElectionDetails.locked = true
 		state.network.txnStatus = 2;

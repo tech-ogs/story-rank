@@ -68,8 +68,8 @@ router.get('/', function(req, res){
   } 
 });
 
-router.get('/assets/logo.png', function(req, res) {
-  res.sendFile(path.join(__dirname, '../dist/static/logo.png'))
+router.get('/assets/logo-bird.png', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/static/logo-bird.png'))
 })
 
 router.post('/login', function(req, res) {
