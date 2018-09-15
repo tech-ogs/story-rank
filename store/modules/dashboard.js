@@ -22,7 +22,8 @@ const state = {
   list: {
     scrollTop: 0,
     filters: {
-        submitter_id: null
+        submitter_id: null,
+		pattern: null
     },
 	filterShortlist: false
   },
@@ -229,16 +230,29 @@ const mutations = {
 	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
+
+  /* filters related */
   dashToggleFilterShortlist: (state) => {
   	state.list.filterShortlist = !state.list.filterShortlist
+	state.list.filters.submitter_id = null
+	state.list.filters.pattern = null
 	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
-  dashRemoveFilterShortlist: (state) => {
+  dashSetFilter: (state, params) => {
+	state.list.filters.submitter_id = params.submitter_id != null ? parseInt(params.submitter_id) : null
+	state.list.filters.pattern = params.pattern
+  },
+
+  dashRemoveFilters: (state) => {
   	state.list.filterShortlist = false
+  	state.list.filters.submitter_id = null
+	state.list.filters.pattern = null
 	state.network.txnStatus = 2;
   	state.socket.emit('rank_update', postData(state))
   },
+
+  /* election related */
 
   dashLockElection: (state) => {
 		state.userElectionDetails.locked = true

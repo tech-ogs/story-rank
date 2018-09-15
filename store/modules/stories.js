@@ -91,31 +91,45 @@ function reindex () {
     state.indexById = indexById
 }
 
+function numFilter (x,y) {
+	return x === y
+}
+
+function strFilter (x,y) {
+	return y.match(x) != null
+}
+
+function checkFilter (key, val, row) {
+	var result
+	if (val == null) {
+		result = true
+	}
+	else if (typeof val === 'number') {
+		result = numFilter (val, row[key])
+	}
+	else {
+		result = strFilter(val, row.attributes.title + row.attributes.shortTitle)
+	}
+	return result
+}
 
 // helpers
 // getters
 const getters = {
-/*
-  storiesGetItems: (state) => {
-    return state.items
-  },
-*/
   storiesGetIdMap: (state) => {
     return state.byId
   },
   storiesGetItems: (state, getters) => {
     //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     //var ranks = getters.ranks
-	/*
+	var filters = getters.dashListFilters
     var filtered = state.items.filter( (story) => {
       var result = true
-      Object.keys(state.filters).forEach((f) => {
-          result = result && (state.filters[f] == null || ( story[f] === state.filters[f]) )
+      Object.keys(filters).forEach((f) => {
+          result = result && checkFilter(f, filters[f], story)
       })
       return result
     })
-	*/
-	var filtered = state.items;
 
 	if (getters.dashFilterShortlist) {
 		var shortlist = getters.shortlist
@@ -139,17 +153,6 @@ const getters = {
   },
 
 
-  stories: (state, getters) => {
-    var ranks = getters.getResults.ranks
-    var filtered = state.items.filter ( (x) => { return ranks.indexOf(x.id) >= 0 } )
-    //console.log('res-filtered', JSON.stringify(state.filters), JSON.stringify(filtered.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
-    var sorted = filtered.sort ( (a ,b) => {
-      return  ranks.indexOf(a.id) - ranks.indexOf(b.id)
-    })
-    //console.log('res-sorted', JSON.stringify(state.filters), JSON.stringify(sorted.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
-    return sorted
-  },
-
 
   storiesFilterIsClear: (state) => {
     var result = true
@@ -160,9 +163,7 @@ const getters = {
       }
     }
     return result
-  },
-  storiesGetAnimateStar: state => state.animateStar,
-  storiesGetAnimateCircle: state => state.animateCircle
+  }
 }
 
 // actions

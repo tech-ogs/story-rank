@@ -75,7 +75,10 @@ export default {
 	this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
   },
   watch: {
-	/* the watch is required to accommodate the reshuffle done for individuals. This watch is expected to be triggered just once for each row after load */
+	/* the watch is required to accommodate the reshuffle done for individuals. This watch is expected to be triggered :
+		Once after load for each row
+		Once after a filter is applied for each row
+	 */
     'row': function(newValue, oldValue)  {
 		//console.log ('row changed:', oldValue.id, newValue.id, this.row.id)
 		this.$refs.trow.setAttribute('id',  "row_" + this.row.id)

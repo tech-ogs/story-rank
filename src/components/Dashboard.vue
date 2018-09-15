@@ -6,7 +6,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/thumbs/logo-bird.jpg" class="logo-icon" alt="WTF-2">
+          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
           {{ election.label }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -20,17 +20,31 @@
           <b-navbar-nav class="ml-auto">
             <b-nav-item>
               <div>
+
               <div style="float:left; width: 80%;">
-              <b-form-select v-model="submitterId"  @change="filterSubmitter($event)" class="mb-3">
-                <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
+              <b-form-select v-model="filterSubmitterId"  class="mb-3">
+                <option v-for="user in usersList" :key="user.id" :value="user.id">{{user.login}}</option>
               </b-form-select>
               </div>
               <div style="float:left;">
-              <b-nav-item @click="submitterId=null;resetSubmitterFilter(null)">
+              <b-nav-item @click="filterSubmitterId = null">
               &nbsp;&nbsp;X
-              &nbsp;&nbsp;<b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge>
+              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
               </b-nav-item>
               </div>
+
+              <div style="float:left; width: 80%;">
+              <b-form-input type="text" v-model="filterPattern" placeholder="Search text" class="mb-3">
+              </b-form-select>
+              </div>
+              <div style="float:left;">
+              <b-nav-item @click="filterPattern = null">
+              &nbsp;&nbsp;X
+              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
+              </b-nav-item>
+              </div>
+
+
               </div>
             </b-nav-item>
             <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> <b>NEW STORY</b> </b-button>
@@ -93,13 +107,6 @@ export default {
     return {
       listTable: null,
       fields: fields,
-      submitterId: null,
-      filterSubmitter: (sid) => {
-        this.$store.commit('storiesSetFilter', {submitter_id : sid })
-      },
-      resetSubmitterFilter: () => {
-        this.$store.commit('storiesSetFilter', {submitter_id : null })
-      },
       rowclick: (item, index, event) => {
         if (this.selectedRow != null && this.selectedRow.id === item.id) {
           this.$store.commit('dashClearSelection') 
@@ -124,7 +131,6 @@ export default {
 	user() { return this.$store.getters.user },
 	userElectionDetails() { return this.$store.getters.userElectionDetails },
     usersList() { return this.$store.getters.usersGetItems },
-    //items() { return this.$store.getters.stories },
     items() { return this.$store.getters.storiesGetItems },
     users () { return this.$store.getters.usersGetIdMap },
     comments () { return this.$store.getters.commentsGetStoryIdMap },
@@ -145,7 +151,24 @@ export default {
 			//console.log ('showInfoModal setter', x)
 			this.$store.commit('dashSetInfoModalShow', x) 
 		}
+	},
+	filterSubmitterId: {
+		get() {
+			return this.$store.getters.dashListFilters.submitter_id
+		},
+		set(x) {
+			this.$store.commit('dashSetFilter', {submitter_id : x })
+		}
+	},
+	filterPattern: {
+		get() {
+			return this.$store.getters.dashListFilters.pattern
+		},
+		set(x) {
+			this.$store.commit('dashSetFilter', {pattern : x })
+		}
 	}
+
   },
   methods: {
     doLogout: () => {
@@ -202,7 +225,7 @@ export default {
 		}
 		else {
 			if (this.myranks[val] != null) { 
-            	this.$store.commit('dashRemoveFilterShortlist')
+            	this.$store.commit('dashRemoveFilters')
 				setTimeout( () => {
 					document.getElementById('row_' + this.myranks[val]).scrollIntoView()
 				},0)
