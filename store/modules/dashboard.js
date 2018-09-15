@@ -14,6 +14,8 @@ const state = {
   },
   showInfoModal: false,
   info: {
+  	cssclass: '',
+	size: '',
   	message: '',
 	handler: null,
 	cancel: null,
