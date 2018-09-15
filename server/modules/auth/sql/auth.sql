@@ -41,9 +41,11 @@ CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   var ret = plv8.execute('select * from application.users where login = $1 and (password = crypt($2, password))', [params.login, params.password])
   plv8.elog(LOG, 'plv8 login ret', JSON.stringify(ret))
 
+/*
   if (['nikesh', 'kavi', 'test', 'sue', 'rajesh', 'Jamwal'].indexOf(params.login) < 0) {
     throw new Error ('login restricted to construction crew at this time')
   }
+*/
 
   if (ret == null || ret.length === 0) {
     throw new Error ('login failed')
