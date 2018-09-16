@@ -287,7 +287,7 @@ export default {
     },
 	handleRankBtnClick: function (val) {
 		console.log ('rank button clicked (dashboard)', val, this.$store)
-		if (this.selectedRow.id !== 0) {
+		if (!(this.userElectionDetails.locked) && this.selectedRow.id !== 0) {
 			this.$store.commit('dashHandleRankBtnClick', val)
 		}
 		else {

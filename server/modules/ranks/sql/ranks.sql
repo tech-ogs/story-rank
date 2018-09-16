@@ -2,17 +2,25 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)
   }
-  plv8.execute('delete from application.ranks where user_id = $1', [session.user_id])
+  var ueLocked = false;
+  var userElectionDetails = plv8.execute('select attributes from application.user_elections where user_id = $1 and election_id = $2', [session.user_id, params.election.id])
+  if (userElectionDetails != null && userElectionDetails.length > 0) {
+	ueLocked = userElectionDetails[0].attributes.locked
+  }
+  plv8.elog (LOG, 'ueLocked: ', ueLocked)
+  if (!ueLocked) {
+	  plv8.execute('delete from application.ranks where user_id = $1', [session.user_id])
 
-  plv8.elog(LOG, ['rank_update params:', JSON.stringify(params)]) 
-  var insertStmt = plv8.prepare('insert into application.ranks (user_id, story_id, rank, election_id) values ($1, $2, $3, $4)')
-  params.myranks.forEach(function(storyId, pos) {
-    plv8.elog(LOG, [ session.user_id, storyId, pos+1]) 
-	if (storyId != null) {
-    	insertStmt.execute([ session.user_id, storyId, pos+1, params.election.id])
-	}
-  })
-  insertStmt.free()
+	  plv8.elog(LOG, ['rank_update params:', JSON.stringify(params)]) 
+	  var insertStmt = plv8.prepare('insert into application.ranks (user_id, story_id, rank, election_id) values ($1, $2, $3, $4)')
+	  params.myranks.forEach(function(storyId, pos) {
+		plv8.elog(LOG, [ session.user_id, storyId, pos+1]) 
+		if (storyId != null) {
+			insertStmt.execute([ session.user_id, storyId, pos+1, params.election.id])
+		}
+	  })
+	  insertStmt.free()
+  }
 
   plv8.execute ('delete from application.user_elections where user_id = $1', [session.user_id])
   plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ($1, $2, $3)', [session.user_id, params.election.id, params.userElectionDetails])
