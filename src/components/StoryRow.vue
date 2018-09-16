@@ -9,6 +9,11 @@
 							{{ row.attributes.title || row.name}}
 						<i class="fa fa-fw fa-question"></i>
 						</span>
+						<br>
+						<span class="story-teaser">
+							{{ row.attributes.excerpt.substr(0,100) }}
+							<b-badge variant="link" class="more-badge" @click.stop="handleMoreClick" > more ... </b-badge>
+						</span>
 					</b-col>
 				</b-row>
 
@@ -61,14 +66,19 @@ export default {
       return  x instanceof Array ? x : [x] 
     },
 	swipeHandler (id)  {
-		console.log ('swipe handler in row', this.row)
+		console.log ('swipe handler in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
 		this.$store.commit('dashSetMode', 'detail')
 	},
-	handleThumbClick:  (url) => {
+	handleThumbClick:  function (url)  {
 		console.log ('handleThumbClick: ', 	url)
   		var win = window.open(url, '_blank');
   		win.focus();
+	},
+	handleMoreClick: function ()  {
+		console.log ('more click in row', this.row.id)
+		this.$store.commit('dashSetDetailRow', this.row)
+		this.$store.commit('dashSetMode', 'detail')
 	}
   },
   mounted () { 
@@ -106,6 +116,16 @@ export default {
 
   .story-title {
     font-weight: bold;
+  }
+
+  .story-teaser {
+    font-size: small;
+	color: gray;
+  }
+
+  .more-badge {
+	/*float: right; */
+	font-weight: bold;
   }
 
   .story-selected {

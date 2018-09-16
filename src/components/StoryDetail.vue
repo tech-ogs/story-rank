@@ -146,17 +146,19 @@
         </b-col>
       </b-row>
 
-      <b-row v-if="isEditor || isAdmin">
+
+      <b-row>
         <b-col class="flex-perfect-center">
-		  <b-button-toolbar v-if="mode === 'view'" key-nav>
+		  <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
 <!--
 			<b-button-group class="mx-1">
 			  <b-btn>&laquo;</b-btn>
 			  <b-btn>&lsaquo;</b-btn>
 			</b-button-group>
 -->
-			<b-button-group class="mx-1">
-			  <b-btn @click="doEdit">Edit</b-btn>
+			<b-button-group class="button-group mx-1">
+			  <b-btn @click="close">Back</b-btn>
+			  <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
 			</b-button-group>
 <!--
 			<b-button-group class="mx-1">
@@ -372,5 +374,10 @@ export default {
   .story-footer {
     display: flex;
     align-items: center;
+  }
+  .button-group {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
   }
 </style>
