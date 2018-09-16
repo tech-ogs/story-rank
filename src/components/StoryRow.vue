@@ -7,12 +7,10 @@
 					<b-col class="story-title-container">
 						<span class="story-title">
 							{{ row.attributes.title || row.name}}
-						<i class="fa fa-fw fa-question"></i>
 						</span>
 						<br>
 						<span class="story-teaser">
 							{{ row.attributes.excerpt.substr(0,100) }}
-							<b-badge variant="link" class="more-badge" @click.stop="handleMoreClick" > more ... </b-badge>
 						</span>
 					</b-col>
 				</b-row>
@@ -28,6 +26,9 @@
 						<span class="story-shortlist-marker" v-if="shortlist.indexOf(row.id) >= 0">
           					<icon name="star" class="shortlist-icon" />
 						</span>
+					</b-col>
+					<b-col cols="2">
+						<b-badge variant="link" class="more-badge" @click.stop="handleMoreClick" > more ... </b-badge>
 					</b-col>
 				</b-row>
 			</b-col>
@@ -124,8 +125,7 @@ export default {
   }
 
   .more-badge {
-	/*float: right; */
-	font-weight: bold;
+	font-size: x-small;
   }
 
   .story-selected {
