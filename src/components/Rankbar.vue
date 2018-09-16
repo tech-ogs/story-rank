@@ -17,7 +17,7 @@
 			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
 		  <b-btn size="sm" class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
-			<span class="tool-text" >SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{election.days_to_close}} days left</b-badge> 
+			<span class="tool-text" >SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{ submitButtonText() }} </b-badge> 
 		  </b-btn>
 		</b-nav>
 	</b-navbar>
@@ -37,7 +37,18 @@ const fields = [
 export default {
   data () {
     return {
+		submitButtonText: () => { 
+			var result
+			if (this.userElectionDetails.locked) {
+				result = 'Locked'
+			}
+			else {
+			 	result = this.election.days_to_close + ' days left'
+			}
+			return result
+		}
     }
+
   },
   computed: {
     items() { 

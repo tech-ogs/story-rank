@@ -220,14 +220,15 @@ const mutations = {
 	}
 
 	var sortFn = locked ? fnLocked: fnUnlocked
-
-	state.items.sort(sortFn)
+	var copy = state.items.map( (x) => x )
+	copy.sort(sortFn)
 	/* and then shuffle if unlocked */
 	if (!locked) { 
 		for (let i=1; i <= userHash; i++) {
-			state.items.push.apply(state.items, state.items.splice(0,1))
+			copy.push.apply(copy, copy.splice(0,1))
 		}
 	}
+	state.items = copy
 	reindex()
   },
 
