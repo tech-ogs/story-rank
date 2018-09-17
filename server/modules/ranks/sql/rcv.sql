@@ -69,16 +69,16 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 			plv8.find_function('rcv_redistribute_votes')(ret.loser)
 		}
 		else {
-			ret.tally.forEach( function (x)  {
-				if (x.story_id !== ret.winner.story_id) {
-					if (x.tally > 0) { 
-						results.unshift(x.story_id)
-					}
-					else {
-						results.push(x.story_id)
-					}
+			/* omit the 0'th record, it is the winner */
+			for (var i = ret.tally.length - 1; i > 0; i-- )  {
+				var x = ret.tally[i]
+				if (x.tally > 0) { 
+					results.unshift(x.story_id)
 				}
-			})
+				else {
+					results.push(x.story_id)
+				}
+			}
 			results.unshift(ret.winner.story_id)
 			winner = ret.winner
 		}

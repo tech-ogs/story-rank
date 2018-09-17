@@ -69,3 +69,5 @@ update application.results set election_id = (select id from application.electio
 delete from application.results where id not in ( select id from application.results order by id desc limit 1);
 
 alter table application.flags add column params jsonb;
+
+alter table application.users alter column attributes set default '{"groups": ["public"]}'::jsonb;
