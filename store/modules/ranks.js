@@ -1,36 +1,19 @@
 import Vue from 'vue'
 // initial state
 const state = {
-  ranks: {},
-  byRank: {},
-  favorites: {},
-  favoritesByRank: {},
-  results: []
+  ranks: [],
+  results: [],
+  tallyById: {},
+  rankBucketById: {}
 }
 
 // helpers
 // getters
 const getters = {
-  ranks: (state) => {
-
-    //console.log( 'ranks getter', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
-    return state.ranks
-  },
-  favorites: (state) => {
-    return state.favorites
-  },
-  numFavorites: (state) => { 
-    var result = 0
-    if (state.favorites != null) { 
-      result = Object.keys(state.favorites)
-      .filter( x => { return state.favorites[x] } )
-      .length
-    }
-    return result
-  },
-  results: (state) => {
-  	return state.results
-  }
+  ranks: state.ranks,
+  results: (state) => state.results,
+  tallyById: (state) => state.tallyById,
+  rankBucketById: (state) => state.rankBucketById
 }
 
 // actions
@@ -38,16 +21,23 @@ const actions = {
   resultsSetData: (context, params) => {
     console.log('resultsSetData', JSON.stringify(params))
     state.results = params.ranks
-	
-	console.log ('resultsSetData, election lock:', context.rootState.dashboard.election.locked)
-
-	context.commit('storiesSort', {locked: context.rootState.dashboard.userElectionDetails.locked, userHash: context.rootState.dashboard.userHash, ranks: state.results})
+	state.ranks = params.ranks.map((x) => x.sid)
+	var tallyById = {}
+	var rankBucketById = {}
+	state.results.forEach((x) => { 
+		tallyById[x.sid] = x.tally 
+		rankBucketById[x.sid] = x.rank	
+	})
+	state.tallyById = tallyById
+	state.rankBucketById = rankBucketById
+	context.commit('storiesSort', {locked: context.rootState.dashboard.userElectionDetails.locked, userHash: context.rootState.dashboard.userHash, ranks: state.ranks})
   },
 
 }
 
 // mutations
 const mutations = {
+/*
   ranksSetData: (state, params) => {
       //console.log('ranksSetData', params)
       state.ranks = params.ranks
@@ -95,6 +85,7 @@ const mutations = {
     state.favoritesByRank = favoritesByRank
     //console.log( 'ranks initData', console.log( Object.keys(state.ranks || {}).sort((a,b)=>state.ranks[a]-state.ranks[b]))  )
   }
+*/
 }
 
 export default {

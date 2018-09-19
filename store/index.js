@@ -144,9 +144,7 @@ export default new Vuex.Store({
 		/* need shell here, retire myranks */
       context.commit('usersSetData', require('./testdata/users.json'))
       context.commit('commentsSetData', require('./testdata/comments.json'))
-      context.commit('ranksSetData', require('./testdata/myranks.json'))
       context.commit('resultsSetData', require('./testdata/results.json'))
-      context.commit('ranksInitData', require('./testdata/stories.json'))
       context.commit('storiesSetData', require('./testdata/stories.json'))
       context.commit('setSocketTest')
     }

@@ -62,7 +62,7 @@ export default {
 	filterShortlist() { return this.$store.getters.dashFilterShortlist },
 	mode() { return this.$store.getters.dashMode },
 	userHash() { return this.$store.getters.userHash },
-	results() { return this.$store.getters.results }
+	ranks() { return this.$store.getters.ranks }
   },
   methods: {
 		handleRankBtnClick (val)  {
@@ -74,7 +74,7 @@ export default {
 		handleLock() {
 			var fn = () => {
 				this.$store.commit('dashLockElection')
-				this.$store.commit('storiesSort', {locked : true, userHash: this.userHash, ranks: this.results})
+				this.$store.commit('storiesSort', {locked : true, userHash: this.userHash, ranks: this.ranks})
 			}
 			//this.$store.commit('dashSetInfoMessage', 'Are you sure? This cannot be undone')
 			//this.$store.commit('dashSetInfoHandler', fn)

@@ -18,8 +18,9 @@
 				<b-row class="story-footer">
 					<b-col class="story-submitter-container">
 						<span class="story-submitter">
-							 <!--  [{{row.id}}]  -->
-            {{ users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx' }}
+							 <!--  id:[{{row.id}}]  -->
+			rank: {{ Object.keys(rankBucketById).length > 0 ? rankBucketById[row.id] : '' }} tally: {{ Object.keys(tallyById).length > 0  ? tallyById[row.id] : ''}}
+            {{ (users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx').substr(0,25) }}
 						</span>
 					</b-col>
 					<b-col class="story-shortlist-container">
@@ -58,7 +59,8 @@ export default {
   computed: {
     selectedRow() { return this.$store.getters.dashSelectedRow },
     ranks () { return this.$store.getters.ranks},
-    results() { return this.$store.getters.getResults },
+	tallyById() { return this.$store.getters.tallyById },
+	rankBucketById() { return this.$store.getters.rankBucketById },
     users () { return this.$store.getters.usersGetIdMap },
     shortlist() { return this.$store.getters.shortlist }
   },
