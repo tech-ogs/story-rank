@@ -52,6 +52,7 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jsonb AS $$
 
 	var results = [];
+	var tallies = {};
 	var winner = null
 	plv8.execute('drop table if exists ranktable');
 	plv8.execute('create temp table ranktable as select * from application.ranks where election_id = $1 and user_id in ( select user_id from application.user_elections where election_id = $1 and (attributes->>\'locked\')::boolean = true)', [election_id])
@@ -66,6 +67,7 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		plv8.find_function('dump_round_results')(ret)
 		if (ret.loser != null) {
 			results.unshift(ret.loser.story_id)
+			tallies[ret.loser.story_id] = ret.loser.tally
 			plv8.find_function('rcv_redistribute_votes')(ret.loser)
 		}
 		else {
@@ -74,16 +76,48 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 				var x = ret.tally[i]
 				if (x.tally > 0) { 
 					results.unshift(x.story_id)
+					tallies[x.story_id] = x.tally
 				}
 				else {
 					results.push(x.story_id)
+					tallies[x.story_id] = x.tally
 				}
 			}
 			results.unshift(ret.winner.story_id)
+			tallies[ret.winner.story_id] = ret.winner.tally
 			winner = ret.winner
 		}
 	}
-	plv8.elog (LOG, 'going to insert results:', election_id, results)
+	
+	plv8.elog(NOTICE, 'tallies: ', JSON.stringify(tallies))
+	results = results.map(function(x) {
+		var obj = {}
+		obj.sid = x
+		obj.tally = tallies[x]
+		obj.rank = null
+		return obj
+	})
+
+	plv8.elog(NOTICE, 'results1: ', JSON.stringify(results))
+
+	results.sort(function( a, b ) {
+		return b.tally - a.tally
+	})
+
+	plv8.elog(NOTICE, 'results2: ', JSON.stringify(results))
+	var currTally  = results[0].tally
+	var currRank = 1
+	for (var j = 0; j < results.length; j++) {
+		if (results[j].tally === currTally) {
+			results[j].rank = currRank
+		}
+		else {
+			currRank++
+			currTally = results[j].tally
+			results[j].rank = currRank
+		}
+	}
+	plv8.elog (NOTICE, 'going to insert results:', election_id, results)
 	plv8.execute('insert into application.results (ranks, election_id) values ($1::jsonb, $2) on conflict (election_id) do update set rank_date = now(), ranks = $1::jsonb', [results, election_id])
 	return results
 
