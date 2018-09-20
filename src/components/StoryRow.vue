@@ -19,9 +19,11 @@
 					<b-col class="story-submitter-container">
 						<span class="story-submitter">
 							 <!--  id:[{{row.id}}]  -->
+						</span>
+<span v-if="userElectionDetails.locked" >
 			rank: {{ Object.keys(rankBucketById).length > 0 ? rankBucketById[row.id] : '' }} tally: {{ Object.keys(tallyById).length > 0  ? tallyById[row.id] : ''}}
             {{ (users[row.submitter_id] != null ? (users[row.submitter_id].name != null ? users[row.submitter_id].name : users[row.submitter_id].login) : 'xxx').substr(0,25) }}
-						</span>
+</span>
 					</b-col>
 					<b-col class="story-shortlist-container">
 						<span class="story-shortlist-marker" v-if="shortlist.indexOf(row.id) >= 0">
@@ -62,6 +64,7 @@ export default {
 	tallyById() { return this.$store.getters.tallyById },
 	rankBucketById() { return this.$store.getters.rankBucketById },
     users () { return this.$store.getters.usersGetIdMap },
+	userElectionDetails() { return this.$store.getters.userElectionDetails},
     shortlist() { return this.$store.getters.shortlist }
   },
   methods: {
