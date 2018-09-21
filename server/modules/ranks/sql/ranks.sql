@@ -2,13 +2,18 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
   if (session.user_id == null) {
     throw Error ('missing user_id in session ' + session.id)
   }
+  var eClosed = false;
   var ueLocked = false;
   var userElectionDetails = plv8.execute('select attributes from application.user_elections where user_id = $1 and election_id = $2', [session.user_id, params.election.id])
   if (userElectionDetails != null && userElectionDetails.length > 0) {
 	ueLocked = userElectionDetails[0].attributes.locked
   }
+  var election = plv8.find_function('get_election')()
+  if (election.days_to_close < 0) {
+	eClosed = true
+  }
   plv8.elog (LOG, 'ueLocked: ', ueLocked)
-  if (!ueLocked) {
+  if (!eClosed && !ueLocked) {
 	  plv8.execute('delete from application.ranks where user_id = $1', [session.user_id])
 
 	  plv8.elog(LOG, ['rank_update params:', JSON.stringify(params)]) 
@@ -20,6 +25,10 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
 		}
 	  })
 	  insertStmt.free()
+  }
+
+  if (ueLocked) {
+	params.userElectionDetails.locked = true
   }
 
   plv8.execute ('delete from application.user_elections where user_id = $1', [session.user_id])
