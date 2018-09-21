@@ -58,6 +58,7 @@ const state = {
   	name : '',
   	label: '',
     days_to_close: 0,
+	active: true
   },
   userElectionDetails : {
   	shortlist: [],

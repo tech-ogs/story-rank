@@ -16,8 +16,11 @@
 		  <b-btn  size="sm" class="tool-button" @click="toggleFilterShortlist">
 			<span class="tool-text">SHORTLIST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><b-badge variant="light" class="shortlist-badge"> {{shortlist.length}} </b-badge> 
 		  </b-btn>
-		  <b-btn size="sm" class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
+		  <b-btn v-if="election.active" size="sm" class="tool-button" :disabled="userElectionDetails.locked" @click="handleLock()">
 			<span class="tool-text" >SUBMIT &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{ submitButtonText() }} </b-badge> 
+		  </b-btn>
+		  <b-btn v-else size="sm" class="tool-button">
+			<span class="tool-text" > CLOSED &nbsp; &nbsp; </span><b-badge variant="light" class="shortlist-badge"> {{ closedButtonText() }} </b-badge> 
 		  </b-btn>
 		</b-nav>
 	</b-navbar>
@@ -46,7 +49,18 @@ export default {
 			 	result = this.election.days_to_close + ' days left'
 			}
 			return result
+		},
+		closedButtonText: () => {
+			var result
+			if (this.election.days_to_close === -1) {
+				result = -(this.election.days_to_close) + ' day ago'
+			}
+			else {
+				result = -(this.election.days_to_close) + ' days ago'
+			}
+			return result
 		}
+
     }
 
   },

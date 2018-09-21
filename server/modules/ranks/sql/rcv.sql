@@ -184,6 +184,8 @@ CREATE OR REPLACE FUNCTION test_random_rcv() returns jsonb AS $$
 		ballot.forEach( function (x, idx)  {
 			stmt.execute([election_id, i, x, idx+1])
 		})
+
+		plv8.execute('insert into application.user_elections (user_id, election_id, attributes) values ($1, $2, $3)', [i, election_id, {locked: true}])
 	} 
 	
 	var result = plv8.find_function('calculate_results_rcv')(election_id)
