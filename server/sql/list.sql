@@ -4,6 +4,6 @@ CREATE OR REPLACE FUNCTION list(params jsonb, control jsonb) returns jsonb AS $$
   }
   /* projection is a csv of colnames */
   var projection = control.projection || '*' 
-  var result = plv8.execute('select ' + projection + ' from ' + params.schema + '.' + params.table + ' order by id asc')
+  var result = plv8.execute('select ' + projection + ' from ' + params.schema + '.' + params.table + ' order by login asc')
   return result
 $$ LANGUAGE plv8;

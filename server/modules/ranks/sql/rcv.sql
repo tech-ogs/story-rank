@@ -89,7 +89,7 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		}
 	}
 	
-	plv8.elog(NOTICE, 'tallies: ', JSON.stringify(tallies))
+	plv8.elog(NOTICE, '\n\ntallies: ', JSON.stringify(tallies))
 	results = results.map(function(x) {
 		var obj = {}
 		obj.sid = x
@@ -98,13 +98,13 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 		return obj
 	})
 
-	plv8.elog(NOTICE, 'results1: ', JSON.stringify(results))
+	plv8.elog(NOTICE, '\n\nresults1: ', JSON.stringify(results))
 
 	results.sort(function( a, b ) {
 		return b.tally - a.tally
 	})
 
-	plv8.elog(NOTICE, 'results2: ', JSON.stringify(results))
+	plv8.elog(NOTICE, '\n\nresults2: ', JSON.stringify(results))
 	var currTally  = results[0].tally
 	var currRank = 1
 	for (var j = 0; j < results.length; j++) {
@@ -125,7 +125,7 @@ $$ LANGUAGE plv8;
 
 
 CREATE OR REPLACE FUNCTION dump_round_results(result jsonb) returns jsonb AS $$
-	var table = 'tally: \n'
+	var table = '\n\ntally: \n'
 	var table = '\nstory   count   total     percent\n'
 	result.tally.map( function (x)  {
 		table += x.story_id
@@ -145,7 +145,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION dump_rankdata() returns jsonb AS $$
 	var ret = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')
-	var table = 'user   ballot\n'
+	var table = '\n\nuser   ballot\n'
 	ret.map( function (x)  {
 		table += x.user_id
 		table += '      '
