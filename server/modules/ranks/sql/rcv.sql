@@ -105,16 +105,18 @@ CREATE OR REPLACE FUNCTION calculate_results_rcv(election_id bigint) returns jso
 	})
 
 	plv8.elog(NOTICE, '\n\nresults2: ', JSON.stringify(results))
-	var currTally  = results[0].tally
-	var currRank = 1
-	for (var j = 0; j < results.length; j++) {
-		if (results[j].tally === currTally) {
-			results[j].rank = currRank
-		}
-		else {
-			currRank++
-			currTally = results[j].tally
-			results[j].rank = currRank
+	if (results.length > 0) { 
+		var currTally  = results[0].tally
+		var currRank = 1
+		for (var j = 0; j < results.length; j++) {
+			if (results[j].tally === currTally) {
+				results[j].rank = currRank
+			}
+			else {
+				currRank++
+				currTally = results[j].tally
+				results[j].rank = currRank
+			}
 		}
 	}
 	plv8.elog (NOTICE, 'going to insert results:', election_id, results)
