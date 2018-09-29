@@ -25,9 +25,11 @@ const mutations = {
   usersSetData: (state, params) => {
       //console.log('usersSetData', params instanceof Array, params.length,  params)
       state.items = params
+	  var byId = {}
       params.forEach( x => {
-        state.byId[x.id] = x
+        byId[x.id] = x
       })
+	  state.byId = byId
   }
 }
 

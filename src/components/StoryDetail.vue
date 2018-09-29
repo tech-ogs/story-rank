@@ -200,7 +200,7 @@ export default {
     return {
       getImg: (url) => { 
         //return url != null ? require('@/'+url) : require('@/assets/thumbs/placeholder.jpg')
-        return url != null ? url : '/assets/thumbs/placeholder.jpg'
+        return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
 	  },
 	  imageFile: '',
       editRow: {
