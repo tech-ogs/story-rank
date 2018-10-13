@@ -10,7 +10,7 @@ const state = {
 // helpers
 // getters
 const getters = {
-  ranks: state.ranks,
+  ranks: (state) => state.ranks,
   results: (state) => state.results,
   tallyById: (state) => state.tallyById,
   rankBucketById: (state) => state.rankBucketById

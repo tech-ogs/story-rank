@@ -35,6 +35,26 @@ module.exports = merge(baseWebpackConfig, {
       template: 'login.html',
       inject: true
     }),
+    new HtmlWebpackPlugin({
+      filename: 'recover-with-login.html',
+      template: 'recover-with-login.html',
+      inject: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'recover-with-mobile.html',
+      template: 'recover-with-mobile.html',
+      inject: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'validate-otp.html',
+      template: 'validate-otp.html',
+      inject: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'reset-password.html',
+      template: 'reset-password.html',
+      inject: true
+    }),
     new FriendlyErrorsPlugin()
   ]
 })

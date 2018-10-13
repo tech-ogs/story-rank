@@ -71,12 +71,54 @@ var webpackConfig = merge(baseWebpackConfig, {
         removeComments: true,
         collapseWhitespace: true,
         removeAttributeQuotes: true
-        // more options:
-        // https://github.com/kangax/html-minifier#options-quick-reference
       },
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
+    new HtmlWebpackPlugin({
+      filename: 'recover-with-login.html',
+      template: 'recover-with-login.html',
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'recover-with-mobile.html',
+      template: 'recover-with-mobile.html',
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'validate-otp.html',
+      template: 'validate-otp.html',
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'reset-password.html',
+      template: 'reset-password.html',
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+
     // keep module.id stable when vender modules does not change
     new webpack.HashedModuleIdsPlugin(),
     // split vendor js into its own file

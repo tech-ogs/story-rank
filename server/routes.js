@@ -68,8 +68,28 @@ router.get('/', function(req, res){
   } 
 });
 
+router.get('/login.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/login.html'))
+})
+
+router.get('/recover-with-login.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/recover-with-login.html'))
+})
+router.get('/recover-with-mobile.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/recover-with-mobile.html'))
+})
+router.get('/validate-otp.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/validate-otp.html'))
+})
+router.get('/reset-password.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/reset-password.html'))
+})
+
 router.get('/assets/logo.png', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/static/logo.png'))
+})
+router.get('/assets/login.css', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/static/login.css'))
 })
 
 router.post('/login', function(req, res) {
