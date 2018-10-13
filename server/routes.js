@@ -58,6 +58,7 @@ var getHandler = function(fn) {
 }
 // public
 
+
 router.get('/', function(req, res){
   //console.log ('get /', session)
   if (req.session.logged_in) {
@@ -68,10 +69,35 @@ router.get('/', function(req, res){
   } 
 });
 
+publicPaths = [
+	'/login.html',
+	'/signup.html',
+	'/recover-with-login.html',
+	'/recover-with-mobile.html',
+	'/validate-otp.html',
+	'/reset-password.html'
+]
+.forEach( (x) => {
+	console.log ('get for ' + x )
+	router.get(x, function(req, res) {
+  		if (req.session.logged_in) {
+    		res.sendFile(path.join(__dirname, '../dist/index.html'));
+  		}
+  		else {
+    		res.sendFile(path.join(__dirname, ('../dist/' + x) ));
+  		}
+	})
+})
+ 
+
+/*
 router.get('/login.html', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/login.html'))
 })
 
+router.get('/signup.html', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/signup.html'))
+})
 router.get('/recover-with-login.html', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/recover-with-login.html'))
 })
@@ -84,6 +110,7 @@ router.get('/validate-otp.html', function(req, res) {
 router.get('/reset-password.html', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/reset-password.html'))
 })
+*/
 
 router.get('/assets/logo.png', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/static/logo.png'))

@@ -75,6 +75,18 @@ var webpackConfig = merge(baseWebpackConfig, {
       chunksSortMode: 'dependency'
     }),
     new HtmlWebpackPlugin({
+      filename: 'signup.html',
+      template: 'signup.html',
+      inject: false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      },
+      chunksSortMode: 'dependency'
+    }),
+
+    new HtmlWebpackPlugin({
       filename: 'recover-with-login.html',
       template: 'recover-with-login.html',
       inject: false,

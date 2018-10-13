@@ -36,6 +36,11 @@ module.exports = merge(baseWebpackConfig, {
       inject: true
     }),
     new HtmlWebpackPlugin({
+      filename: 'signup.html',
+      template: 'signup.html',
+      inject: true
+    }),
+    new HtmlWebpackPlugin({
       filename: 'recover-with-login.html',
       template: 'recover-with-login.html',
       inject: true
