@@ -94,6 +94,13 @@ io.on('connection', function (socket) {
 });
 
 /* just do this once. The db notification listeners are not socket specific */
+/*
 db.setup_notify_listeners(socketEvents)
-
+.then( (ret) => {
+	// do nothing
+})
+.catch( (err) => {
+	throw (err)
+})
+*/
 

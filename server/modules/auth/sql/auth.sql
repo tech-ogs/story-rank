@@ -20,7 +20,6 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 $$ LANGUAGE plv8;
 
 
-DROP  FUNCTION  active_election();
 CREATE OR REPLACE FUNCTION get_election() returns jsonb AS $$
 
 	var election = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc limit 1', ['test%'])
@@ -34,6 +33,48 @@ CREATE OR REPLACE FUNCTION get_election() returns jsonb AS $$
 
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
+	plv8.elog(LOG, 'plv8 signup', JSON.stringify(params))
+
+	var emptyRex = /^\s*$/
+
+	if (emptyRex.test(params.login) || params.login == null) {
+		throw new Error ('Login name is required')
+	}
+	if (emptyRex.test(params.mobile) || params.mobile == null) {
+		throw new Error ('Mobile is required')
+	}
+	if (emptyRex.test(params.password) || params.password == null) { 
+		throw new Error ('Password is required')
+	}
+
+	var userCheck = plv8.execute('select * from application.users where login = $1', [params.login])
+	plv8.elog(LOG, 'plv8 signup userCheck', JSON.stringify(ret))
+
+	if (userCheck != null && userCheck.length > 0) {
+		throw new Error ('login exists, please retry with a different login')
+	}
+
+	var mobileCheck = plv8.execute('select id from application.users where mobile = $1', [params.mobile])
+	plv8.elog(LOG, 'plv8 signup mobileCheck', JSON.stringify(ret))
+
+	if (mobileCheck != null && mobileCheck.length > 0) {
+		throw new Error ('Mobile already registered, please retry with a different mobile')
+	}
+
+	/* if we got here, the signup attempt can go through */
+	var userRecord = plv8.execute('insert into application.users (login, mobile, password) values ($1, $2, $3) returning *', [params.login, params.mobile, params.password])
+	if (userRecord == null || userRecord.length === 0) {
+		throw new Error ('Server error during signup')
+	}
+		
+	if (params.session != null && params.session.id != null) {
+		plv8.execute('update application.sessions set logged_in = true, last_touched = now(), user_id = $1 where id = $2 returning *', [userRecord[0].id, params.session.id])
+	}
+
+	return userRecord[0]
+   
+$$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   plv8.elog(LOG, 'plv8 login', JSON.stringify(params))

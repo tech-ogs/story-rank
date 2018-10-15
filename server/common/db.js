@@ -1,23 +1,26 @@
 const { Client } = require('pg')
 const path = require('path')
-//const socketEvents = require (path.join ( __dirname, '../../server/common/socketEvents.js'))
+const credentials = {
+	user: 'postgres',
+	database: 'stories'
+}
 
-function getClient() {
-  const client = new Client({
-    user: 'postgres',
-    database: 'stories'
-  })
-  client.connect()
-  return client
+//const socketEvents = require (path.join ( __dirname, '../../server/common/socketEvents.js'))
+async function getClient() {
+	const client = new Client(credentials)
+	await client.connect()
+	return client
 }
 
 
-function setup_notify_listeners(socketEvents) {
-  const notificationsClient = getClient() 
+async function setup_notify_listeners(socketEvents) {
+  const notificationsClient = new Client(credentials)
+  await notificationsClient.connect()
   notificationsClient.query("LISTEN broadcast");
   notificationsClient.on('notification', socketEvents.doBroadcast);
 }
 
+/*
 function query(client, params) {
   var promise = new Promise(function(resolve, reject) {
     client.query(params.cmd,params.params, function(err, ret) {
@@ -33,6 +36,7 @@ function query(client, params) {
   })
   return promise
 }
+*/
 
 function processEventsOld() {
   console.log ('processEvents 0')
@@ -88,6 +92,7 @@ async function processEvents() {
     and then also commits the results of the event processing call
 */
 
+/*
 function commitClient(client) {
   var promise = new Promise(function(resolve, reject) {
     query(client, {cmd: 'commit', params: []})
@@ -103,15 +108,17 @@ function commitClient(client) {
   })
   return promise
 }
-
+*/
+/*
 function endClient(client) {
   client.end()
 }
+*/
 
 exports = module.exports = {
   getClient,
-  query,
-  commitClient,
-  endClient,
+  //query,
+  //commitClient,
+  //endClient,
   setup_notify_listeners
 }

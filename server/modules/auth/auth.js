@@ -1,82 +1,86 @@
 var path = require('path')
 var db = require(path.join(__dirname, '../../common/db'))
-function shell (req, res) {
-  var client = db.getClient()
-  var promise = new Promise(function(resolve, reject) {
-    var session = req.session
-    console.log('shell:', session.id)
-    client.query('select shell($1)', [session.id || null], function (err, ret) {
-      client.end()
-      console.log('pg callback', err)
-      if (err == null) {
-        resolve(ret.rows[0].shell)
-      }
-      else {
-        reject(err)
-      }
-    })
-  })
-  return promise
+
+async function shell (req, res) {
+	var client, result
+	try {
+		var client = await db.getCient()
+		var session = req.session
+		console.log('shell:', session.id)
+		result = await client.query('select shell($1)', [session.id || null])
+        result = result.rows[0].shell
+	}
+	catch(err) {
+		throw(err)
+	}
+	finally {
+		await client.end()
+	}
+	return result
 }
  
-function login (req, res) {
-  var client = db.getClient()
-  var params = req.body
-  params.session = req.session
-  var promise = new Promise(function(resolve, reject) {
-    console.log('login:', params)
-    client.query('select login($1)', [params || {}], function (err, ret1) {
-      console.log('pg callback', err)
-      if (err == null) {
-        client.query('commit',[], function(err, ret2) {
-          if (err == null) {
-            client.end()
-            resolve(ret1.rows[0].login)
-          }
-          else {
-            client.end()
-            reject(err)
-          }
-        })
-      }
-      else {
-        client.end()
-        reject(err)
-      }
-    })
-  })
-  return promise
-}
- 
-function logout (req, res) {
-  var client = db.getClient()
-  var params = req.body
-  params.session = req.session
-  var promise = new Promise(function(resolve, reject) {
-    console.log('logout:', params)
-    client.query('select logout($1)', [params || {}], function (err, ret1) {
-      console.log('pg callback', err)
-      if (err == null) {
-        client.query('commit',[], function(err, ret2) {
-          if (err == null) {
-            client.end()
-            resolve(ret1.rows[0].logout)
-          }
-          else {
-            client.end()
-            reject(err)
-          }
-        })
-      }
-      else {
-        client.end()
-        reject(err)
-      }
-    })
-  })
-  return promise
+async function signup (req, res) {
+	var client, result
+	try {
+		client = await db.getClient()
+		var params = req.body
+		params.session = req.session
+		console.log('signup:', params)
+		result = await client.query('select signup($1)', [params || {}])
+        result = result.rows[0].signup
+		await client.query('commit')
+	}
+	catch(err) {
+	  throw (err)
+	}
+	finally {
+      await client.end()
+	}
+    return result
 }
 
+async function login (req, res) {
+    var client, result
+    try {
+        client = await db.getClient()
+        var params = req.body
+        params.session = req.session
+        console.log('login:', params)
+        result = await client.query('select login($1)', [params || {}])
+		console.log ('login result:', result)
+        result = result.rows[0].login
+        await client.query('commit')
+    }
+  	catch(err) {
+	    throw (err)
+	}
+	finally {
+        await client.end()
+	}
+    return result
+}
+ 
+async function logout (req, res) {
+    var client, result
+    try {
+        client = await db.getClient()
+        var params = req.body
+        params.session = req.session
+        console.log('logout:', params)
+        result = await client.query('select logout($1)', [params || {}])
+        result = result.rows[0].logout
+        await client.query('commit')
+    }
+  	catch(err) {
+	    throw (err)
+	}
+	finally {
+        await client.end()
+	}
+    return result
+}
+
+/*
 function reset (req, res) {
   var client = db.getClient()
   var params = req.body
@@ -105,10 +109,11 @@ function reset (req, res) {
   })
   return promise
 }
-
+*/
 exports = module.exports = {
   shell: shell,
+  signup: signup,
   login: login,
   logout: logout,
-  reset: reset
+  //reset: reset
 }
