@@ -1,23 +1,22 @@
 var path = require('path')
 var db = require(path.join(__dirname, '../../common/db'))
  
-function results (req, res) {
-  var client = db.getClient()
-  var promise = new Promise(function(resolve, reject) {
-    var session = req.session
-    console.log('results:', session.id)
-    client.query('select results($1)', [req.body], function (err, ret) {
-      client.end()
-      console.log('pg callback', err)
-      if (err == null) {
-        resolve(ret.rows[0].results)
-      }
-      else {
-        reject(err)
-      }
-    })
-  })
-  return promise
+async function results (req, res) {
+	var result, client
+	try {
+		client = await db.getClient()
+		var session = req.session
+		console.log('results:', session.id)
+		result = await client.query('select results($1)', [req.body])
+		result = result.rows[0].results
+	}
+	catch (err) {
+		throw (err)
+	}
+	finally {
+		client.end()
+	}
+  return result
 }
  
 

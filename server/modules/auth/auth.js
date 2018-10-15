@@ -4,13 +4,14 @@ var db = require(path.join(__dirname, '../../common/db'))
 async function shell (req, res) {
 	var client, result
 	try {
-		var client = await db.getCient()
+		client = await db.getClient()
 		var session = req.session
 		console.log('shell:', session.id)
 		result = await client.query('select shell($1)', [session.id || null])
         result = result.rows[0].shell
 	}
 	catch(err) {
+		//console.trace ('in shell error', err.message)
 		throw(err)
 	}
 	finally {

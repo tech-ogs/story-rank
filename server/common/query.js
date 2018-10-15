@@ -1,32 +1,23 @@
-const { Client } = require('pg')
-//const Promise = require('promise')
+var path = require('path')
+var db = require(path.join(__dirname, '/db'))
 
-function getClient() {
-  const client = new Client({
-    user: 'postgres',
-    database: 'stories'
-  })
-  client.connect()
-  return client
-}
-
-function list (req, res) {
-  var client = getClient()
-  var promise = new Promise(function(resolve, reject) {
-    console.log('list:', req.body)
-    var params = req.body || { schema: 'application', table : 'stories' }
-    client.query('select list($1, $2)', [params , {}], function (err, ret) {
-      client.end()
-      console.log('pg callback', err, ret)
-      if (err == null) {
-        resolve(ret.rows[0].list)
-      }
-      else {
-        reject(err)
-      }
-    })
-  })
-  return promise
+async function list (req, res) {
+	var result, client
+	try {
+		client = await db.getClient()
+		console.log('list:', req.body)
+		var params = req.body || { schema: 'application', table : 'stories' }
+		result = await client.query('select list($1, $2)', [params , {}])
+		result = result.rows[0].list
+	}
+	catch(err) {
+		//console.trace('list error', err.message)
+		throw (err)
+	}
+	finally {
+		await client.end()
+	}
+	return result
 }
  
 exports = module.exports = {
