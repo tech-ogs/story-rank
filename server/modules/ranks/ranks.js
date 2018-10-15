@@ -20,29 +20,22 @@ async function results (req, res) {
 }
  
 
-function rankUpdate (req, data) {
-  var client = db.getClient()
-  var promise = new Promise(function(resolve, reject) {
-    var session = req.session
-    var result = null
-    db.query(client, {
-      cmd: 'select rank_update($1, $2)', 
-      params: [session, data]
-    })
-    .then(function(ret) {
-      result = ret
-      return db.commitClient(client)
-    })
-    .then(function(ret) {
-      db.endClient(client)
-      resolve(result)
-    })
-    .catch(function(err) {
-      db.endClient(client)
-      reject(err)
-    })
-  })
-  return promise
+async function rankUpdate (req, data) {
+	var client, result
+	try {
+		client = await db.getClient()
+    	var session = req.session
+		result = await client.query('select rank_update($1, $2)', [session, data])
+		result = result.rows[0].rank_update
+		await client.query('commit');
+	}
+	catch(err) {
+		throw (err)
+	}
+	finally {
+		client.end()
+	}
+	return result
 }
 
 exports = module.exports = {
