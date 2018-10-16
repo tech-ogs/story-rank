@@ -68,7 +68,9 @@ export default {
 	voterList: function() {
 		this.$store.commit('dashSetAdminView', 'voter-list')
     },
-	elections: function() {},
+	elections: function() {
+		this.$store.commit('dashSetAdminView', 'elections')
+	},
     myProfile: function() {
 		this.$store.commit('dashSetAdminView', 'my-profile')
     },

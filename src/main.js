@@ -15,6 +15,7 @@ import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
 import Admin from '@/components/Admin'
+import Elections from '@/components/Elections'
 import VoterList from '@/components/VoterList'
 import MyProfile from '@/components/MyProfile'
 
@@ -39,6 +40,7 @@ Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
 Vue.component('admin', Admin)
+Vue.component('elections', Elections)
 Vue.component('voter-list', VoterList)
 Vue.component('my-profile', MyProfile)
 

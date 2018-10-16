@@ -15,21 +15,35 @@
 					&nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
 				</div>
 			</div>
-            <b-button class="width100" size="sm" @click="addRow"> <b>ADD VOTER</b> </b-button>
+            <b-button class="width100" size="sm" @click="addRow"> <b>NEW ELECTION</b> </b-button>
+			
         </template>
 
     </admin>
 </template>
 
 <script>
-
-
 export default {
   data () {
     return {
+		name : '',
+		mobile: '',
       listTable: null,
       rowclick: (item, index, event) => {
-      }
+        if (this.selectedRow != null && this.selectedRow.id === item.id) {
+          this.$store.commit('dashClearSelection') 
+		  this.$store.commit('dashRemoveShortlist', item.id)
+        }
+        else {
+          this.$store.commit('dashSetSelected', item)
+		  this.$store.commit('dashAddShortlist', item.id)
+        }
+      },
+	  blinkenClass: (status) => { return [
+		['blinken blinken0', 'blinken blinken1 blinken-fade', 'blinken blinken2 blinken-fade'],
+		['blinken blinken0 blinken-fade', 'blinken blinken1', 'blinken blinken2 blinken-fade'],
+		['blinken blinken0 blinken-fade', 'blinken blinken1 blinken-fade', 'blinken blinken2']
+	  ][status || 0] }
     }
   },
   computed: {
