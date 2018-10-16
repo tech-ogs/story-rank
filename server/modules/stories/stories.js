@@ -19,59 +19,42 @@ async function list (req, res) {
   return result
 }
 
-function editRow (req, res) {
-  console.log ('stories editRow', req.body)
-  var client = db.getClient()
-  var promise = new Promise(function(resolve, reject) {
-    var session = req.session
-    var result = null
-    db.query(client, {
-      cmd: 'select edit_row($1, $2)', 
-      params: [req.session, req.body]
-    })
-    .then(function(ret) {
-	  //console.log ('ret editrow: ',ret )
-      result = ret.rows[0].edit_row
-      return db.commitClient(client)
-    })
-    .then(function(ret) {
-      db.endClient(client)
-	  console.log ('resolving editrow: ', result)
-      resolve(result)
-    })
-    .catch(function(err) {
-      db.endClient(client)
-      reject(err)
-    })
-  })
-  return promise
+async function editRow (req, res) {
+	console.log ('stories editRow', req.body)
+	var result, client
+	try {
+  		client = await db.getClient()
+    	var session = req.session
+		result = await client.query('select edit_row($1, $2)', [req.session, req.body])
+      	result = result.rows[0].edit_row
+		await client.query('commit')
+	}
+	catch(err) {
+		throw (err)
+	}
+	finally {
+		client.end()
+	}
+	return result
 }
 
-function createRow (req, res) {
-  console.log ('stories createRow', req.body)
-  var client = db.getClient()
-  var promise = new Promise(function(resolve, reject) {
-    var session = req.session
-    var result = null
-    db.query(client, {
-      cmd: 'select create_row($1, $2)', 
-      params: [req.session, req.body]
-    })
-    .then(function(ret) {
-      result = ret.rows[0].create_row
-      return db.commitClient(client)
-    })
-    .then(function(ret) {
-      db.endClient(client)
-	  console.log ('resolving createrow: ', result)
-      resolve(result)
-    })
-    .catch(function(err) {
-      db.endClient(client)
-      reject(err)
-    })
-  })
-  return promise
+async function createRow (req, res) {
+	console.log ('stories createRow', req.body)
+	var result, client
+	try {
+  		client = await db.getClient()
+    	var session = req.session
+		result = await client.query('select create_row($1, $2)', [req.session, req.body])
+      	result = result.rows[0].create_row
+		await client.query('commit')
+	}
+	catch(err) {
+		throw (err)
+	}
+	finally {
+		client.end()
+	}
+	return result
 }
 
 

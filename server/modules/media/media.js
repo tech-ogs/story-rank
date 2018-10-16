@@ -1,14 +1,5 @@
-const { Client } = require('pg')
-//const Promise = require('promise')
-
-function getClient() {
-  const client = new Client({
-    user: 'postgres',
-    database: 'stories'
-  })
-  client.connect()
-  return client
-}
+var path = require('path')
+var db = require(path.join(__dirname, '../../common/db'))
 
 var imagemagick = require('imagemagick');
 var Promise = require('promise');
@@ -212,7 +203,7 @@ async function uploadMedia (fileObj, attributes, sessionParams) {
 	var mediaPath;
 	var thumbPath;
 	var imgBuf;
-	var client = getClient()
+	var client = await db.getClient()
 	try {
 		var docId = await addMedia(fileObj, attributes, sessionParams, client)
 		var imgData = await generateMediaThumbnail(fileObj)
@@ -238,7 +229,7 @@ async function uploadMedia (fileObj, attributes, sessionParams) {
 
 async function patchReferencingRow(params, data) {
 
-	var client = getClient()
+	var client = await db.getClient()
 	try {
 		if (params.storyId != null && !params.storyId.match(/null/)) {
 			await client.query ('select set_story_thumbnail($1, $2, $3)', [params.storyId, data.thumbUrl, data.url])
