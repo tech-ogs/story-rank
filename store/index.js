@@ -142,6 +142,7 @@ export default new Vuex.Store({
 
     initStoreTest(context, params) {
 		/* need shell here, retire myranks */
+      context.commit('dashInitialize', require('./testdata/shell.json'))
       context.commit('usersSetData', require('./testdata/users.json'))
       context.commit('commentsSetData', require('./testdata/comments.json'))
       context.commit('resultsSetData', require('./testdata/results.json'))

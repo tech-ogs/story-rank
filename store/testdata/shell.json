@@ -1,0 +1,39 @@
+{
+  "user": {
+    "id": 8,
+    "name": "Kaviraj Singh",
+    "login": "kavi",
+    "groups": [
+      "public",
+	  "admin",
+      "editor"
+    ],
+    "sessionId": 30926
+  },
+  "myranks": [
+    131,
+    136,
+    132
+  ],
+  "election": {
+    "id": 3,
+    "name": "wtf-q3-p1",
+    "label": "WTF3 prelim #1",
+    "active": false,
+    "days_to_close": -7
+  },
+  "userElectionDetails": {
+    "id": 4336,
+    "user_id": 8,
+    "attributes": {
+      "locked": true,
+      "shortlist": [
+        133,
+        132,
+        144,
+        131
+      ]
+    },
+    "election_id": 3
+  }
+}
