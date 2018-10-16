@@ -15,8 +15,15 @@
 					&nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
 				</div>
 			</div>
-            <b-button class="width100" size="sm" @click="addRow"> <b>NEW ELECTION</b> </b-button>
-			
+            <b-button class="width100" size="sm" v-b-toggle.collapse1> <b>NEW ELECTION</b> </b-button>
+			<b-collapse id="collapse1" class="mt-2">
+			<b-card>
+			  <p class="card-text">Election form  here</p>
+			</b-card>
+			</b-collapse>
+			<div>
+				list of elections here
+			</div>
         </template>
 
     </admin>
