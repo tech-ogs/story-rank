@@ -1,102 +1,33 @@
 <template>
-  <b-container class="app-container">
-    <b-row class="app-header">
-      <b-navbar class="title-bar" toggleable="sm" type="light" variant="faded" style="width: 100%">
+    <admin>
 
-
-        <b-navbar-brand href="#">
-          <span class="title-brand">
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
-          {{ election.label }}&nbsp; &nbsp;
-          </span>
-        </b-navbar-brand>
-
-		<b-navbar-nav>
-		<b-nav-item>
-			 <b-badge @click="showHelp"><h4> &nbsp; ? &nbsp;</h4> </b-badge>
-		</b-nav-item>
-		</b-navbar-nav>
-
-        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-
-        <b-collapse is-nav size="small" id="nav_collapse">
-          <b-navbar-nav>
-          </b-navbar-nav>
-          <!-- Right aligned nav items -->
-          <b-navbar-nav class="ml-auto">
-            <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> <b>NEW STORY</b> </b-button>
-			<br>
-            <b-button v-if="isAdmin" size="sm" @click="admin"> <b>MANAGE</b> </b-button>
-            <b-button v-else size="sm" @click="admin"> <b>PROFILE</b> </b-button>
-			<br>
+        <template slot="admin-view-menu">
+            <b-button  size="sm" @click="addRow"> <b>ADD VOTER</b> </b-button>
             <b-nav-item>
-              <div>
-
-              <div style="float:left; width: 80%;">
-              <b-form-select v-model="filterSubmitterId"  class="mb-3">
-                <option v-for="user in usersList" :key="user.id" :value="user.id">{{user.login}}</option>
-              </b-form-select>
-              </div>
-              <div style="float:left;">
-              <b-nav-item @click="filterSubmitterId = null">
-              &nbsp;&nbsp;X
-              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
-              </b-nav-item>
-              </div>
-
-              <div style="float:left; width: 80%;">
-              <b-form-input type="text" v-model="filterPattern" placeholder="Search text" class="mb-3">
-              </b-form-input>
-              </div>
-              <div style="float:left;">
-              <b-nav-item @click="filterPattern = null">
-              &nbsp;&nbsp;X
-              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
-              </b-nav-item>
-              </div>
-              </div>
+            	<div style="float:left; width: 80%;">
+            		<b-form-input type="text" v-model="filterPattern" placeholder="Search text" class="mb-3">
+            		</b-form-input>
+           	 	</div>
+            	<div style="float:left;">
+            		<b-nav-item @click="filterPattern = null">
+            			&nbsp;&nbsp;X
+            			&nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
+            		</b-nav-item>
+            	</div>
             </b-nav-item>
-			<br>
-            <b-button size="sm" @click="doLogout"> <b>SIGN OUT</b> </b-button>
-          </b-navbar-nav>
-        </b-collapse>
-      </b-navbar>
+            <br>
+        </template>
 
-      <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
-
-    </b-row>
-	<b-row class="app-header">
-		<b-col>
-		<div class="info-bar">
-		<div class="leaderboard-text">Leaderboard</div>
-		<div class="blinkenlights-container">
-			<span class="blinkenlights">  
-				<icon name="square" :class="blinkenClass(networkTxnStatus)[0]" /> 
-				<icon name="square" :class="blinkenClass(networkTxnStatus)[1]" /> 
-				<icon name="square" :class="blinkenClass(networkTxnStatus)[2]" /> 
-			</span> 
-		</div>
-		</div>
-		</b-col>
-	</b-row>
-    <b-row class="app-content" ref="list">
-      <b-col>
+        <template slot="admin-view-content">
         <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
-          <template slot="content" slot-scope="data">
+            <template slot="content" slot-scope="data">
             <story-row :row="data.item" :items="items">
             </story-row>
-          </template>
+            </template>
         </b-table>
-      </b-col>
-    </b-row>
-    <b-row class="app-footer">
-    </b-row>
-	<b-row>
-		<b-col>
-			<modal-dialog> </modal-dialog>
-		</b-col>
-	</b-row>
-  </b-container>
+        </template>
+
+    </admin>
 </template>
 
 <script>
@@ -316,9 +247,6 @@ export default {
 			message: faqMessage()
 		})
 		this.$store.commit('dashSetInfoModalShow', true) 
-	},
-	admin: function() {
-		this.$store.commit('dashSetMode', 'admin')
 	}
   },
   watch: {
@@ -329,29 +257,6 @@ export default {
   },
 
   mounted () {
-    console.log('ENV', process.env)
-    var listTable = this.$refs.list
-    console.log('listTable:', listTable)
-    this.listTable = listTable
-    
-    this.listTable.addEventListener('scroll', this.scrollListener());
-
-    this.listTable.scrollTop = this.scrollTop
-    if (process.env.NODE_ENV === 'client-development') {
-      this.$store.dispatch('initStoreTest')
-    }
-    else { 
-      var socket = window.io({
-		reconnection: true
-	  });
-      console.log('Dashboard socket:', socket)
-      this.$store.dispatch('initStore', {socket: socket})
-      .then(() => {
-        //console.log('checking state stories', this.items)
-        console.log('checking state election', JSON.stringify(this.election))
-        console.log('checking state results', JSON.stringify(this.results))
-      })
-    }
 
   }
 }

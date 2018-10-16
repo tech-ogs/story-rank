@@ -14,6 +14,9 @@ import Rankbutton from '@/components/Rankbutton'
 import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
+import Admin from '@/components/Admin'
+import VoterList from '@/components/VoterList'
+import MyProfile from '@/components/MyProfile'
 
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -35,7 +38,9 @@ Vue.component('rank-button', Rankbutton)
 Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
-
+Vue.component('admin', Admin)
+Vue.component('voter-list', VoterList)
+Vue.component('my-profile', MyProfile)
 
 /* eslint-disable no-new */
 new Vue({

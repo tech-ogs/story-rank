@@ -6,11 +6,40 @@ const crypto = require('crypto')
 const state = {
   socket: null,
   	
-  mode: 'list', /* ['list', 'detail'] */
+  mode: 'list', /* ['list', 'detail', 'admin'] */
+  list: {
+    scrollTop: 0,
+    filters: {
+        submitter_id: null,
+		pattern: null
+    },
+	filterShortlist: false
+  },
   detail: {
 	mode: 'view', /* ['view', 'edit'] */
   	row: null,
 	action: ''
+  },
+  admin: {
+	view: 'my-profile', /* 'voterList', 'elections', 'myProfile', 'myElections' */
+	voterList: {
+		filters: {
+			pattern: null
+		}
+	},
+	elections: {
+		filters: {
+			pattern: null
+		}
+	},
+	myProfile: {
+
+	},
+	myElections: {
+		filters: { 
+			pattern: null
+		}
+	}
   },
   showInfoModal: false,
   info: {
@@ -24,14 +53,6 @@ const state = {
 	okOnly: false
   },
 
-  list: {
-    scrollTop: 0,
-    filters: {
-        submitter_id: null,
-		pattern: null
-    },
-	filterShortlist: false
-  },
   selected: null,
 
   /* from socket handlers */
@@ -46,7 +67,7 @@ const state = {
 	pingTimestamp: 0
   },
 
-  /* from server */
+  /* current election */
   user: {
   	id: null,
   	login: '', 
@@ -85,10 +106,11 @@ const getters = {
 
   user: state => state.user,
   userHash: state => state.userHash,
-  election: state => state.election,
-  userElectionDetails: state => state.userElectionDetails,
   isAdmin: state => state.user.groups.indexOf('admin') >= 0,
   isEditor: state => state.user.groups.indexOf('editor') >= 0,
+
+  election: state => state.election,
+  userElectionDetails: state => state.userElectionDetails,
   myranks: state => state.myranks,
   shortlist: state=>state.userElectionDetails.shortlist,
 
@@ -107,8 +129,11 @@ const getters = {
   dashShowInfoModal: state => state.showInfoModal,
   info: state=>state.info,
   /* network related */
-  networkTxnStatus: state => state.network.txnStatus
-  
+  networkTxnStatus: state => state.network.txnStatus,
+ 
+ /* admin related */
+ admin: state=>state.admin,
+ adminView: state => state.admin.view
 }
 
 // actions
