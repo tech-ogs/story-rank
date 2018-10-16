@@ -60,12 +60,18 @@ export default {
   computed: {
 	isAdmin () { return this.$store.getters.isAdmin },
 	election() { return this.$store.getters.election },
-    adminView () { return this.$store.getters.adminView || 'voterList'},
+    adminView () { return this.$store.getters.adminView || 'my-profile'},
 	election() { return this.$store.getters.election }
   },
   methods: {
     showHelp: function() {},
-    myProfile: function() {},
+	voterList: function() {
+		this.$store.commit('dashSetAdminView', 'voter-list')
+    },
+	elections: function() {},
+    myProfile: function() {
+		this.$store.commit('dashSetAdminView', 'my-profile')
+    },
     myElections: function() {},
   },
   watch: {
@@ -80,5 +86,64 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+html,
+body,
+.app-container {
+  height: 100%; /* needed for proper layout */
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  flex: 0 0 auto;
+}
+.title-bar {
+/*
+	height: 65px;
+*/
+	border-bottom-color: rgba(0, 0, 0, 0.05);
+	border-bottom-thickness: 1px;
+	border-bottom-style: solid;
+    padding: 0.0rem 1rem;
+
+}
+
+.app-content {
+  flex: 1 1 auto;
+  position: relative;/* need this to position inner content */
+  overflow-y: scroll; 
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-footer {
+  flex: 0 0 auto;
+}
+
+.logo-icon {
+    height: 50px;
+    width: 50px;
+    margin: 10px;
+    border:1px solid gray;
+    border-radius: 500px;
+    -webkit-border-radius: 500px;
+    -moz-border-radius: 500px;
+}
+
+.title-brand {
+  display: flex;
+  align-items: center;
+  /*justify-content: center;*/
+}
+
+.info-bar {
+	height: 12px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 
 </style>

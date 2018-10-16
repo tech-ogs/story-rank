@@ -303,6 +303,11 @@ const mutations = {
   	state.detail.action = action
   },
 
+  /* admin related */
+
+  dashSetAdminView: (state, value) => {
+  	state.admin.view = value
+  },
   /* info related */
 
   dashSetInfoModalShow: (state, value) => {
