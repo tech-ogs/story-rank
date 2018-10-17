@@ -1,10 +1,10 @@
 <template>
-    <admin>
+    <profile>
 
-        <template slot="admin-view-menu">
+        <template slot="profile-view-menu">
         </template>
 
-        <template slot="admin-view-content">
+        <template slot="profile-view-content">
 			<div style="float:left; width: 80%;">
 				<b-form-input type="text" v-model="name" placeholder="Name" class="mb-3">
 				</b-form-input>
@@ -16,7 +16,7 @@
 
         </template>
 
-    </admin>
+    </profile>
 </template>
 
 <script>

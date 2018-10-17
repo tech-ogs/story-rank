@@ -1,20 +1,14 @@
 <template>
-  <div v-touch:swipe.left="close"  v-touch:swipe.right="close" >
-    <b-container small>
-	  <br>
-	  <b-row>
-        <b-col class="close-button-container flex-left"> 
-          <b-link href="#" @click="close" class="close-button"> <icon name="arrow-left" class="close-icon" /> </b-link> 
-		</b-col>
-	  </b-row>
-
+<detail>
+	<template slot="detail-header">
 	  <b-row>
 		<b-col>
       		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 		</b-col>
 	  </b-row>
-	  <br>
-	  <br>
+	</template>
+
+	<template slot="detail-form">
 	  <b-row v-if="mode === 'edit'" >
 		<b-col>
 	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
@@ -146,39 +140,8 @@
         </b-col>
       </b-row>
 
-
-      <b-row>
-        <b-col class="flex-perfect-center">
-		  <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
-<!--
-			<b-button-group class="mx-1">
-			  <b-btn>&laquo;</b-btn>
-			  <b-btn>&lsaquo;</b-btn>
-			</b-button-group>
--->
-			<b-button-group class="button-group mx-1">
-			  <b-btn @click="close">Back</b-btn>
-			  <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
-			</b-button-group>
-<!--
-			<b-button-group class="mx-1">
-			  <b-btn>&rsaquo;</b-btn>
-			  <b-btn>&raquo;</b-btn>
-			</b-button-group>
--->
-		  </b-button-toolbar>
-
-		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
-			<b-button-group class="mx-1">
-			  <b-btn @click="doSave(action, editRow)">Save</b-btn>
-			</b-button-group>
-		  </b-button-toolbar>
-
-        </b-col>
-      </b-row>
-
-    </b-container>
-  </div>
+	</template>
+</detail>
 </template>
 
 <script>
@@ -240,27 +203,12 @@ export default {
 	shortTitleState() { return this.editRow.attributes.shortTitle.length <= 10 },
 	submitterState() { return this.editRow.submitter_id != null }
   },
+
   methods: {
-    close: function() {
-      this.$store.commit('dashSetMode', 'list')
-    },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)
 		this.$store.commit('dashSetSelected', this.row)
 		this.$store.commit('dashHandleRankBtnClick', pos)
-	},
-	doEdit: function() {
-		this.$store.commit('dashSetDetailAction', 'storiesEditRow')
-		this.$store.commit('dashSetDetailMode', 'edit')
-	},
-	doSave: function( action, editRow ) {
-		this.$store.dispatch(action, editRow)
-		.then( (result) => {
-			Object.assign(this.editRow, result)
-		})
-		.catch( (err) => {
-			throw err
-		})
 	},
 
 	saveFile(formData) {
@@ -307,15 +255,6 @@ export default {
 </script>
 
 <style scoped>
-  .close-button-container{
-  }
-  .close-button {
-    color: black;
-  }
-  .close-icon {
-    height: 25px;
-    width: 25px;
-  }
   .story-title-container {
     text-align: left;
   }
@@ -374,10 +313,5 @@ export default {
   .story-footer {
     display: flex;
     align-items: center;
-  }
-  .button-group {
-	width: 100%;
-	display: flex;
-	justify-content: space-around;
   }
 </style>

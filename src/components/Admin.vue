@@ -25,13 +25,9 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
 
+            <b-button v-if="isAdmin" size="sm" @click="electionDetail"> <b>ELECTION</b> </b-button>
+			<br>
             <b-button v-if="isAdmin" size="sm" @click="voterList"> <b>VOTER LIST</b> </b-button>
-			<br>
-            <b-button v-if="isAdmin" size="sm" @click="elections"> <b>ELECTIONS</b> </b-button>
-			<br>
-            <b-button  size="sm" @click="myProfile"> <b>MY PROFILE</b> </b-button>
-			<br>
-            <b-button  size="sm" @click="myElections"> <b>MY ELECTIONS</b> </b-button>
 			<br>
 			<slot name="admin-view-menu">
 			</slot>
@@ -65,16 +61,12 @@ export default {
   },
   methods: {
     showHelp: function() {},
+	electionDetail: function() {
+		this.$store.commit('dashSetAdminView', 'election-detail')
+	},
 	voterList: function() {
 		this.$store.commit('dashSetAdminView', 'voter-list')
-    },
-	elections: function() {
-		this.$store.commit('dashSetAdminView', 'elections')
-	},
-    myProfile: function() {
-		this.$store.commit('dashSetAdminView', 'my-profile')
-    },
-    myElections: function() {},
+    }
   },
   watch: {
   },

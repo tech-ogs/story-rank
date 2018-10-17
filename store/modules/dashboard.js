@@ -16,31 +16,22 @@ const state = {
 	filterShortlist: false
   },
   detail: {
-	mode: 'view', /* ['view', 'edit'] */
+	mode: 'view', /* view, edit */
   	row: null,
 	action: ''
   },
   admin: {
-	view: 'my-profile', /* 'voterList', 'elections', 'myProfile', 'myElections' */
-	voterList: {
+	view: 'election-detail', /* election-detail, voter-list */
+	'election-detail': {
+		mode: 'view' /* view, edit */
+	},
+	'voter-list': {
 		filters: {
-			pattern: null
-		}
-	},
-	elections: {
-		filters: {
-			pattern: null
-		}
-	},
-	myProfile: {
-
-	},
-	myElections: {
-		filters: { 
 			pattern: null
 		}
 	}
   },
+
   showInfoModal: false,
   info: {
   	cssclass: '',
@@ -133,7 +124,9 @@ const getters = {
  
  /* admin related */
  admin: state=>state.admin,
- adminView: state => state.admin.view
+
+ /* profile related */
+ profile: state=>state.profile
 }
 
 // actions

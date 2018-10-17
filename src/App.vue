@@ -2,7 +2,8 @@
   <div id="app">
     <dashboard v-if="mode === 'list'"></dashboard>
     <story-detail v-if="mode === 'detail'"></story-detail>
-    <component v-if="mode === 'admin'" v-bind:is="adminView"></component>
+    <component v-if="mode === 'admin'" v-bind:is="admin.view"></component>
+    <component v-if="mode === 'profile'" v-bind:is="profile.view"></component>
   </div>
 </template>
 
@@ -11,7 +12,8 @@ export default {
   name: 'App',
   computed: {
     mode () { return this.$store.getters.dashMode },
-	adminView () { return this.$store.getters.adminView }
+	admin () { return this.$store.getters.admin},
+	profile () { return this.$store.getters.profile}
   }
 }
 </script>

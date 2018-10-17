@@ -9,14 +9,16 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 import Dashboard from '@/components/Dashboard'
+import Detail from '@/components/Detail'
 import Rankbar from '@/components/Rankbar'
 import Rankbutton from '@/components/Rankbutton'
 import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
 import Admin from '@/components/Admin'
-import Elections from '@/components/Elections'
+import ElectionDetail from '@/components/ElectionDetail'
 import VoterList from '@/components/VoterList'
+import Profile from '@/components/Profile'
 import MyProfile from '@/components/MyProfile'
 
 import 'vue-awesome/icons'
@@ -33,6 +35,7 @@ Vue.use(Vue2TouchEvents,{
 })
 
 Vue.component('dashboard', Dashboard)
+Vue.component('detail', Detail)
 Vue.component('icon', Icon)
 Vue.component('rank-bar', Rankbar)
 Vue.component('rank-button', Rankbutton)
@@ -40,8 +43,9 @@ Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
 Vue.component('admin', Admin)
-Vue.component('elections', Elections)
+Vue.component('election-detail', ElectionDetail)
 Vue.component('voter-list', VoterList)
+Vue.component('profile', Profile)
 Vue.component('my-profile', MyProfile)
 
 /* eslint-disable no-new */

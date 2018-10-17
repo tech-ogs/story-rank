@@ -27,7 +27,8 @@
             <b-button v-if="isAdmin" size="sm" @click="admin"> <b>MANAGE</b> </b-button>
 			<br>
             <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> <b>NEW STORY</b> </b-button>
-            <b-button v-else size="sm" @click="admin"> <b>PROFILE</b> </b-button>
+			<br>
+            <b-button  size="sm" @click="profile"> <b>PROFILE</b> </b-button>
 			<br>
             <b-nav-item>
               <div>
@@ -319,6 +320,9 @@ export default {
 	},
 	admin: function() {
 		this.$store.commit('dashSetMode', 'admin')
+	},
+	profile: function() { 
+		this.$store.commit('dashSetMode', 'profile')
 	}
   },
   watch: {
