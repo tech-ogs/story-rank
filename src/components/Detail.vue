@@ -2,35 +2,12 @@
   <div v-touch:swipe.left="close"  v-touch:swipe.right="close" >
     <b-container small>
 	  <b-row>
-      <b-navbar class="title-bar" toggleable="sm" type="light" variant="faded" style="width: 100%">
-
-
-
-
-        <b-navbar-brand href="#">
-          <span class="title-brand">
-          <b-link href="#" @click="close" class="close-button"> <icon name="arrow-left" class="close-icon" /> </b-link> 
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
-          {{ election.label }}&nbsp; &nbsp;
-          </span>
-        </b-navbar-brand>
-
-		<b-navbar-nav>
-		<b-nav-item>
-			 <b-badge @click="showHelp"><h4> &nbsp; ? &nbsp;</h4> </b-badge>
-		</b-nav-item>
-		</b-navbar-nav>
-
-        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-
-        <b-collapse is-nav size="small" id="nav_collapse">
-          <b-navbar-nav>
-          </b-navbar-nav>
-          <!-- Right aligned nav items -->
-          <slot name="detail-menu">
-          </slot>
-        </b-collapse>
-      </b-navbar>
+        <banner>
+            <template slot="banner-menu">
+              <slot name="detail-menu">
+              </slot>
+            </template>
+        </banner>
 	  </b-row>
 
     <slot name="detail-header">

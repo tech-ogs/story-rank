@@ -45,9 +45,15 @@ export default {
     },
 	candidate: function() { 
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
+		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
+		this.$store.commit ('dashSetDetailMode', 'edit')
+		this.$store.commit('dashSetAdminView', 'story-detail')
+/*
+		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
 		this.$store.commit('dashSetMode', 'detail')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
+*/
 	},
 
   },

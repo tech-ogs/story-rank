@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <dashboard v-if="mode === 'list'"></dashboard>
-    <story-detail v-if="mode === 'detail'"></story-detail>
+    <!-- <story-detail v-if="mode === 'detail'"></story-detail> -->
     <component v-if="mode === 'admin'" v-bind:is="admin.view"></component>
     <component v-if="mode === 'profile'" v-bind:is="profile.view"></component>
   </div>
