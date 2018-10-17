@@ -1,14 +1,20 @@
 <template>
-<admin-detail :editRow="editRow">
-	<template slot="admin-detail-header">
+  <div v-touch:swipe.left="close"  v-touch:swipe.right="close" >
+    <b-container small>
+	  <br>
 	  <b-row>
-		<b-col>
-      		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
+        <b-col class="close-button-container flex-left"> 
+          <b-link href="#" @click="close" class="close-button"> <icon name="arrow-left" class="close-icon" /> </b-link> 
 		</b-col>
 	  </b-row>
-	</template>
 
-	<template slot="admin-detail-form">
+	  <b-row>
+		<b-col>
+			<slot name="profile-view-menu"> </slot>
+		</b-col>
+	  </b-row>
+	  <br>
+	  <br>
 	  <b-row v-if="mode === 'edit'" >
 		<b-col>
 	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
@@ -25,8 +31,8 @@
 
       <b-row>
         <b-col cols="4"> 
-
-		  <b-img thumbnail rounded fluid-grow :src="getImg(editRow.attributes.image)" class="story-image" > </b-img>
+			<slot name="profile-view-content"></slot>
+		  <b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" > </b-img>
 
 
           <span v-if="mode === 'view'" class="story-title">
@@ -113,7 +119,7 @@
           </span>
 		  <div>
 			<b-form-select v-if="mode === 'edit'"  placeholder="Submitter"
-				v-model="submitterId" 
+				v-model="editRow.submitter_id" 
 				:state="submitterState"
 			>
                 <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
@@ -140,8 +146,39 @@
         </b-col>
       </b-row>
 
-	</template>
-</admin-detail>
+
+      <b-row>
+        <b-col class="flex-perfect-center">
+		  <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
+<!--
+			<b-button-group class="mx-1">
+			  <b-btn>&laquo;</b-btn>
+			  <b-btn>&lsaquo;</b-btn>
+			</b-button-group>
+-->
+			<b-button-group class="button-group mx-1">
+			  <b-btn @click="close">Back</b-btn>
+			  <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
+			</b-button-group>
+<!--
+			<b-button-group class="mx-1">
+			  <b-btn>&rsaquo;</b-btn>
+			  <b-btn>&raquo;</b-btn>
+			</b-button-group>
+-->
+		  </b-button-toolbar>
+
+		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
+			<b-button-group class="mx-1">
+			  <b-btn @click="doSave(action, editRow)">Save</b-btn>
+			</b-button-group>
+		  </b-button-toolbar>
+
+        </b-col>
+      </b-row>
+
+    </b-container>
+  </div>
 </template>
 
 <script>
@@ -166,15 +203,20 @@ export default {
         return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
 	  },
 	  imageFile: '',
-/*
       editRow: {
-		attributes: {}
+		id: '',
+		election_id: '',
+		submitter_id: '',
+		creation_date: '',
+		attributes: {
+			image: '',
+			full_image: '',
+			shortTitle: '',
+			title: '',
+			excerpt: '',
+			url: ''
+		}
 	  }
-*/
-	
-	  get submitterId () { return this.editRow.submitter_id || (this.user != null ? this.user.id : null)},
-	  set submitterId (x) { this.editRow.submitter_id = x},
-	  editRow: null
     }
   },
   computed: {
@@ -200,10 +242,26 @@ export default {
   },
 
   methods: {
+    close: function() {
+      this.$store.commit('dashSetMode', 'list')
+    },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)
 		this.$store.commit('dashSetSelected', this.row)
 		this.$store.commit('dashHandleRankBtnClick', pos)
+	},
+	doEdit: function() {
+		this.$store.commit('dashSetDetailAction', 'storiesEditRow')
+		this.$store.commit('dashSetDetailMode', 'edit')
+	},
+	doSave: function( action, editRow ) {
+		this.$store.dispatch(action, editRow)
+		.then( (result) => {
+			Object.assign(this.editRow, result)
+		})
+		.catch( (err) => {
+			throw err
+		})
 	},
 
 	saveFile(formData) {
@@ -233,10 +291,16 @@ export default {
   },
 
   created() {
-	this.editRow = JSON.parse(JSON.stringify(this.row))
-	this.editRow.submitter_id = this.editRow.submitter_id || this.user.id
-	this.editRow.creation_date = this.editRow.creation_date ? dateString(this.editRow.creation_date) : dateString(this.election.open_date)
-	this.editRow.election_id = this.editRow.election_id || this.election.id
+	this.editRow.id = this.row.id
+	this.editRow.submitter_id = this.row.submitter_id || this.user.id
+	this.editRow.election_id = this.row.election_id || this.election.id
+	this.editRow.creation_date = this.row.creation_date ? dateString(this.row.creation_date) : '2018-09-01'
+	this.editRow.attributes.shortTitle = this.row.attributes.shortTitle || ''
+	this.editRow.attributes.title = this.row.attributes.title || ''
+	this.editRow.attributes.excerpt = this.row.attributes.excerpt || ''
+	this.editRow.attributes.url = this.row.attributes.url || ''
+	this.editRow.attributes.image = this.row.attributes.image || ''
+	this.editRow.attributes.full_image = this.row.attributes.full_image || ''
   },
   mounted () { 
   }
@@ -244,6 +308,15 @@ export default {
 </script>
 
 <style scoped>
+  .close-button-container{
+  }
+  .close-button {
+    color: black;
+  }
+  .close-icon {
+    height: 25px;
+    width: 25px;
+  }
   .story-title-container {
     text-align: left;
   }
@@ -302,5 +375,10 @@ export default {
   .story-footer {
     display: flex;
     align-items: center;
+  }
+  .button-group {
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
   }
 </style>

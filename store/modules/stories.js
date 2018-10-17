@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Crud from '../crud'
 
 // initial state
 const state = {
@@ -53,32 +54,6 @@ async function createRow(context, row) {
     return result
 }
 
-async function uploadImage(context, id, fileObj) {
-	console.log ('uploadImage', id, fileObj)
-    var formData = new FormData()
-    formData.append('imgfile', fileObj)
-	formData.append('storyId', id)
-	formData.append('name', fileObj.name)
-	var headers = new Headers();
-	var result;
-	try {
-		var response = await window.fetch('/media/upload', {
-		  method: 'post',
-		  credentials: 'same-origin',
-		  headers: headers,
-		  body: formData
-		}) 
-		var result = await response.json()
-		result.storyId = id
-        if (id != null) { 
-		    context.commit('storySetImage', result)
-        }
-	}
-	catch (err) {
-		throw (new Error ('error uploading image: ' + err.message) )
-	}
-    return result
-}
 
 function reindex () { 
     var byId = {}
@@ -175,7 +150,7 @@ const actions = {
 		return createRow(context, row)
 	},
     storyImageUpload (context, params) {
-        return uploadImage(context, params.id, params.fileObj)
+        return Crud.uploadImage(context, params.id, params.fileObj)
     }
 
 }

@@ -1,32 +1,10 @@
 <template>
   <b-container class="app-container">
     <b-row class="app-header">
-      <b-navbar class="title-bar" toggleable="sm" type="light" variant="faded" style="width: 100%">
-
-
-        <b-navbar-brand href="#">
-          <span class="title-brand">
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
-          {{ election.label }}&nbsp; &nbsp;
-          </span>
-        </b-navbar-brand>
-
-		<b-navbar-nav>
-		<b-nav-item>
-			 <b-badge @click="showHelp"><h4> &nbsp; ? &nbsp;</h4> </b-badge>
-		</b-nav-item>
-		</b-navbar-nav>
-
-        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-
-        <b-collapse is-nav size="small" id="nav_collapse">
-          <b-navbar-nav>
-          </b-navbar-nav>
-          <!-- Right aligned nav items -->
+	  <banner :helpText="helpText">
+		<template slot="banner-menu">
           <b-navbar-nav class="ml-auto">
             <b-button v-if="isAdmin" size="sm" @click="admin"> <b>MANAGE</b> </b-button>
-			<br>
-            <b-button v-if="isAdmin || isEditor" size="sm" @click="addRow"> <b>NEW STORY</b> </b-button>
 			<br>
             <b-button  size="sm" @click="profile"> <b>PROFILE</b> </b-button>
 			<br>
@@ -60,9 +38,8 @@
 			<br>
             <b-button size="sm" @click="doLogout"> <b>SIGN OUT</b> </b-button>
           </b-navbar-nav>
-        </b-collapse>
-      </b-navbar>
-
+		</template>
+	  </banner>
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 
     </b-row>
@@ -187,6 +164,7 @@ return result
 export default {
   data () {
     return {
+	  helpText: faqMessage(),
       listTable: null,
       fields: fields,
       rowclick: (item, index, event) => {
@@ -301,22 +279,6 @@ export default {
 				},0)
 			}
 		}
-	},
-	addRow: function() { 
-		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
-		this.$store.commit('dashSetMode', 'detail')
-		this.$store.commit ('dashSetDetailMode', 'edit')
-		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
-	},
-	showHelp: function() { 
-		this.$store.commit('dashInfoSetProps', {
-			cssclass: 'modal-fullscreen2',
-			size: 'lg',
-			okOnly: true,
-			okTitle: 'OK',
-			message: faqMessage()
-		})
-		this.$store.commit('dashSetInfoModalShow', true) 
 	},
 	admin: function() {
 		this.$store.commit('dashSetMode', 'admin')

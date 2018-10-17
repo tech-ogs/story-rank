@@ -21,7 +21,7 @@ const state = {
 	action: ''
   },
   admin: {
-	view: 'election-detail', /* election-detail, voter-list */
+	view: 'election-detail', /* election-detail, voter-list, story-detail */
 	'election-detail': {
 		mode: 'view' /* view, edit */
 	},
@@ -29,6 +29,9 @@ const state = {
 		filters: {
 			pattern: null
 		}
+	},
+	'story-detail': {
+		mode: 'edit'
 	}
   },
 

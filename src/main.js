@@ -8,6 +8,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
+import Banner from '@/components/Banner'
 import Dashboard from '@/components/Dashboard'
 import Detail from '@/components/Detail'
 import Rankbar from '@/components/Rankbar'
@@ -15,7 +16,7 @@ import Rankbutton from '@/components/Rankbutton'
 import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
-import Admin from '@/components/Admin'
+import AdminDetail from '@/components/AdminDetail'
 import ElectionDetail from '@/components/ElectionDetail'
 import VoterList from '@/components/VoterList'
 import Profile from '@/components/Profile'
@@ -34,6 +35,7 @@ Vue.use(Vue2TouchEvents,{
 	swipeTolerance: 60
 })
 
+Vue.component('banner', Banner)
 Vue.component('dashboard', Dashboard)
 Vue.component('detail', Detail)
 Vue.component('icon', Icon)
@@ -42,7 +44,7 @@ Vue.component('rank-button', Rankbutton)
 Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
-Vue.component('admin', Admin)
+Vue.component('admin-detail', AdminDetail)
 Vue.component('election-detail', ElectionDetail)
 Vue.component('voter-list', VoterList)
 Vue.component('profile', Profile)
