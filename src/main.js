@@ -16,10 +16,10 @@ import Rankbutton from '@/components/Rankbutton'
 import StoryRow from '@/components/StoryRow'
 import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
-import AdminDetail from '@/components/AdminDetail'
+import AdminMenu from '@/components/AdminMenu'
 import ElectionDetail from '@/components/ElectionDetail'
 import VoterList from '@/components/VoterList'
-import Profile from '@/components/Profile'
+import ProfileMenu from '@/components/ProfileMenu'
 import MyProfile from '@/components/MyProfile'
 
 import 'vue-awesome/icons'
@@ -44,10 +44,10 @@ Vue.component('rank-button', Rankbutton)
 Vue.component('story-row', StoryRow)
 Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
-Vue.component('admin-detail', AdminDetail)
+Vue.component('admin-menu', AdminMenu)
 Vue.component('election-detail', ElectionDetail)
 Vue.component('voter-list', VoterList)
-Vue.component('profile', Profile)
+Vue.component('profile-menu', ProfileMenu)
 Vue.component('my-profile', MyProfile)
 
 /* eslint-disable no-new */

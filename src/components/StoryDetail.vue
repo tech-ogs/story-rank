@@ -1,6 +1,6 @@
 <template>
-<admin-detail :editRow="editRow">
-	<template slot="admin-detail-header">
+<detail :editRow="editRow">
+	<template slot="detail-header">
 	  <b-row>
 		<b-col>
       		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
@@ -8,7 +8,11 @@
 	  </b-row>
 	</template>
 
-	<template slot="admin-detail-form">
+	<template slot="detail-menu">
+		<admin-menu> </admin-menu>
+	</template>
+
+	<template slot="detail-form">
 	  <b-row v-if="mode === 'edit'" >
 		<b-col>
 	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
@@ -141,7 +145,7 @@
       </b-row>
 
 	</template>
-</admin-detail>
+</detail>
 </template>
 
 <script>

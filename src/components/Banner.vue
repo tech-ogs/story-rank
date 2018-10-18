@@ -5,7 +5,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
+          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2" @click="close">
           {{ election.label }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -50,6 +50,10 @@ export default {
 		})
 		this.$store.commit('dashSetInfoModalShow', true) 
 	},
+    close: function() {
+      this.$store.commit('dashSetModule', 'public')
+    },
+
 
   },
   watch: {

@@ -1,14 +1,16 @@
 <template>
-    <admin-detail>
+    <detail :viewMode="view.mode">
 
-        <template slot="admin-detail-menu">
+        <template slot="detail-menu">
+			<admin-menu v-if="moduleName === 'admin'"> </admin-menu>
+			<profile-menu v-else> </profile-menu>
         </template>
 
-        <template slot="admin-detail-form">
+        <template slot="detail-form">
 			election details form here
         </template>
 
-    </admin-detail>
+    </detail>
 </template>
 
 <script>
@@ -24,7 +26,9 @@ export default {
 	user() { return this.$store.getters.user },
 	userElectionDetails() { return this.$store.getters.userElectionDetails },
     usersList() { return this.$store.getters.usersGetItems },
-	info() { return this.$store.getters.info }
+	info() { return this.$store.getters.info },
+	view() { return this.$store.getters.view },
+	moduleName() { return this.$store.getters.moduleName}
 
   },
   methods: {

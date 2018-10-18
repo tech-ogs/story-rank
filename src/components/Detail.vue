@@ -54,7 +54,7 @@
 <script>
 
 export default {
-  props: ['editRow'],
+  props: ['editRow', 'viewMode'],
   data () {
     return {
     }
@@ -79,7 +79,7 @@ export default {
 
   methods: {
     close: function() {
-      this.$store.commit('dashSetMode', 'list')
+      this.$store.commit('dashSetModule', 'list')
     },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)
@@ -127,6 +127,9 @@ export default {
   },
 
   created() {
+	if (this.viewMode != null) { 
+		this.$store.commit('dashSetDetailMode', this.viewMode)
+	}
   },
   mounted () { 
   }

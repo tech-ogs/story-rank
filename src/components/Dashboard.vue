@@ -281,10 +281,10 @@ export default {
 		}
 	},
 	admin: function() {
-		this.$store.commit('dashSetMode', 'admin')
+		this.$store.commit('dashSetModule', 'admin')
 	},
 	profile: function() { 
-		this.$store.commit('dashSetMode', 'profile')
+		this.$store.commit('dashSetModule', 'profile')
 	}
   },
   watch: {

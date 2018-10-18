@@ -74,7 +74,7 @@ export default {
 	swipeHandler (id)  {
 		console.log ('swipe handler in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
-		this.$store.commit('dashSetMode', 'detail')
+		this.$store.commit('dashSetModule', 'detail')
 	},
 	handleThumbClick:  function (url)  {
 		console.log ('handleThumbClick: ', 	url)
@@ -84,7 +84,7 @@ export default {
 	handleMoreClick: function ()  {
 		console.log ('more click in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
-		this.$store.commit('dashSetMode', 'detail')
+		this.$store.commit('dashSetModule', 'detail')
 	}
   },
   mounted () { 

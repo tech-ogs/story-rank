@@ -6,7 +6,38 @@ const crypto = require('crypto')
 const state = {
   socket: null,
   	
-  mode: 'list', /* ['list', 'detail', 'admin'] */
+  module: 'public', /* ['public', 'admin', 'profile'] */
+
+  public: {
+	view: 'dashboard',
+	dashboard: {
+		mode: 'view'
+	}
+  },
+  admin: {
+	view: 'election-detail', /* election-detail, voter-list, story-detail */
+	'election-detail': {
+		mode: 'view' /* view, edit */
+	},
+	'voter-list': {
+		mode: 'edit',
+		filters: {
+			pattern: null
+		}
+	},
+	'story-detail': {
+		mode: 'edit'
+	}
+  },
+  profile: {
+	view: 'my-profile',
+	'my-profile': {
+		mode: 'view'
+	},
+	'election-detail': {
+		mode: 'edit'
+	}
+  },
   list: {
     scrollTop: 0,
     filters: {
@@ -20,28 +51,14 @@ const state = {
   	row: null,
 	action: ''
   },
-  admin: {
-	view: 'election-detail', /* election-detail, voter-list, story-detail */
-	'election-detail': {
-		mode: 'view' /* view, edit */
-	},
-	'voter-list': {
-		filters: {
-			pattern: null
-		}
-	},
-	'story-detail': {
-		mode: 'edit'
-	}
-  },
 
   showInfoModal: false,
   info: {
   	cssclass: '',
 	size: '',
   	message: '',
-	handler: null,
-	cancel: null,
+	handler: () => {},
+	cancel: () => {},
 	okTitle: 'OK',
 	cancelTitle: 'Cancel',
 	okOnly: false
@@ -109,7 +126,6 @@ const getters = {
   shortlist: state=>state.userElectionDetails.shortlist,
 
   dashState: state => state,
-  dashMode: state => state.mode,
   dashScrollTop: state => state.list.scrollTop,
   dashSelectedRow: (state) => state.selected || {id:0},
 
@@ -125,11 +141,11 @@ const getters = {
   /* network related */
   networkTxnStatus: state => state.network.txnStatus,
  
- /* admin related */
- admin: state=>state.admin,
+ /* views related */
+  moduleName: state=>state.module,
+  module: state=>state[state.module],
+  view: state=>state[state.module][state[state.module].view]
 
- /* profile related */
- profile: state=>state.profile
 }
 
 // actions
@@ -162,8 +178,8 @@ const mutations = {
 	state.userHash = Number('0x' + (crypto.createHash('md5').update(params.user.login).digest('hex').substr(0,8)))
   },
 
-  dashSetMode (state, params) {
-    state.mode = params
+  dashSetModule (state, params) {
+    state.module = params
   },
   dashSetScrollTop (state, params) {
     state.list.scrollTop = params
@@ -299,10 +315,12 @@ const mutations = {
   	state.detail.action = action
   },
 
-  /* admin related */
+  /* views related */
 
-  dashSetAdminView: (state, value) => {
-  	state.admin.view = value
+  dashSetView: (state, [module, view, mode]) => {
+    state.module = module
+  	state[module].view = view
+  	state[module][view].mode = mode
   },
   /* info related */
 

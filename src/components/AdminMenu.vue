@@ -1,24 +1,12 @@
 <template>
-	<detail>
-    <template slot="detail-header">
-        <slot name="admin-detail-header">
-        </slot>
-    </template>
-	<template slot="detail-menu">
-          <b-navbar-nav class="ml-auto">
-            <b-button v-if="isAdmin" size="sm" @click="electionDetail"> <b>CONFIGURATION</b> </b-button>
-			<br>
-            <b-button v-if="isAdmin" size="sm" @click="voterList"> <b>VOTER LIST</b> </b-button>
-			<br>
-            <b-button v-if="isAdmin || isEditor" size="sm" @click="candidate"> <b>NEW CANDIDATE</b> </b-button>
-			<br>
-		  </b-navbar-nav>
-	</template>
-	<template slot="detail-form">
-		<slot name="admin-detail-form">
-        </slot>
-	</template>
-	</detail>
+  <b-navbar-nav class="ml-auto">
+	<b-button v-if="isAdmin" size="sm" @click="electionDetail"> <b>CONFIGURATION</b> </b-button>
+	<br>
+	<b-button v-if="isAdmin" size="sm" @click="voterList"> <b>VOTER LIST</b> </b-button>
+	<br>
+	<b-button v-if="isAdmin || isEditor" size="sm" @click="candidate"> <b>NEW CANDIDATE</b> </b-button>
+	<br>
+  </b-navbar-nav>
 </template>
 
 <script>
@@ -38,22 +26,16 @@ export default {
   methods: {
     showHelp: function() {},
 	electionDetail: function() {
-		this.$store.commit('dashSetAdminView', 'election-detail')
+		this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])
 	},
 	voterList: function() {
-		this.$store.commit('dashSetAdminView', 'voter-list')
+		this.$store.commit('dashSetView', ['admin', 'voter-list', 'edit'])
     },
 	candidate: function() { 
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
 		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
 		this.$store.commit ('dashSetDetailMode', 'edit')
-		this.$store.commit('dashSetAdminView', 'story-detail')
-/*
-		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
-		this.$store.commit('dashSetMode', 'detail')
-		this.$store.commit ('dashSetDetailMode', 'edit')
-		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
-*/
+		this.$store.commit('dashSetView', ['admin', 'story-detail', 'edit'])
 	},
 
   },
