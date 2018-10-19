@@ -231,8 +231,16 @@ async function patchReferencingRow(params, data) {
 
 	var client = await db.getClient()
 	try {
-		if (params.storyId != null && !params.storyId.match(/null/)) {
-			await client.query ('select set_story_thumbnail($1, $2, $3)', [params.storyId, data.thumbUrl, data.url])
+		if (params.rowId != null && !params.rowId.match(/null/)) {
+			await client.query ('select set_image_paths($1)', [{
+                schema: params.schema,
+                table: params.table,
+                rowId: params.rowId,
+                fieldPath: params.fieldPath,
+                thumbPath: params.thumbPath,
+                imageUrl: data.url,
+                thumbUrl: data.thumbUrl
+            }])
 		}
 	}
 	catch(err) {

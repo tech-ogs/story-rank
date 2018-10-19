@@ -281,7 +281,7 @@ export default {
 		}
 	},
 	admin: function() {
-		this.$store.commit('dashSetModule', 'admin')
+		this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])
 	},
 	profile: function() { 
 		this.$store.commit('dashSetModule', 'profile')

@@ -40,7 +40,7 @@
 
 		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
 			<b-button-group class="mx-1">
-			  <b-btn @click="doSave(action, editRow)">Save</b-btn>
+			  <b-btn @click="saveHandler(action, editRow)">Save</b-btn>
 			</b-button-group>
 		  </b-button-toolbar>
 
@@ -54,7 +54,7 @@
 <script>
 
 export default {
-  props: ['editRow', 'viewMode'],
+  props: ['editRow', 'viewMode', 'saveHandler'],
   data () {
     return {
     }
@@ -79,7 +79,7 @@ export default {
 
   methods: {
     close: function() {
-      this.$store.commit('dashSetModule', 'list')
+      this.$store.commit('dashSetModule', 'public')
     },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)
@@ -87,43 +87,10 @@ export default {
 		this.$store.commit('dashHandleRankBtnClick', pos)
 	},
 	doEdit: function() {
-		this.$store.commit('dashSetDetailAction', 'storiesEditRow')
+		this.$store.commit('dashSetDetailAction', 'editRow')
 		this.$store.commit('dashSetDetailMode', 'edit')
 	},
-	doSave: function( action, editRow ) {
-		this.$store.dispatch(action, editRow)
-		.then( (result) => {
-			Object.assign(this.editRow, result)
-		})
-		.catch( (err) => {
-			throw err
-		})
-	},
 
-	saveFile(formData) {
-	},
-	useImage (x) {
-		this.editRow.attributes.url = x 
-	},
-
-	fileChange(fieldName, fileList) {
-
-		if (!fileList.length) return;
-		var fileObj = fileList[0]
-		// async ..
-		console.log ('StoryDetail fileChange', fileObj, this.row.id)
-		this.$store.dispatch('storyImageUpload', { fileObj : fileObj, id : this.row.id })
-		.then((ret) => {
-			//if (this.row.id == null) { 
-				this.editRow.attributes.image = ret.thumbUrl
-				this.editRow.attributes.full_image = ret.url
-			//}
-		})
-		.catch((err) => {
-			throw (err)
-		})
-			
-	}
   },
 
   created() {

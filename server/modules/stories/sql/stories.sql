@@ -20,21 +20,21 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
 	}
   })
 */
-  var attributes = plv8.execute('select attributes from application.stories where id = $1', [params.id])[0].attributes
+  var attributes = plv8.execute('select attributes from application.stories where id = $1', [params.row.id])[0].attributes
 
   /*Object.assign(attributes, params.attributes)*/
 
-  Object.keys(params.attributes).forEach(function(x) {
-	attributes[x] = params.attributes[x]
+  Object.keys(params.row.attributes).forEach(function(x) {
+	attributes[x] = params.row.attributes[x]
   })
 
-  plv8.execute('update application.stories set attributes = $1, submitter_id = $2, creation_date = $3 where id = $4', [attributes, params.submitter_id, params.creation_date, params.id])
+  plv8.execute('update application.stories set attributes = $1, submitter_id = $2, creation_date = $3 where id = $4', [attributes, params.row.submitter_id, params.row.creation_date, params.row.id])
 
   /*update the flags to request a recalc*/
 
-  plv8.execute('update application.flags set value =  $2, params = $3  where name = $1', ['request_recalc', true, { electionId : params.election_id } ])
+  plv8.execute('update application.flags set value =  $2, params = $3  where name = $1', ['request_recalc', true, { electionId : params.row.election_id } ])
   
-  var ret = plv8.execute('select * from application.stories where id = $1', [params.id])[0]
+  var ret = plv8.execute('select * from application.stories where id = $1', [params.row.id])[0]
   return ret
 
 $$ LANGUAGE plv8;
@@ -51,10 +51,10 @@ CREATE OR REPLACE FUNCTION create_row(session jsonb,  params jsonb) returns json
     throw Error ('missing user_id in session ' + session.id)
   }
 
-  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, creation_date, attributes) values ($1, $2, $3, $4) returning *', [params.submitter_id, params.election_id, params.creation_date, params.attributes])[0]
+  var ret = plv8.execute ('insert into application.stories (submitter_id, election_id, creation_date, attributes) values ($1, $2, $3, $4) returning *', [params.row.submitter_id, params.row.election_id, params.row.creation_date, params.row.attributes])[0]
   /*update the flags to request a recalc*/
 
-  plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election_id}])
+  plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.row.election_id}])
 
   return ret
 $$ LANGUAGE plv8;

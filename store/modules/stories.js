@@ -1,57 +1,10 @@
 import Vue from 'vue'
-import Crud from '../crud'
 
 // initial state
 const state = {
   items: [],
   byId: {},
   indexById: {}
-}
-
-async function editRow(context, row) {
-	var headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	var response;
-    var result;
-	try {
-		response = await window.fetch('/edit_row', {
-		  method: 'post',
-		  credentials: 'same-origin',
-		  headers: headers,
-		  body: JSON.stringify(row || {})
-		}) 
-		result = await response.json()
-		context.commit('dashSetDetailMode', 'view')
-		context.commit('storiesEditRow', result)
-		context.commit('dashSetDetailRow', result)
-	}
-	catch (err) {
-		throw (new Error ('error editing row: ' + err.message) )
-	}
-    return result
-}
-
-async function createRow(context, row) {
-	var headers = new Headers();
-	headers.append('Content-Type', 'application/json');
-	var response;
-    var result
-	try {
-		response = await window.fetch('/create_row', {
-		  method: 'post',
-		  credentials: 'same-origin',
-		  headers: headers,
-		  body: JSON.stringify(row || {})
-		}) 
-		result = await response.json()
-		context.commit('dashSetDetailMode', 'view')
-		context.commit('storiesCreateRow', result)
-		context.commit('dashSetDetailRow', result)
-	}
-	catch (err) {
-		throw (new Error ('error creating row: ' + err.message) )
-	}
-    return result
 }
 
 
@@ -143,16 +96,6 @@ const getters = {
 
 // actions
 const actions = {
-	storiesEditRow(context, row) {
-		return editRow(context, row)
-	},
-	storiesCreateRow(context, row) {
-		return createRow(context, row)
-	},
-    storyImageUpload (context, params) {
-        return Crud.uploadImage(context, params.id, params.fileObj)
-    }
-
 }
 
 // mutations
@@ -223,8 +166,8 @@ const mutations = {
   },
   storySetImage: (state, params) => {
     if (params.storyId != null) {
-	    state.byId[params.storyId].attributes.image = params.thumbUrl
-	    state.byId[params.storyId].attributes.full_image = params.url
+	    state.byId[params.id].attributes.image = params.thumbUrl
+	    state.byId[params.id].attributes.full_image = params.url
     }
   }
 }

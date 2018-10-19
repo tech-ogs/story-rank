@@ -1,6 +1,6 @@
 <template>
   <b-navbar-nav class="ml-auto">
-	<b-button v-if="isAdmin" size="sm" @click="electionDetail"> <b>CONFIGURATION</b> </b-button>
+	<b-button v-if="isAdmin" size="sm" @click="electionDetail"> <b>ELECTION</b> </b-button>
 	<br>
 	<b-button v-if="isAdmin" size="sm" @click="voterList"> <b>VOTER LIST</b> </b-button>
 	<br>
@@ -33,7 +33,7 @@ export default {
     },
 	candidate: function() { 
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { shortTitle: '', title : '', excerpt: '', url: '', image: '' } } )
-		this.$store.commit ('dashSetDetailAction', 'storiesCreateRow')
+		this.$store.commit ('dashSetDetailAction', 'createRow')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit('dashSetView', ['admin', 'story-detail', 'edit'])
 	},

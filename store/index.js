@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import crud from './modules/crud'
 import stories from './modules/stories'
 import users from './modules/users'
 import comments from './modules/comments'
@@ -154,6 +155,7 @@ export default new Vuex.Store({
   mutations: {
   },
   modules: {
+    crud,
     stories,
     users,
     comments,

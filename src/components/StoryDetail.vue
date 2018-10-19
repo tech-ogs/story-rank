@@ -1,5 +1,5 @@
 <template>
-<detail :editRow="editRow">
+<detail :editRow="editRow" :saveHandler="saveHandler">
 	<template slot="detail-header">
 	  <b-row>
 		<b-col>
@@ -17,7 +17,7 @@
 		<b-col>
 	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
 				style="width: 300px;"
-				@change="fileChange($event.target.name, $event.target.files)"
+				@change="fileChange('attributes.full_image', 'attributes.image', $event.target.files)"
 				accept="image/jpeg, image/png, image/gif"
 				placeholder="Image file..." >
 		  </b-form-file>
@@ -210,30 +210,50 @@ export default {
 		this.$store.commit('dashHandleRankBtnClick', pos)
 	},
 
-	saveFile(formData) {
-	},
 	useImage (x) {
 		this.editRow.attributes.url = x 
 	},
 
-	fileChange(fieldName, fileList) {
+	fileChange(fieldPath, thumbPath, fileList) {
 
 		if (!fileList.length) return;
+
 		var fileObj = fileList[0]
-		// async ..
 		console.log ('StoryDetail fileChange', fileObj, this.row.id)
-		this.$store.dispatch('storyImageUpload', { fileObj : fileObj, id : this.row.id })
+		this.$store.dispatch('imageUpload', { 
+			schema : 'application',
+			table : 'stories',
+			fileObj : fileObj, 
+			rowId : this.row.id, 
+			fieldPath: fieldPath, 
+			thumbPath: thumbPath, 
+			postAction: 'storySetImage' 
+		})
 		.then((ret) => {
-			//if (this.row.id == null) { 
-				this.editRow.attributes.image = ret.thumbUrl
-				this.editRow.attributes.full_image = ret.url
-			//}
+			this.editRow.attributes.image = ret.thumbUrl
+			this.editRow.attributes.full_image = ret.url
 		})
 		.catch((err) => {
 			throw (err)
 		})
-			
+	},
+	saveHandler: function( action, editRow ) {
+		this.$store.dispatch(action, {
+			schema : 'application',
+			table : 'stories',
+			row: editRow,
+			postAction: action === 'createRow' ? 'storiesCreateRow' : 'storiesEditRow'
+		})
+		.then( (result) => {
+            this.$store.commit('dashSetDetailMode', 'view')
+            this.$store.commit('dashSetDetailRow', result)
+			Object.assign(this.editRow, result)
+		})
+		.catch( (err) => {
+			throw err
+		})
 	}
+
   },
 
   created() {

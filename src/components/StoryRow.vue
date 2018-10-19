@@ -84,7 +84,10 @@ export default {
 	handleMoreClick: function ()  {
 		console.log ('more click in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
-		this.$store.commit('dashSetModule', 'detail')
+        this.$store.commit ('dashSetDetailAction', 'editRow')
+        //this.$store.commit ('dashSetDetailMode', 'view')
+        this.$store.commit('dashSetView', ['admin', 'story-detail', 'view'])
+
 	}
   },
   mounted () { 
