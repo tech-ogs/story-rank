@@ -7,7 +7,7 @@ var upload = multer({ dest: 'uploads/' })
 var path = require('path');
 var express = require('express');
 var path = require('path');
-var query = require(path.join(__dirname , 'common/query.js'))
+var crud = require(path.join(__dirname , 'common/crud.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
 var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
 var stories = require(path.join(__dirname , 'modules/stories/stories.js'))
@@ -144,18 +144,18 @@ router.use('/assets', checkAuth, function(req,res,next){
 })
 
 router.post('/shell', checkAuth, handler(auth.shell)) 
-router.post('/list', checkAuth, handler(query.list)) 
+router.post('/list', checkAuth, handler(crud.list)) 
 router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
 router.post('/results', checkAuth, handler(ranks.results))
 router.post('/myfavorites', checkAuth, handler(ranks.myfavorites))
 router.post('/stories', checkAuth, handler(stories.list))
-router.post('/edit_row', checkAuth, handler(stories.editRow))
+router.post('/edit_row', checkAuth, handler(crud.editRow))
 router.post('/media/upload', checkAuth, upload.single('imgfile'), handler(media.upload))
-router.post('/create_row', checkAuth, handler(stories.createRow))
+router.post('/create_row', checkAuth, handler(crud.createRow))
 
 /* to get debug data for client work only, comment in production */
-router.get('/list',  getHandler(query.list)) 
+router.get('/list',  getHandler(crud.list)) 
 router.get('/logout',  getHandler(auth.logout))
 router.get('/myranks',  getHandler(ranks.myranks))
 router.get('/results',  getHandler(ranks.results))

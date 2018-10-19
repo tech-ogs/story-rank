@@ -10,9 +10,15 @@ cp -f src/assets/thumbs/* dist/static/thumbs/
 
 # uploaded thumbs from db
 
+rm -f cache/*
 rm -f cache/thumbs/*
 
-psql -U postgres stories -c "select bytea_export(data, '/home/kavi/story-rank/cache/thumbs/thumb_' || id || '.png') from application.media"
+psql -U postgres stories -c "select bytea_export(data, '/home/kavi/story-rank/cache/' || id || '.' || (regexp_split_to_array(type, '\/'))[2]) from application.media"
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path cache/thumbs cache/*.jpg
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path cache/thumbs cache/*.jpeg
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path cache/thumbs cache/*.png
+mogrify -resize 80x80 -background white -gravity center -extent 80x80 -format jpg -quality 75 -path cache/thumbs cache/*.mp4[100]
+
 
 #chown root:root cache/thumbs/*
 #chmod 755 cache/thumbs/*

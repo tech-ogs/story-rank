@@ -1,6 +1,7 @@
-psql -U postgres stories < server/sql/helpers.sql
+psql -U postgres stories < server/common/sql/crud.sql
+psql -U postgres stories < server/common/sql/helpers.sql
 psql -U postgres stories < server/sql/utils.sql
-psql -U postgres stories < server/sql/list.sql
+#psql -U postgres stories < server/sql/list.sql
 psql -U postgres stories < server/modules/sessions/sql/sessions.sql
 psql -U postgres stories < server/modules/auth/sql/auth.sql
 psql -U postgres stories < server/modules/ranks/sql/ranks.sql

@@ -1,5 +1,5 @@
 <template>
-<detail :editRow="editRow" :saveHandler="saveHandler">
+<detail :editRow="editRow" :viewMode="mode" :saveHandler="saveHandler">
 	<template slot="detail-header">
 	  <b-row>
 		<b-col>
