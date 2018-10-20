@@ -22,7 +22,7 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION get_election() returns jsonb AS $$
 
-	var election = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc limit 1', ['test%'])
+	var election = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc limit 1', ['test%'])
 /*
 	var election = plv8.execute ('select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where active = true')[0]
 	if (election == null || election.length > 0) {

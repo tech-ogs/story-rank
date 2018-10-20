@@ -1,7 +1,7 @@
 <template>
-<detail :editRow="editRow" :viewMode="mode" :saveHandler="saveHandler">
+<detail :editRow="editRow" :viewMode="viewMode" :saveHandler="saveHandler">
 	<template slot="detail-header">
-	  <b-row>
+	  <b-row v-if="mode === 'view'">
 		<b-col>
       		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 		</b-col>
@@ -17,7 +17,7 @@
 		<b-col>
 	 		<b-form-file v-model="imageFile" state="true" name="imgfile"
 				style="width: 300px;"
-				@change="fileChange('attributes.full_image', 'attributes.image', $event.target.files)"
+				@change="fileChange('full_image', 'image', $event.target.files)"
 				accept="image/jpeg, image/png, image/gif"
 				placeholder="Image file..." >
 		  </b-form-file>
@@ -195,6 +195,7 @@ export default {
 	groups() { return this.$store.getters.groups },
 	isEditor () { return this.$store.getters.isEditor },
 	isAdmin () { return this.$store.getters.isAdmin },
+	viewMode() { return (this.$store.getters.view).mode },
 	mode() { return this.$store.getters.dashDetailMode },
 	action() { return this.$store.getters.dashDetailAction },
 	// editing helpers
@@ -261,6 +262,10 @@ export default {
 	this.editRow.submitter_id = this.editRow.submitter_id || this.user.id
 	this.editRow.creation_date = this.editRow.creation_date ? dateString(this.editRow.creation_date) : dateString(this.election.open_date)
 	this.editRow.election_id = this.editRow.election_id || this.election.id
+    var createDefaults = { shortTitle: '', title : '', excerpt: '', url: '', image: '' }
+	Object.keys(createDefaults).forEach( (x) =>  {
+		this.editRow.attributes[x] = this.editRow.attributes[x] || createDefaults[x]
+	})
   },
   mounted () { 
   }
