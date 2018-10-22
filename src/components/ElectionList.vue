@@ -42,14 +42,8 @@ export default {
       listTable: null,
       fields: fields,
       rowclick: (item, index, event) => {
-        if (this.selectedRow != null && this.selectedRow.id === item.id) {
-          this.$store.commit('dashClearSelection') 
-		  this.$store.commit('dashRemoveShortlist', item.id)
-        }
-        else {
-          this.$store.commit('dashSetSelected', item)
-		  this.$store.commit('dashAddShortlist', item.id)
-        }
+
+		this.$store.commit('dashSetView', ['public', 'dashboard', 'view'])
       }
 	}
   },

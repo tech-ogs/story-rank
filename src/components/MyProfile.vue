@@ -1,17 +1,26 @@
 <template>
     <detail :viewMode="view.mode">
 
+        <template slot="detail-header">
+			<admin-header>
+			</admin-header>
+        </template>
+
         <template slot="detail-menu">
 			<profile-menu> </profile-menu>
         </template>
 
         <template slot="detail-form">
-			<b-row>
+			<div>
 				My profile form here
-			</b-row>
+			</div>
         </template>
-
+		<template slot="detail-footer">
+			<admin-footer>
+			</admin-footer>
+		</template>
     </detail>
+
 </template>
 
 <script>
@@ -43,4 +52,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.app-footer {
+  flex: 0 0 auto;
+}
+
 </style>

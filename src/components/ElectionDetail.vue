@@ -87,12 +87,17 @@ function  dateString(d) {
 export default {
   data () {
     return {
-		imageFile: '',
-		algorithm: 'rcv',
-		algOptions: [
-			{value: 'rcv', text: 'Ranked Choice'},
-			{value: 'fptp', text: 'First Past The Post'}
-		]
+	imageFile: '',
+	algorithm: 'rcv',
+	algOptions: [
+		{value: 'rcv', text: 'Ranked Choice'},
+		{value: 'fptp', text: 'First Past The Post'}
+	],
+	getImg: (url) => { 
+		//return url != null ? require('@/'+url) : require ('@/assets/thumbs/placeholder.jpg')
+		return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
+	} 
+
     }
   },
   computed: {

@@ -24,7 +24,7 @@
 						</span>
 					</b-col>
 					<b-col cols="2">
-						<b-badge variant="link" class="more-badge" @click.stop="handleMoreClick" > more ... </b-badge>
+						<b-badge v-if="hasAdmin(row)" class="more-badge" @click.stop="handleMoreClick" > admin </b-badge>
 					</b-col>
 				</b-row>
 			</b-col>
@@ -38,6 +38,9 @@ export default {
   props: ['row', 'items', 'settings'],
   data () {
     return {
+      hasAdmin: (row) => {
+        return (row.attributes.userDetails.groups || []).indexOf('admin') >= 0 
+       },
       rowClass: (row) => {
         var result = 'story-row'
 /*
@@ -80,7 +83,7 @@ export default {
 		console.log ('more click in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
         this.$store.commit ('dashSetDetailAction', 'editRow')
-        this.$store.commit('dashSetView', ['admin', 'story-detail', 'view'])
+        this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])
 
 	}
   },

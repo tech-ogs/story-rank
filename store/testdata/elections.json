@@ -4,7 +4,13 @@
 	"name":"WTF-3.1",
 	"label":"WTF3 prelim round 1",
 	"active":true,
-	"attributes":{"recalc": true, "algorithm": "rcv"},
+	"attributes":{
+		"recalc": true, 
+		"algorithm": "rcv",
+		"userDetails": {
+			"groups" : [ "public", "admin", "editor"]
+		}
+	},
 	"close_date":"2018-11-04T00:00:00.000Z",
 	"days_to_close":15,
 	"open_date":"2018-10-20T00:00:00.000Z"
@@ -14,7 +20,13 @@
 	"name":"random4",
 	"label":"Random 4",
 	"active":true,
-	"attributes":{"recalc": true, "algorithm": "rcv"},
+	"attributes":{
+		"recalc": true, 
+		"algorithm": "rcv",
+		"userDetails": {
+			"groups" : [ "public"]
+		}
+	},
 	"close_date":"2018-11-04T00:00:00.000Z",
 	"days_to_close":15,
 	"open_date":"2018-10-20T00:00:00.000Z"
@@ -24,7 +36,13 @@
 	"name":"foobar5",
 	"label":"Foo Bar 5",
 	"active":true,
-	"attributes":{"recalc": true, "algorithm": "rcv"},
+	"attributes":{
+		"recalc": true, 
+		"algorithm": "rcv",
+		"userDetails": {
+			"groups" : [ "public"]
+		}
+	},
 	"close_date":"2018-11-04T00:00:00.000Z",
 	"days_to_close":15,
 	"open_date":"2018-10-20T00:00:00.000Z"

@@ -152,6 +152,7 @@ const getters = {
  
  /* views related */
   moduleName: state=>state.module,
+  viewName: state=>state.module.view,
   module: state=>state[state.module],
   view: state=>state[state.module][state[state.module].view]
 

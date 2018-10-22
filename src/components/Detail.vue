@@ -1,54 +1,53 @@
 <template>
-  <div v-touch:swipe.left="close"  v-touch:swipe.right="close" >
-    <b-container small>
-	  <b-row>
+    <b-container class="app-container" v-touch:swipe.left="close"  v-touch:swipe.right="close">
+	  <b-row class="app-header">
+        <slot name="detail-header">
         <banner>
             <template slot="banner-menu">
               <slot name="detail-menu">
               </slot>
             </template>
         </banner>
+        </slot>
 	  </b-row>
-
-    <slot name="detail-header">
-    </slot>
-	  <br>
-	  <br>
-    <slot name="detail-form">
-    </slot>
-
-      <b-row>
-        <b-col class="flex-perfect-center">
-		  <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
+      <b-row class="app-content">
+        <slot name="detail-form">
+        </slot>
+		<br>
+        <div class="flex-perfect-center">
+          <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
 <!--
-			<b-button-group class="mx-1">
-			  <b-btn>&laquo;</b-btn>
-			  <b-btn>&lsaquo;</b-btn>
-			</b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn>&laquo;</b-btn>
+              <b-btn>&lsaquo;</b-btn>
+            </b-button-group>
 -->
-			<b-button-group class="button-group mx-1">
-			  <b-btn @click="close">Back</b-btn>
-			  <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
-			</b-button-group>
+            <b-button-group class="button-group mx-1">
+              <b-btn @click="close">Back</b-btn>
+              <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
+            </b-button-group>
 <!--
-			<b-button-group class="mx-1">
-			  <b-btn>&rsaquo;</b-btn>
-			  <b-btn>&raquo;</b-btn>
-			</b-button-group>
+            <b-button-group class="mx-1">
+              <b-btn>&rsaquo;</b-btn>
+              <b-btn>&raquo;</b-btn>
+            </b-button-group>
 -->
-		  </b-button-toolbar>
+          </b-button-toolbar>
 
-		  <b-button-toolbar v-if="mode === 'edit'" key-nav>
-			<b-button-group class="mx-1">
-			  <b-btn @click="saveHandler(action, editRow)">Save</b-btn>
-			</b-button-group>
-		  </b-button-toolbar>
+          <b-button-toolbar v-if="mode === 'edit'" key-nav>
+            <b-button-group class="mx-1">
+              <b-btn @click="saveHandler(action, editRow)">Save</b-btn>
+            </b-button-group>
+          </b-button-toolbar>
 
-        </b-col>
+        </div>
       </b-row>
 
+      <b-row class="app-footer">
+        <slot name="detail-footer">
+        </slot>
+      </b-row>
     </b-container>
-  </div>
 </template>
 
 <script>
@@ -79,7 +78,7 @@ export default {
 
   methods: {
     close: function() {
-      this.$store.commit('dashSetModule', 'public')
+      this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
     },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)
@@ -104,15 +103,31 @@ export default {
 </script>
 
 <style scoped>
-  .close-button-container{
-  }
-  .close-button {
-    color: black;
-  }
-  .close-icon {
-    height: 25px;
-    width: 25px;
-  }
+    .app-container {
+      height: 100%; /* needed for proper layout */
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      flex: 0 0 auto;
+    }
+
+    .app-content {
+      flex: 1 1 auto;
+      position: relative;/* need this to position inner content */
+      overflow-y: scroll; 
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .app-footer {
+      flex: 0 0 auto;
+    }
+
+
   .button-group {
 	width: 100%;
 	display: flex;

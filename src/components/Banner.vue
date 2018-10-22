@@ -5,8 +5,9 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2" @click="close">
-          {{ election.label }}&nbsp; &nbsp;
+		  <span @click="close"><icon name="angle-left" class="back-icon"/></span>
+          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
+          {{ election.label.substr(0,15) }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
@@ -51,7 +52,8 @@ export default {
 		this.$store.commit('dashSetInfoModalShow', true) 
 	},
     close: function() {
-      this.$store.commit('dashSetModule', 'public')
+	  console.log ('i am here')
+      this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
     },
 
 
@@ -75,6 +77,17 @@ export default {
 	border-bottom-style: solid;
     padding: 0.0rem 1rem;
 
+}
+
+.back-icon {
+	transform: scale(2.0, 3.5);
+	color: #007bff;
+/*
+    border:1px solid gray;
+    border-radius: 500px;
+    -webkit-border-radius: 500px;
+    -moz-border-radius: 500px;
+*/
 }
 
 .logo-icon {
