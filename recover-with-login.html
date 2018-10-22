@@ -1,0 +1,93 @@
+<html>
+	<head>
+	<link rel="icon" type="image/jpeg" href="http://www.story-rank.com/assets/thumbs/logo.jpg">
+	<link rel="apple-touch-icon" type="image/jpeg" href="http://www.story-rank.com/assets/thumbs/logo.jpg">
+	<link rel="stylesheet" href="/assets/login.css">
+    <title>rankNvote</title>
+    <script>
+	  function mock(msgbox, param) { 
+	  	if (param === 'xxx') {
+	  		window.location.href = '/validate-otp.html'
+		}
+		else {
+			msgbox.innerHTML = 'error message from server'
+		}
+		return
+	  }
+      function recoverWithLogin() {
+        var msgbox = document.getElementById('msgbox')
+        var login = document.getElementById('login-name').value
+		mock(msgbox, login); 
+		return
+        var headers = new Headers();
+        headers.append('Content-Type', 'application/json');
+        window.fetch('/recover-with-login', {
+          method: 'post',
+          credentials: 'same-origin',
+          headers: headers,
+          body: JSON.stringify({login: login})
+        })
+        .then( res => {
+          if (!res.ok ) {
+            throw res
+          }
+          return res.json()
+        })
+        .then( response => {
+          window.location.href = '/validate-otp.html'
+        })
+        .catch( err => {
+          err.json().then( obj => {
+            msgbox.innerHTML = obj.message
+          })
+        })
+      }
+
+		function recoverWithMobile() {
+			window.location.assign('/recover-with-mobile.html')
+		}
+		function backToLogin() {
+			window.location.assign('/login.html')
+		}
+
+    </script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	</head>
+<body>
+	<div class="background"></div>
+	<div class="backdrop"></div>
+	<div class="login-form-container" id="login-form">
+		<div class="login-form-content">
+			<div class="login-form-header">
+				<div class="logo">
+					<img src="assets/logo.png" onclick="window.location.href='/'">
+				</div>
+				<h3>Account Recovery</h3>
+				<h3>With Login</h3>
+			</div>
+				<br>
+			<form method="post" action="" class="login-form">
+				<div class="input-container">
+					<i class="fa fa-envelope"></i>
+					<input type="email" class="input" name="login-name" id="login-name" placeholder="Login"/>
+				</div>
+				<input type="button" name="recover-with-login" value="Get OTP on registered mobile" class="button" onclick="recoverWithLogin()"/>
+                <div>
+                <div id="msgbox" class="message-box">
+                    &nbsp;
+                </div>
+
+				<br>
+				<br>
+				<br>
+				<br>
+				<a href="#" class="register" onclick="recoverWithMobile()">Recover with mobile</a>
+				<br>
+				<a href="#" class="register" onclick="backToLogin()">Back to Login</a>
+
+        </div>
+			</form>
+		</div>
+	</div>
+</body>
+</html>

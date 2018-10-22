@@ -6,7 +6,7 @@ const crypto = require('crypto')
 const state = {
   socket: null,
   	
-  module: 'public', /* ['public', 'admin', 'profile'] */
+  module: 'admin', /* ['public', 'admin', 'profile'] */
 
   public: {
 	view: 'dashboard',
@@ -15,26 +15,35 @@ const state = {
 	}
   },
   admin: {
-	view: 'election-detail', /* election-detail, voter-list, story-detail */
+	view: 'election-list', /* election-list, election-detail, voter-list, story-detail */
+	'election-list': {
+	 	title: 'Elections',
+		mode: 'view' /* view */
+	},
 	'election-detail': {
+	 	title: 'Election Properties',
 		mode: 'view' /* view, edit */
 	},
 	'voter-list': {
+	 	title: 'Voters',
 		mode: 'edit',
 		filters: {
 			pattern: null
 		}
 	},
 	'story-detail': {
+	 	title: 'Candidate',
 		mode: 'edit'
 	}
   },
   profile: {
 	view: 'my-profile',
 	'my-profile': {
+	 	title: 'Profile',
 		mode: 'view'
 	},
 	'election-detail': {
+	 	title: 'Election Properties',
 		mode: 'edit'
 	}
   },

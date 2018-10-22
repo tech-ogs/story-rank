@@ -16,11 +16,14 @@
     132
   ],
   "election": {
-    "id": 3,
-    "name": "wtf-q3-p1",
-    "label": "WTF3 prelim #1",
-    "active": false,
-    "days_to_close": -7
+	"id":3,
+	"name":"WTF-3.1",
+	"label":"WTF3 prelim round 1",
+	"active":true,
+	"attributes":{"recalc": true, "algorithm": "rcv"},
+	"close_date":"2018-11-04T00:00:00.000Z",
+	"days_to_close":15,
+	"open_date":"2018-10-20T00:00:00.000Z"
   },
   "userElectionDetails": {
     "id": 4336,

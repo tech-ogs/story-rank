@@ -1,0 +1,111 @@
+<html>
+	<head>
+	<link rel="icon" type="image/jpeg" href="http://www.story-rank.com/assets/thumbs/logo.jpg">
+	<link rel="apple-touch-icon" type="image/jpeg" href="http://www.story-rank.com/assets/thumbs/logo.jpg">
+	<link rel="stylesheet" href="/assets/login.css">
+
+    <title>rankNvote</title>
+    <script>
+		function mock() {
+			window.location.href = '/'
+		}
+
+		function validate(msgbox, params) {
+			var result = true
+			var emptyRex = /^\s*$/
+			if (params.login == null || emptyRex.test(params.login)) {
+				msgbox.innerHTML = 'Please enter a login name and retry'
+				result = false
+			}
+			else if (params.mobile == null || emptyRex.test(params.mobile)) {
+				msgbox.innerHTML = 'Please enter your mobile number and retry'
+				result = false
+			}
+			else if ( params.password == null || emptyRex.test(params.password)) {
+				msgbox.innerHTML = 'Please enter a password and retry'
+				result = false
+			}
+			return result
+		}
+
+		function signup() {
+			var msgbox = document.getElementById('msgbox')
+			var login = document.getElementById('login-name').value
+			var mobile = document.getElementById('mobile').value
+			var password = document.getElementById('login-password').value
+			if (validate (msgbox, {login: login, mobile: mobile, password: password})) {
+				//mock()
+				//return
+				var headers = new Headers();
+				headers.append('Content-Type', 'application/json');
+				window.fetch('/signup', {
+				  method: 'post',
+				  credentials: 'same-origin',
+				  headers: headers,
+				  body: JSON.stringify({login: login, mobile: mobile, password: password})
+				})
+				.then( res => {
+				  if (!res.ok ) {
+					throw res
+				  }
+				  return res.json()
+				})
+				.then( response => {
+				  window.location.href = '/'
+				})
+				.catch( err => {
+				  err.json().then( obj => {
+					msgbox.innerHTML = obj.message
+				  })
+				})
+			}
+		}
+
+    </script>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	</head>
+<body>
+	<div class="background"></div>
+	<div class="backdrop"></div>
+	<div class="login-form-container" id="login-form">
+		<div class="login-form-content">
+			<div class="login-form-header">
+				<div class="logo">
+					<img src="assets/logo.png" onclick="window.location.href='/'">
+				</div>
+				<!-- <h3>Please Login</h3> -->
+				<h3>Sign Up</h3>
+			</div>
+				<br>
+			<form method="post" action="" class="login-form">
+				<div class="input-container">
+					<i class="fa fa-envelope"></i>
+					<input type="email" class="input" name="login-name" id="login-name" placeholder="Login"/>
+				</div>
+
+				<div class="input-container">
+					<i class="fa fa-envelope"></i>
+					<input type="tel" class="input" name="mobile" id="mobile" placeholder="Mobile"/>
+				</div>
+
+				<div class="input-container">
+					<i class="fa fa-lock"></i>
+					<input type="password"  id="login-password" class="input" name="password" placeholder="Password"/>
+					<i id="show-password" class="fa fa-eye"></i>
+				</div>
+				<input type="button" name="btnSignUp" value="Sign Up" class="button" onclick="signup()"/>
+				<div id="msgbox" class="message-box">
+					&nbsp;
+				</div>
+
+				<br>
+				<br>
+				<br>
+				<br>
+			</form>
+        </div>
+    </div>
+	</div>
+	</div>
+</body>
+</html>

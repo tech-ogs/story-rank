@@ -18,9 +18,13 @@ import StoryDetail from '@/components/StoryDetail'
 import ModalDialog from '@/components/ModalDialog'
 import AdminMenu from '@/components/AdminMenu'
 import ElectionDetail from '@/components/ElectionDetail'
+import ElectionList from '@/components/ElectionList'
+import ElectionRow from '@/components/ElectionRow'
 import VoterList from '@/components/VoterList'
 import ProfileMenu from '@/components/ProfileMenu'
 import MyProfile from '@/components/MyProfile'
+import AdminHeader from '@/components/AdminHeader'
+import AdminFooter from '@/components/AdminFooter'
 
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -46,9 +50,14 @@ Vue.component('story-detail', StoryDetail)
 Vue.component('modal-dialog', ModalDialog)
 Vue.component('admin-menu', AdminMenu)
 Vue.component('election-detail', ElectionDetail)
+Vue.component('election-list', ElectionList)
+Vue.component('election-row', ElectionRow)
 Vue.component('voter-list', VoterList)
 Vue.component('profile-menu', ProfileMenu)
 Vue.component('my-profile', MyProfile)
+Vue.component('admin-header', AdminHeader)
+Vue.component('admin-footer', AdminFooter)
+
 
 /* eslint-disable no-new */
 new Vue({

@@ -4,14 +4,14 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 
 	var userDetails = plv8.execute('select id, login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
 
-	var election = plv8.find_function('get_election')()
+	var elections = plv8.find_function('get_elections')()
 
 	var userElectionDetails = plv8.execute ('select * from application.user_elections where election_id = $1  and user_id = (select user_id from application.sessions where id = $2)', [election.id, cookie])[0] || {}
     var ranks = plv8.execute('with x as (select story_id from application.ranks where election_id = $1 and user_id = (select user_id from application.sessions where id = $2) order by rank asc) select jsonb_agg(x.story_id) as ranks from x', [election.id, cookie])[0]
 
 	result.user = userDetails
 	result.user.sessionId = cookie
-	result.election = election;
+	result.elections = elections;
 	result.userElectionDetails = userElectionDetails
     result.myranks = ranks.ranks != null ? ranks.ranks : []
     
@@ -20,16 +20,18 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 $$ LANGUAGE plv8;
 
 
-CREATE OR REPLACE FUNCTION get_election() returns jsonb AS $$
+CREATE OR REPLACE FUNCTION get_elections() returns jsonb AS $$
 
-	var election = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc limit 1', ['test%'])
+
+	var elections = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc', ['test%'])
+
+	return elections
+
 /*
-	var election = plv8.execute ('select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where active = true')[0]
-	if (election == null || election.length > 0) {
-		election = plv8.execute('select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc limit 1', ['test%'])
-	}
-*/
+	var election = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y order by active desc, id desc limit 1', ['test%'])
+	
 	return election[0] || {}
+*/
 
 $$ LANGUAGE plv8;
 

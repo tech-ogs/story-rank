@@ -6,6 +6,7 @@ import users from './modules/users'
 import comments from './modules/comments'
 import ranks from './modules/ranks'
 import dashboard from './modules/dashboard'
+import elections from './modules/elections'
 
 Vue.use(Vuex)
 
@@ -148,6 +149,7 @@ export default new Vuex.Store({
       context.commit('commentsSetData', require('./testdata/comments.json'))
       context.commit('resultsSetData', require('./testdata/results.json'))
       context.commit('storiesSetData', require('./testdata/stories.json'))
+      context.commit('electionsSetData', require('./testdata/elections.json'))
       context.commit('setSocketTest')
     }
 
@@ -160,7 +162,8 @@ export default new Vuex.Store({
     users,
     comments,
     ranks,
-    dashboard
+    dashboard,
+	elections
   },
   strict: debug,
   plugins: debug ? [/*createLogger()*/] : []
