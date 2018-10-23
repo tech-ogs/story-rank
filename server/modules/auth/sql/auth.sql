@@ -6,8 +6,8 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 
 	var elections = plv8.find_function('get_elections')()
 
-	var userElectionDetails = plv8.execute ('select * from application.user_elections where election_id = $1  and user_id = (select user_id from application.sessions where id = $2)', [election.id, cookie])[0] || {}
-    var ranks = plv8.execute('with x as (select story_id from application.ranks where election_id = $1 and user_id = (select user_id from application.sessions where id = $2) order by rank asc) select jsonb_agg(x.story_id) as ranks from x', [election.id, cookie])[0]
+	var userElectionDetails = plv8.execute ('select * from application.user_elections where user_id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
+    var ranks = plv8.execute('with e as (select id from application.elections), x as (select election_id, story_id from application.ranks, e where election_id = e.id and user_id = (select user_id from application.sessions where id = $1)  order by rank asc) select jsonb_build_object(election_id, jsonb_agg(x.story_id)) as ranks from x group by election_id', [cookie])[0]
 
 	result.user = userDetails
 	result.user.sessionId = cookie

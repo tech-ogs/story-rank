@@ -9,6 +9,7 @@ var express = require('express');
 var path = require('path');
 var crud = require(path.join(__dirname , 'common/crud.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
+var users = require(path.join(__dirname , 'modules/users/users.js'))
 var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
 var stories = require(path.join(__dirname , 'modules/stories/stories.js'))
 var media = require(path.join(__dirname, 'modules/media/media.js'))
@@ -144,7 +145,7 @@ router.use('/assets', checkAuth, function(req,res,next){
 })
 
 router.post('/shell', checkAuth, handler(auth.shell)) 
-router.post('/list', checkAuth, handler(crud.list)) 
+router.post('/users', checkAuth, handler(users.list)) 
 router.post('/logout', checkAuth, handler(auth.logout))
 router.post('/myranks', checkAuth, handler(ranks.myranks))
 router.post('/results', checkAuth, handler(ranks.results))
@@ -155,7 +156,7 @@ router.post('/media/upload', checkAuth, upload.single('imgfile'), handler(media.
 router.post('/create_row', checkAuth, handler(crud.createRow))
 
 /* to get debug data for client work only, comment in production */
-router.get('/list',  getHandler(crud.list)) 
+router.get('/users',  getHandler(users.list)) 
 router.get('/logout',  getHandler(auth.logout))
 router.get('/myranks',  getHandler(ranks.myranks))
 router.get('/results',  getHandler(ranks.results))

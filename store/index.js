@@ -86,10 +86,9 @@ export default new Vuex.Store({
 		})
 		.then( (shell) => {
           context.dispatch('fetchData',{ 
-            url: '/list',
+            url: '/users',
             payload: {
-              schema: 'application',
-              table: 'users',
+			  electionId: context.rootState.dashboard.election.id,
               mutation: 'usersSetData'
             }
           })
