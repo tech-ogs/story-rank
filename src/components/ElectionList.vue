@@ -3,6 +3,9 @@
     <b-row class="app-header">
 	  <admin-header :helpText="helpText">
 	  </admin-header>
+	  <b-nav class="toolbar">
+		<b-nav-item variant="link" @click="newElection"> New </b-nav-item>
+	  </b-nav>
     </b-row>
     <b-row class="app-content" ref="list">
       <b-col>
@@ -64,6 +67,12 @@ export default {
 
   },
   methods: {
+	newElection: function() {
+		this.$store.commit('dashSetDetailRow', {id: null, attributes: {} } )
+		this.$store.commit ('dashSetDetailAction', 'createRow')
+		this.$store.commit ('dashSetDetailMode', 'edit')
+		this.$store.commit('dashSetView', ['profile', 'election-detail', 'edit'])
+    },
     scrollToTop: function() { 
       this.$store.commit('dashSetScrollTop', 0)
     },
@@ -158,4 +167,9 @@ body,
   flex: 0 0 auto;
 }
 
+.toolbar {
+	width: 100%;
+	disply: flex;
+	justify-content: flex-end;
+}
 </style>

@@ -2,7 +2,6 @@
 <template>
   <b-nav fill pills class="width100">
     <b-nav-item :active="moduleName === 'admin'" @click="elections" > Elections </b-nav-item>
-    <b-nav-item :active="moduleName === 'public'" @click="vote" > Vote </b-nav-item>
     <b-nav-item :active="moduleName === 'profile'" @click="settings" > Settings </b-nav-item>
   </b-nav>
 </template>
@@ -17,6 +16,7 @@ export default {
     }
   },
   computed: {
+	user() { return this.$store.getters.user },
 	moduleName () { return this.$store.getters.moduleName }
   },
   methods: {
@@ -24,11 +24,8 @@ export default {
 	elections: function() {
 		this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
 	},
-	vote: function() {
-		this.$store.commit('dashSetView', ['public', 'dashboard', 'view'])
-    },
 	settings: function() { 
-		//this.$store.commit('dashSetDetailRow', {id: null, attributes: { } } )
+		this.$store.commit('dashSetDetailRow', this.user )
 		this.$store.commit ('dashSetDetailAction', 'editRow')
 		this.$store.commit('dashSetView', ['profile', 'my-profile', 'edit'])
 	},

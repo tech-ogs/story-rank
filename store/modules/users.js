@@ -30,7 +30,22 @@ const mutations = {
         byId[x.id] = x
       })
 	  state.byId = byId
+  },
+  usersEditRow: (state, row) => {
+    var idx = state.indexById[row.id]
+    delete state.items[idx]
+    Vue.set(state.items, idx, row)
+	reindex()
+  },
+  usersCreateRow: (state, row) => {
+  /*
+    var idx = state.items.length
+    Vue.set(state.items, idx, row)
+  */
+	state.items.splice(0, 0, row)
+	reindex()
   }
+
 }
 
 export default {

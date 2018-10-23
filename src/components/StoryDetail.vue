@@ -1,16 +1,10 @@
 <template>
 <detail :editRow="editRow" :viewMode="viewMode" :saveHandler="saveHandler">
 	<template slot="detail-header">
-	  <b-row v-if="mode === 'view'">
-		<b-col>
+			<banner></banner>
       		<rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
-		</b-col>
-	  </b-row>
 	</template>
 
-	<template slot="detail-menu">
-		<admin-menu> </admin-menu>
-	</template>
 
 	<template slot="detail-form">
 	  <b-row v-if="mode === 'edit'" >

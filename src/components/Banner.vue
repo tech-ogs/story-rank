@@ -5,7 +5,7 @@
 
         <b-navbar-brand href="#">
           <span class="title-brand">
-		  <span @click="close"><icon name="angle-left" class="back-icon"/></span>
+		  <span @click="close"><icon name="angle-left" class="back-icon"/> &nbsp;</span>
           <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
           {{ election.label.substr(0,15) }}&nbsp; &nbsp;
           </span>
@@ -25,8 +25,11 @@
           <!-- Right aligned nav items -->
           <slot name="banner-menu">
           </slot>
+
         </b-collapse>
+
       </b-navbar>
+
 </template>
 
 <script>
@@ -39,6 +42,7 @@ export default {
   },
   computed: {
 	election() { return this.$store.getters.election },
+	back() { return this.$store.getters.back }
   },
   methods: {
 	showHelp: function() { 
@@ -52,8 +56,14 @@ export default {
 		this.$store.commit('dashSetInfoModalShow', true) 
 	},
     close: function() {
-	  console.log ('i am here')
-      this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
+		var back = this.back
+		if (back.module != null && back.view != null && back.mode != null) {
+			this.$store.commit('dashSetView', [back.module, back.view, back.mode])
+			this.$store.commit('dashClearBack')
+		}
+		else {
+      		this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
+		}
     },
 
 

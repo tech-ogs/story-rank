@@ -24,7 +24,7 @@
 						</span>
 					</b-col>
 					<b-col cols="2">
-						<b-badge v-if="hasAdmin(row)" class="more-badge" @click.stop="handleMoreClick" > admin </b-badge>
+						<b-badge v-if="hasAdmin(row)" class="more-badge" @click.stop="handleAdminClick" > admin </b-badge>
 					</b-col>
 				</b-row>
 			</b-col>
@@ -79,8 +79,8 @@ export default {
   		var win = window.open(url, '_blank');
   		win.focus();
 	},
-	handleMoreClick: function ()  {
-		console.log ('more click in row', this.row.id)
+	handleAdminClick: function ()  {
+		console.log ('admin click in row', this.row.id)
 		this.$store.commit('dashSetDetailRow', this.row)
         this.$store.commit ('dashSetDetailAction', 'editRow')
         this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])

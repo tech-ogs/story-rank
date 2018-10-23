@@ -4,17 +4,20 @@
         <slot name="detail-header">
         <banner>
             <template slot="banner-menu">
-              <slot name="detail-menu">
-              </slot>
             </template>
         </banner>
         </slot>
+
+	  <slot name="detail-menu">
+	  </slot>
 	  </b-row>
+
+	<slot name="detail-form">
+	</slot>
+
       <b-row class="app-content">
-        <slot name="detail-form">
-        </slot>
 		<br>
-        <div class="flex-perfect-center">
+        <div class="flex-perfect-center width100">
           <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
 <!--
             <b-button-group class="mx-1">
@@ -44,7 +47,7 @@
       </b-row>
 
       <b-row class="app-footer">
-        <slot name="detail-footer">
+        <slot name="view-footer">
         </slot>
       </b-row>
     </b-container>

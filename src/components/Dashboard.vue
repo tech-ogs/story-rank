@@ -4,10 +4,6 @@
 	  <banner :helpText="helpText">
 		<template slot="banner-menu">
           <b-navbar-nav class="ml-auto">
-            <b-button v-if="isAdmin" size="sm" @click="admin"> <b>MANAGE</b> </b-button>
-			<br>
-            <b-button  size="sm" @click="profile"> <b>PROFILE</b> </b-button>
-			<br>
             <b-nav-item>
               <div>
 
@@ -41,6 +37,9 @@
 		</template>
 	  </banner>
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
+	  <b-nav v-if="isAdmin || isEditor" class="toolbar">
+		<b-nav-item variant="link" @click="newCandidate"> New </b-nav-item>
+	  </b-nav>
 
     </b-row>
 	<b-row class="app-header">
@@ -280,14 +279,13 @@ export default {
 			}
 		}
 	},
-	admin: function() {
+	newCandidate: function() {
+		this.$store.commit('dashSetBack', ['public', 'dashboard', 'view'])
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { } } )
 		this.$store.commit ('dashSetDetailAction', 'createRow')
 		this.$store.commit('dashSetView', ['admin', 'story-detail', 'edit'])
 	},
-	profile: function() { 
-		this.$store.commit('dashSetModule', 'profile')
-	}
+
   },
   watch: {
     'scrollTop': function(newValue, oldValue)  {
@@ -418,5 +416,10 @@ body,
 
 .blinken-fade {
 	opacity: 0.15
+}
+.toolbar {
+	width: 100%;
+	disply: flex;
+	justify-content: flex-end;
 }
 </style>

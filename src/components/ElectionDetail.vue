@@ -2,8 +2,10 @@
     <detail :editRow="editRow" :viewMode="viewMode" :saveHandler="saveHandler">
 
         <template slot="detail-menu">
-			<admin-menu v-if="moduleName === 'admin'"> </admin-menu>
-			<profile-menu v-else> </profile-menu>
+		  <b-nav class="toolbar">
+			<b-nav-item variant="link" @click="voterList">  Voters </b-nav-item>
+			<b-nav-item variant="link" @click="candidates"> Candidates </b-nav-item>
+		  </b-nav>
         </template>
 
         <template slot="detail-form">
@@ -118,6 +120,13 @@ export default {
 
   },
   methods: {
+	voterList: function() {
+		this.$store.commit('dashSetView', ['admin', 'voter-list', 'edit'])
+    },
+	candidates: function() {
+		this.$store.commit('dashSetView', ['public', 'dashboard', 'view'])
+    },
+
 	fileChange(fieldPath, thumbPath, fileList) {
 
 		if (!fileList.length) return;
@@ -181,4 +190,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.toolbar {
+	width: 100%;
+	disply: flex;
+	justify-content: flex-end;
+}
 </style>

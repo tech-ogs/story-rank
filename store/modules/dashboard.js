@@ -7,6 +7,11 @@ const state = {
   socket: null,
   	
   module: 'admin', /* ['public', 'admin', 'profile'] */
+  back: {
+	module: null,
+	view: null,
+	mode: null
+  },
 
   public: {
 	view: 'dashboard',
@@ -154,7 +159,8 @@ const getters = {
   moduleName: state=>state.module,
   viewName: state=>state.module.view,
   module: state=>state[state.module],
-  view: state=>state[state.module][state[state.module].view]
+  view: state=>state[state.module][state[state.module].view],
+  back: state => state.back,
 
 }
 
@@ -331,6 +337,16 @@ const mutations = {
     state.module = module
   	state[module].view = view
   	state[module][view].mode = mode
+  },
+  dashSetBack: (state, [module, view, mode]) => {
+	state.back.module = module
+	state.back.view = view
+	state.back.mode = mode
+  },
+  dashClearBack: (state) => {
+	state.back.module = null
+	state.back.view = null
+	state.back.mode = null
   },
   /* info related */
 
