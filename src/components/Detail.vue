@@ -81,7 +81,14 @@ export default {
 
   methods: {
     close: function() {
-      this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
+		var back = this.back
+		if (back.module != null && back.view != null && back.mode != null) {
+			this.$store.commit('dashSetView', [back.module, back.view, back.mode])
+			this.$store.commit('dashClearBack')
+		}
+		else {
+      		this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
+		}
     },
 	handleRankBtnClick: function(pos) {
 		console.log ('rank button click in details', pos)

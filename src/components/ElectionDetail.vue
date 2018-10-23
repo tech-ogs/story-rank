@@ -121,6 +121,7 @@ export default {
   },
   methods: {
 	voterList: function() {
+		this.$store.commit('dashSetBack', ['admin', 'election-detail', 'edit'])
 		this.$store.commit('dashSetView', ['admin', 'voter-list', 'edit'])
     },
 	candidates: function() {
