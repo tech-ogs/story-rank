@@ -4,9 +4,10 @@
 	  <banner :helpText="helpText">
 	  </banner>
 	  <b-nav class="toolbar">
-		 <b-nav-item @click=""> 
-			Invite Link: <input type="text" ref="linktext" :value="getInviteLink()"> </input> 
-			<b-badge class="" @click="copyInviteLink">copy</b-badge> </b-nav-item> 
+		 <span class="width100">
+			Invite Link: <input class="invite-textbox" type="text" ref="linktext" :value="getInviteLink()"> </input> 
+			<!-- <b-badge class="" @click="copyInviteLink">copy</b-badge> --> 
+		<span> 
 	  </b-nav>
     </b-row>
     <b-row class="app-content" ref="list">
@@ -74,10 +75,14 @@ export default {
 	getInviteLink: function() {
 		return 'http://www.ranknvote.com/invite/' + (this.election.hash || this.election.id)
 	},
+/*
 	copyInviteLink: function() {
+		this.linkText.focus()
 		this.linkText.select()
 		document.execCommand('copy')
+		this.linkText.blur()
 	},
+*/
     scrollToTop: function() { 
       this.$store.commit('dashSetScrollTop', 0)
     },
@@ -158,5 +163,9 @@ body,
 	width: 100%;
 	disply: flex;
 	justify-content: flex-start;
+}
+.invite-textbox {
+	border: 0px;
+	width: 75%;
 }
 </style>
