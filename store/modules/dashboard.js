@@ -131,8 +131,6 @@ const getters = {
 
   user: state => state.user,
   userHash: state => state.userHash,
-  isAdmin: state => state.user.groups.indexOf('admin') >= 0,
-  isEditor: state => state.user.groups.indexOf('editor') >= 0,
 
   election: state => state.election,
   userElectionDetails: state => state.userElectionDetails,
@@ -171,7 +169,13 @@ const actions = {
       var socket = params.socket
       context.commit('setSocket', {socket: socket})
       socketEvents.registerHandlers(context, socket)     
-    }
+    },
+    dashInitialize (context, params) {
+		context.commit('dashStateInit', params)
+		context.commit('electionsSetData', params.elections)
+		context.commit('userElectionsSetData', params.userElections)
+  	},
+
 }
 
 // mutations
@@ -183,15 +187,15 @@ const mutations = {
       state.socket = { emit : () => null }
     },
 
-  dashInitialize (state, params) {
-  	Object.assign(state.user, params.user)
-	Object.assign(state.election, params.election)
-	Object.assign(state.userElectionDetails, params.userElectionDetails.attributes)
-	state.myranks = params.myranks
+    dashStateInit (state, params) {
+  	    Object.assign(state.user, params.user)
+	    Object.assign(state.election, params.elections[0])
+	    Object.assign(state.userElectionDetails, params.userElections[state.election.id])
+	    state.myranks = params.myranks
 
-	/* compute a random integer hash to randomly shuffle sort order on a per user basis. Use md5 to obtain a stable hash */
-	/* modulo the hash by length of list to obtain a random shuffle */
-	state.userHash = Number('0x' + (crypto.createHash('md5').update(params.user.login).digest('hex').substr(0,8)))
+		/* compute a random integer hash to randomly shuffle sort order on a per user basis. Use md5 to obtain a stable hash */
+		/* modulo the hash by length of list to obtain a random shuffle */
+		state.userHash = Number('0x' + (crypto.createHash('md5').update(params.user.login).digest('hex').substr(0,8)))
   },
 
   dashSetModule (state, params) {
@@ -312,6 +316,10 @@ const mutations = {
   },
 
   /* election related */
+
+  dashSetElection: (state, row) => {
+	state.election = row
+  },
 
   dashLockElection: (state) => {
 		state.userElectionDetails.locked = true

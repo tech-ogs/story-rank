@@ -47,15 +47,18 @@ const getters = {
   storiesGetIdMap: (state) => {
     return state.byId
   },
-  storiesGetItems: (state, getters) => {
+  storiesGetItems: (state, getters) => (electionId) => {
     //console.log('storiesGetItemsF', JSON.stringify(state.filters), JSON.stringify(state.items.map(x=>{return{id: x.id, sid: x.submitter_id, name:x.name}})))
     //var ranks = getters.ranks
 	var filters = getters.dashListFilters
     var filtered = state.items.filter( (story) => {
       var result = true
-      Object.keys(filters).forEach((f) => {
-          result = result && checkFilter(f, filters[f], story)
-      })
+	  result = result && story.election_id === electionId
+	  if (result) {
+	      Object.keys(filters).forEach((f) => {
+    	      result = result && checkFilter(f, filters[f], story)
+      	})
+	  }
       return result
     })
 

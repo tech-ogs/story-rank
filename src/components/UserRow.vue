@@ -2,15 +2,15 @@
   <b-container small ref="trow">
 		<b-row :class="rowClass(row)" v-touch:swipe.left="swipeHandler"  v-touch:swipe.right="swipeHandler">
 					<b-col cols="4"> 
-						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" @click.stop="handleThumbClick(row.attributes.url)"> </b-img>
+						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" @click.stop=""> </b-img>
 					</b-col>
 					<b-col class="story-title-container">
 						<span class="story-title">
-							{{ row.attributes.name || row.name}}
+							{{ row.login}}
 						</span>
 						<br>
 						<span class="story-teaser">
-							{{ row.attributes.label }}
+							{{ row.name || '...' }}
 						</span>
 					</b-col>
 				</b-row>
@@ -19,12 +19,8 @@
 					<b-col class="story-submitter-container">
 					</b-col>
 					<b-col class="story-shortlist-container">
-						<span class="story-shortlist-marker" v-if="shortlist.indexOf(row.id) >= 0">
-          					<icon name="star" class="shortlist-icon" />
-						</span>
 					</b-col>
 					<b-col cols="2">
-						<b-badge v-if="isAdmin(row.id)" class="more-badge" @click.stop="handleAdminClick" > admin </b-badge>
 					</b-col>
 				</b-row>
 			</b-col>
@@ -35,16 +31,11 @@
 <script>
 
 export default {
-  props: ['row', 'items', 'settings'],
+  props: ['row', 'items'],
   data () {
     return {
       rowClass: (row) => {
         var result = 'story-row'
-/*
-        if (this.selectedRow.id === row.id) {
-          result += ' story-selected'
-        }
-*/
         return result
       },
       getImg: (url) => { 
@@ -72,32 +63,11 @@ export default {
 		this.$store.commit('dashSetDetailRow', this.row)
 		this.$store.commit('dashSetModule', 'detail')
 	},
-	handleThumbClick:  function (url)  {
-		console.log ('handleThumbClick: ', 	url)
-  		var win = window.open(url, '_blank');
-  		win.focus();
-	},
-	handleAdminClick: function ()  {
-		console.log ('admin click in row', this.row.id)
-		this.$store.commit('dashSetElection', this.row)
-		this.$store.commit('dashSetDetailRow', this.row)
-        this.$store.commit ('dashSetDetailAction', 'editRow')
-        this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])
-
-	}
   },
   mounted () { 
 	this.$refs.trow.setAttribute('id',  "erow_" + this.row.id)
   },
   watch: {
-	/* the watch is required to accommodate the reshuffle done for individuals. This watch is expected to be triggered :
-		Once after load for each row
-		Once after a filter is applied for each row
-	 */
-    'row': function(newValue, oldValue)  {
-		//console.log ('row changed:', oldValue.id, newValue.id, this.row.id)
-		this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
-    }
   },
 
 }

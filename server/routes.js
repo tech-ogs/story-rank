@@ -9,6 +9,7 @@ var express = require('express');
 var path = require('path');
 var crud = require(path.join(__dirname , 'common/crud.js'))
 var auth = require(path.join(__dirname , 'modules/auth/auth.js'))
+var elections = require(path.join(__dirname , 'modules/elections/elections.js'))
 var users = require(path.join(__dirname , 'modules/users/users.js'))
 var ranks = require(path.join(__dirname , 'modules/ranks/ranks.js'))
 var stories = require(path.join(__dirname , 'modules/stories/stories.js'))
@@ -154,6 +155,7 @@ router.post('/stories', checkAuth, handler(stories.list))
 router.post('/edit_row', checkAuth, handler(crud.editRow))
 router.post('/media/upload', checkAuth, upload.single('imgfile'), handler(media.upload))
 router.post('/create_row', checkAuth, handler(crud.createRow))
+router.post('/create_election', checkAuth, handler(elections.createElection))
 
 /* to get debug data for client work only, comment in production */
 router.get('/users',  getHandler(users.list)) 

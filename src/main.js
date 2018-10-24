@@ -21,6 +21,7 @@ import ElectionDetail from '@/components/ElectionDetail'
 import ElectionList from '@/components/ElectionList'
 import ElectionRow from '@/components/ElectionRow'
 import VoterList from '@/components/VoterList'
+import UserRow from '@/components/UserRow'
 import ProfileMenu from '@/components/ProfileMenu'
 import MyProfile from '@/components/MyProfile'
 import AdminHeader from '@/components/AdminHeader'
@@ -53,6 +54,7 @@ Vue.component('election-detail', ElectionDetail)
 Vue.component('election-list', ElectionList)
 Vue.component('election-row', ElectionRow)
 Vue.component('voter-list', VoterList)
+Vue.component('user-row', UserRow)
 Vue.component('profile-menu', ProfileMenu)
 Vue.component('my-profile', MyProfile)
 Vue.component('admin-header', AdminHeader)

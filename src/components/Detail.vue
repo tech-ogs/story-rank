@@ -12,34 +12,28 @@
 	  </slot>
 	  </b-row>
 
-	<slot name="detail-form">
-	</slot>
 
       <b-row class="app-content">
+		<slot name="detail-form">
+		</slot>
+
 		<br>
         <div class="flex-perfect-center width100">
           <b-button-toolbar class="width100" v-if="mode === 'view'" key-nav>
-<!--
-            <b-button-group class="mx-1">
-              <b-btn>&laquo;</b-btn>
-              <b-btn>&lsaquo;</b-btn>
-            </b-button-group>
--->
             <b-button-group class="button-group mx-1">
+
               <b-btn @click="close">Back</b-btn>
-              <b-btn v-if="isEditor || isAdmin" @click="doEdit">Edit</b-btn>
+
+              <b-btn v-if="isEditor(election.id) || isAdmin(election.id)" @click="doEdit">Edit</b-btn>
+
             </b-button-group>
-<!--
-            <b-button-group class="mx-1">
-              <b-btn>&rsaquo;</b-btn>
-              <b-btn>&raquo;</b-btn>
-            </b-button-group>
--->
           </b-button-toolbar>
 
           <b-button-toolbar v-if="mode === 'edit'" key-nav>
             <b-button-group class="mx-1">
+
               <b-btn @click="saveHandler(action, editRow)">Save</b-btn>
+
             </b-button-group>
           </b-button-toolbar>
 

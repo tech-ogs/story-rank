@@ -8,8 +8,10 @@ const state = {
 // helpers
 // getters
 const getters = {
-  usersGetItems: (state, params) => {
-    return state.items
+  usersGetItems: (state, params) => (electionId) => {
+    return state.items.filter( (x) => {
+		return x.election_id === electionId
+	})
   },
   usersGetIdMap: (state) => {
     return state.byId

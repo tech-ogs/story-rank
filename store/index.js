@@ -80,7 +80,7 @@ export default new Vuex.Store({
             payload: {
               schema: 'application',
               table: 'users',
-              mutation: 'dashInitialize'
+              action: 'dashInitialize'
             }
           })
 		})

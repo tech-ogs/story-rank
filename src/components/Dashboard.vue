@@ -9,13 +9,13 @@
 
               <div style="float:left; width: 80%;">
               <b-form-select v-model="filterSubmitterId"  class="mb-3">
-                <option v-for="user in usersList" :key="user.id" :value="user.id">{{user.login}}</option>
+                <option v-for="user in usersList(election.id)" :key="user.id" :value="user.id">{{user.login}}</option>
               </b-form-select>
               </div>
               <div style="float:left;">
               <b-nav-item @click="filterSubmitterId = null">
               &nbsp;&nbsp;X
-              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
+              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items(election.id) != null ? items(election.id).length : 0 }} </b-badge> -->
               </b-nav-item>
               </div>
 
@@ -26,7 +26,7 @@
               <div style="float:left;">
               <b-nav-item @click="filterPattern = null">
               &nbsp;&nbsp;X
-              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items != null ? items.length : 0 }} </b-badge> -->
+              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items(election.id) != null ? items(election.id).length : 0 }} </b-badge> -->
               </b-nav-item>
               </div>
               </div>
@@ -37,7 +37,7 @@
 		</template>
 	  </banner>
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
-	  <b-nav v-if="isAdmin || isEditor" class="toolbar">
+	  <b-nav v-if="isAdmin(election.id) || isEditor(election.id)" class="toolbar">
 		<b-nav-item variant="link" @click="handleAdminClick"> Admin </b-nav-item>
 		<b-nav-item variant="link" @click="newCandidate"> New </b-nav-item>
 	  </b-nav>
@@ -59,9 +59,9 @@
 	</b-row>
     <b-row class="app-content" ref="list">
       <b-col>
-        <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
+        <b-table striped small :items="items(election.id)" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <story-row :row="data.item" :items="items">
+            <story-row :row="data.item" :items="items(election.id)">
             </story-row>
           </template>
         </b-table>
@@ -250,7 +250,7 @@ export default {
         //console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
 		if (_this.selectedRow != null) { 
-			var el0 = document.getElementById('row_' + _this.items[0].id);
+			var el0 = document.getElementById('row_' + _this.items(this.election.id)[0].id);
 			var el0Parent = el0 ? el0.parentElement : null;
 			var offset = el0Parent.offsetTop + el0.offsetHeight;
 			var el = document.getElementById ('row_' + _this.selectedRow.id)
@@ -309,22 +309,6 @@ export default {
     this.listTable.addEventListener('scroll', this.scrollListener());
 
     this.listTable.scrollTop = this.scrollTop
-    if (process.env.NODE_ENV === 'client-development') {
-      this.$store.dispatch('initStoreTest')
-    }
-    else { 
-      var socket = window.io({
-		reconnection: true
-	  });
-      console.log('Dashboard socket:', socket)
-      this.$store.dispatch('initStore', {socket: socket})
-      .then(() => {
-        //console.log('checking state stories', this.items)
-        console.log('checking state election', JSON.stringify(this.election))
-        console.log('checking state results', JSON.stringify(this.results))
-      })
-    }
-
   }
 }
 </script>

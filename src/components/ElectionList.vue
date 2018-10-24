@@ -45,7 +45,7 @@ export default {
       listTable: null,
       fields: fields,
       rowclick: (item, index, event) => {
-
+		this.$store.commit('dashSetElection', item)
 		this.$store.commit('dashSetView', ['public', 'dashboard', 'view'])
       }
 	}
@@ -69,7 +69,7 @@ export default {
   methods: {
 	newElection: function() {
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: {} } )
-		this.$store.commit ('dashSetDetailAction', 'createRow')
+		this.$store.commit ('dashSetDetailAction', 'createElection')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit('dashSetView', ['profile', 'election-detail', 'edit'])
     },

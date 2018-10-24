@@ -13,11 +13,25 @@ const getters = {
   },
   electionsGetIdMap: (state) => {
     return state.byId
+  },
+  electionsGetUserData: (state, electionId) => {
+    return state.userData[electionId]
+  },
+  isAdmin: (state) =>  (electionId) => {
+  	return state.userData[electionId].groups != null ? state.userData[electionId].groups.indexOf('admin') >= 0 : false
+  },
+  isEditor: (state) =>  (electionId) => {
+  	return state.userData[electionId].groups != null ? state.userData[electionId].groups.indexOf('editor') >= 0 : false
   }
+
 }
 
 // actions
 const actions = {
+    createElection: async function (context, params) {
+        params.url = '/create_election'
+        return context.dispatch('createRow', params)
+    }
 }
 
 // mutations
@@ -30,6 +44,9 @@ const mutations = {
         byId[x.id] = x
       })
 	  state.byId = byId
+  },
+  userElectionsSetData: (state, params) => {
+    state.userData = params
   },
   electionsEditRow: (state, row) => {
     var idx = state.indexById[row.id]

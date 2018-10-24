@@ -5,9 +5,10 @@ async function list (req, res) {
   var client, result
   try {
  	client = await db.getClient()
-    console.log('stories users:', req.body)
-    result = await client.query('select users($1)', [req.body])
-	result = result.rows[0].stories
+    console.log('users list:', req.body, req.session)
+    result = await client.query('select users($1)', [req.session.id])
+	result = result.rows[0].users
+    console.log('users result:', result)
   }
   catch(err) {
     //console.trace('stories list error', err.message)

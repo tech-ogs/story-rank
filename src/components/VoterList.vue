@@ -4,15 +4,17 @@
 	  <banner :helpText="helpText">
 	  </banner>
 	  <b-nav class="toolbar">
-		<b-nav-item variant="link" @click=""> Invite Link </b-nav-item>
+		 <b-nav-item @click=""> 
+			Invite Link: <input type="text" ref="linktext" :value="getInviteLink()"> </input> 
+			<b-badge class="" @click="copyInviteLink">copy</b-badge> </b-nav-item> 
 	  </b-nav>
     </b-row>
     <b-row class="app-content" ref="list">
       <b-col>
-        <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
+        <b-table striped small :items="items(election.id)" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
-            <election-row :row="data.item" :items="items">
-            </election-row>
+            <user-row :row="data.item" :items="items(election.id)">
+            </user-row>
           </template>
         </b-table>
       </b-col>
@@ -40,6 +42,7 @@ export default {
   data () {
     return {
 	  helpText: '',
+      linkText: null,
       listTable: null,
       fields: fields,
       rowclick: (item, index, event) => {
@@ -68,6 +71,13 @@ export default {
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit('dashSetView', ['profile', 'election-detail', 'edit'])
     },
+	getInviteLink: function() {
+		return 'http://www.ranknvote.com/invite/' + (this.election.hash || this.election.id)
+	},
+	copyInviteLink: function() {
+		this.linkText.select()
+		document.execCommand('copy')
+	},
     scrollToTop: function() { 
       this.$store.commit('dashSetScrollTop', 0)
     },
@@ -77,7 +87,7 @@ export default {
         //console.log('scroll evt:', _this.listTable.scrollTop)
         _this.$store.commit('dashSetScrollTop', _this.listTable.scrollTop)
 		if (_this.selectedRow != null) { 
-			var el0 = document.getElementById('row_' + _this.items[0].id);
+			var el0 = document.getElementById('row_' + _this.items(this.election.id)[0].id);
 			var el0Parent = el0 ? el0.parentElement : null;
 			var offset = el0Parent.offsetTop + el0.offsetHeight;
 			var el = document.getElementById ('row_' + _this.selectedRow.id)
@@ -103,6 +113,7 @@ export default {
 
   mounted () {
     console.log('ENV', process.env)
+    this.linkText = this.$refs.linktext
     var listTable = this.$refs.list
     console.log('listTable:', listTable)
     this.listTable = listTable
@@ -110,25 +121,6 @@ export default {
     this.listTable.addEventListener('scroll', this.scrollListener());
 
     this.listTable.scrollTop = this.scrollTop
-
-    /* TODO : move to a central location */
-
-    this.listTable.scrollTop = this.scrollTop
-    if (process.env.NODE_ENV === 'client-development') {
-      this.$store.dispatch('initStoreTest')
-    }
-    else { 
-      var socket = window.io({
-		reconnection: true
-	  });
-      console.log('Dashboard socket:', socket)
-      this.$store.dispatch('initStore', {socket: socket})
-      .then(() => {
-        //console.log('checking state stories', this.items)
-        console.log('checking state election', JSON.stringify(this.election))
-        console.log('checking state results', JSON.stringify(this.results))
-      })
-    }
 
   }
 }
@@ -165,6 +157,6 @@ body,
 .toolbar {
 	width: 100%;
 	disply: flex;
-	justify-content: flex-end;
+	justify-content: flex-start;
 }
 </style>

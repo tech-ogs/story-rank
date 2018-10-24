@@ -114,7 +114,7 @@
 				v-model="submitterId" 
 				:state="submitterState"
 			>
-                <option v-for="user in usersList" :value="user.id">{{user.login}}</option>
+                <option v-for="user in usersList(election.id)" :value="user.id">{{user.login}}</option>
 			</b-form-select>
 			<b-form-invalid-feedback id="inputTitle">
 			 	Maximum 100 characters!

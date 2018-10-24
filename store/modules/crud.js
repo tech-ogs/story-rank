@@ -36,7 +36,8 @@ const actions = {
         var response;
         var result
         try {
-            response = await window.fetch('/create_row', {
+		    let url = params.url || '/create_row'
+            response = await window.fetch(url, {
               method: 'post',
               credentials: 'same-origin',
               headers: headers,

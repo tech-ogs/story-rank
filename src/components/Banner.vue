@@ -7,7 +7,7 @@
           <span class="title-brand">
 		  <span @click="close"><icon name="angle-left" class="back-icon"/> &nbsp;</span>
           <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
-          {{ election.label.substr(0,15) }}&nbsp; &nbsp;
+          {{ (election.label || election.name).substr(0,15) }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
 
