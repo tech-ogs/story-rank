@@ -81,6 +81,27 @@ async function logout (req, res) {
     return result
 }
 
+async function invite (req, res) {
+    var client, result
+    try {
+        client = await db.getClient()
+        var params = req.params
+        params.session = req.session
+        console.log('invite:', params)
+        result = await client.query('select invite($1)', [params || {}])
+		console.log ('invite result:', result)
+        result = result.rows[0].invite
+        await client.query('commit')
+    }
+  	catch(err) {
+	    throw (err)
+	}
+	finally {
+        await client.end()
+	}
+    return result
+}
+
 /*
 function reset (req, res) {
   var client = db.getClient()

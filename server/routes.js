@@ -71,6 +71,23 @@ router.get('/', function(req, res){
   } 
 });
 
+
+router.get('/invite/:code', function(req, res) {
+	console.log ('invite code: ' , req.params.code)
+	auth.invite(req, res)
+	.then(function(ret) {
+		if (req.session.logged_in) {
+			res.sendFile(path.join(__dirname, '../dist/index.html'));
+		}
+		else {
+			res.sendFile(path.join(__dirname, ('../dist/invite.html') ));
+		}
+	})
+	.catch(function(err) {
+		res.status(420).json({message: err.message})
+	})
+})
+
 publicPaths = [
 	'/login.html',
 	'/signup.html',

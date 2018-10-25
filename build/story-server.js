@@ -62,14 +62,15 @@ function getIP() {
 
 var port = process.env.NODE_ENV === 'production' ? 80 : 8080
 var IP = getIP()
-if ( process.env.NODE_ENV === 'production') {
+
+if (process.env.NODE_ENV === 'production') {
   server.listen(port, function() {
-    console.log('server listening on port ' + port);
+    console.log('server listening on  ' + IP);
   });
 }
 else {
   server.listen(port, IP, function() {
-    console.log('server listening on IP:port ' + IP + ':'+ port);
+    console.log('server listening on  ' + IP + ':' + port);
   });
 }
 

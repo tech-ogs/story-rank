@@ -5,7 +5,7 @@
 	  </banner>
 	  <b-nav class="toolbar">
 		 <span class="width100">
-			Invite Link: <input class="invite-textbox" type="text" ref="linktext" :value="getInviteLink()"> </input> 
+			Invite Link: &nbsp; <input class="invite-textbox" type="text" ref="linktext" :value="getInviteLink()"> </input> 
 			<!-- <b-badge class="" @click="copyInviteLink">copy</b-badge> --> 
 		<span> 
 	  </b-nav>
@@ -73,7 +73,7 @@ export default {
 		this.$store.commit('dashSetView', ['profile', 'election-detail', 'edit'])
     },
 	getInviteLink: function() {
-		return 'http://www.ranknvote.com/invite/' + (this.election.hash || this.election.id)
+		return process.env.URL + '/invite/' + (this.election.hash || this.election.id)
 	},
 /*
 	copyInviteLink: function() {
@@ -167,5 +167,6 @@ body,
 .invite-textbox {
 	border: 0px;
 	width: 75%;
+    color: #007bff;
 }
 </style>

@@ -43,6 +43,7 @@ CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
 	plv8.elog(LOG, 'plv8 signup', JSON.stringify(params))
 
 	var emptyRex = /^\s*$/
+	var result = null
 
 	if (emptyRex.test(params.login) || params.login == null) {
 		throw new Error ('Login name is required')
@@ -68,19 +69,63 @@ CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
 		throw new Error ('Mobile already registered, please retry with a different mobile')
 	}
 
-	/* if we got here, the signup attempt can go through */
-	var userRecord = plv8.execute('insert into application.users (login, mobile, password) values ($1, $2, $3) returning *', [params.login, params.mobile, params.password])
-	if (userRecord == null || userRecord.length === 0) {
-		throw new Error ('Server error during signup')
+	/* if we got here, we can send the OTP for validation of mobile */
+	/* record the OTP for verification */
+
+	if (params.session == null ||  params.session.id == null) {
+		throw new Error ('signup attempt failed, session not found. Please make sure cookies are enabled on this device')
 	}
-		
-	if (params.session != null && params.session.id != null) {
-		plv8.execute('update application.sessions set logged_in = true, last_touched = now(), user_id = $1 where id = $2 returning *', [userRecord[0].id, params.session.id])
+	else if (params.session.user_id != null && params.session.logged_in) {
+		throw new Error ('signup failed, already logged in as a registered user from this device')
+
+	}
+	else {
+		result = { otp : Math.floor(Math.random()*10000) }
+		var cryptedPassword = plv8.execute('select crypt($1, gen_salt(\'md5\') as cpasswd)', [params.password])[0].cpasswd
+
+		plv8.execute('update application.sessions set logged_in = false, last_touched = now(), user_id = null, attributes = $1 where id = $1 returning *', 
+			[{pendingOtp: { task : 'signup', otp : result.otp, login: params.login, mobile: params.mobile, password: cryptedPassword}}, params.session.id])
 	}
 
-	return userRecord[0]
+	return result
    
 $$ LANGUAGE plv8;
+
+
+CREATE OR REPLACE FUNCTION process_invites_upon_signup (session jsonb) returns jsonb AS $$
+
+	var invites = session.invites
+	if (invites != null && invites instanceof Array && invites.length > 0) {
+		invites.forEach(function(x) { 
+			var invt = plv8.find_function('parse_invite_code')(x)
+			plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ( (select user_id from application.sessions where id = $1), $2, $3 returning *', [session.id, invt.electionId, {groups: ["public"]}])
+		})
+	}
+
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION validate_otp (params jsonb) returns jsonb AS $$
+	var session = params.session
+	var operation = session.attributes.pendingOtp
+	if (operation == null) {
+		throw new Error ('nothing waiting for OTP validation')
+	}
+	else if (operation.task === 'signup') {
+		if (params.otp === task.otp) {
+			var userRecord = plv8.execute('insert into application.users (login, mobile, password) values ($1, $2, $3) returning *', [operation.login, operation.mobile, operation.password])
+			if (userRecord == null || userRecord.length === 0) {
+				throw new Error ('Server error during signup, could not create user')
+			}
+			plv8.execute('update application.sessions set logged_in = true, last_touched = now(), user_id = $1 where id = $2 returning *', [userRecord[0].id, params.session.id])
+			plv8.find_function('process_invites_upon_signup')(params.session)
+		}
+		else {
+			throw new Error ('OTP does not match, try again')
+		}
+	}
+$$ LANGUAGE plv8;
+
+
 
 CREATE OR REPLACE FUNCTION login (params json) returns jsonb AS $$
   plv8.elog(LOG, 'plv8 login', JSON.stringify(params))
@@ -177,6 +222,27 @@ CREATE OR REPLACE FUNCTION approve_reset (login varchar) returns jsonb AS $$
   }
   else {
     plv8.execute('update application.sessions set last_touched = now(), logged_in = false, user_id = null  where user_id = (select id from application.users where login = $1)', [login])
+  }
+
+  return null
+   
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION parse_invite_code (code text) returns jsonb AS $$
+	return { electionId : code }	
+$$ LANGUAGE plv8;
+
+CREATE OR REPLACE FUNCTION invite (params jsonb) returns jsonb AS $$
+  plv8.elog(LOG, 'plv8 invite', JSON.stringify(params))
+  var result = null;
+  var invite = plv8.find_function('parse_invite_code')(params.code);
+  var electionId = invite.electionId;
+  
+  if (params.session.logged_in) {
+	result = plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ( (select user_id from application.sessions where id = $1), $2, $3 returning *', [params.session.id, electionId, {groups: ["public"]}])
+  }
+  else {
+	result = plv8.execute('update application.sessions set last_touched = now(), attributes = jsonb_set(attributes,\'{invites}\', attributes->\'invites\' || $1)  where id = $2 returning *',[[code], params.sessions.cookie])
   }
 
   return null
