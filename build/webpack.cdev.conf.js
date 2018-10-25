@@ -31,6 +31,11 @@ module.exports = merge(baseWebpackConfig, {
       inject: true
     }),
     new HtmlWebpackPlugin({
+      filename: 'invite.html',
+      template: 'invite.html',
+      inject: true
+    }),
+    new HtmlWebpackPlugin({
       filename: 'login.html',
       template: 'login.html',
       inject: true

@@ -242,7 +242,7 @@ CREATE OR REPLACE FUNCTION invite (params jsonb) returns jsonb AS $$
 	result = plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ( (select user_id from application.sessions where id = $1), $2, $3 returning *', [params.session.id, electionId, {groups: ["public"]}])
   }
   else {
-	result = plv8.execute('update application.sessions set last_touched = now(), attributes = jsonb_set(attributes,\'{invites}\', attributes->\'invites\' || $1)  where id = $2 returning *',[[code], params.sessions.cookie])
+	result = plv8.execute('update application.sessions set last_touched = now(), attributes = jsonb_set(attributes,\'{invites}\', attributes->\'invites\' || $1)  where id = $2 returning *',[[params.code], params.session.id])
   }
 
   return null
