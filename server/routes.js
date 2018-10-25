@@ -109,8 +109,8 @@ publicPaths = [
 })
  
 
-router.get('/assets/logo.png', function(req, res) {
-  res.sendFile(path.join(__dirname, '../dist/static/logo.png'))
+router.get('/assets/rnv-logo.png', function(req, res) {
+  res.sendFile(path.join(__dirname, '../dist/static/rnv-logo.png'))
 })
 router.get('/assets/login.css', function(req, res) {
   res.sendFile(path.join(__dirname, '../dist/static/login.css'))
@@ -120,6 +120,16 @@ router.post('/signup', function(req, res) {
   auth.signup(req, res)
   .then (function(ret) {
     res.status(200).json({message: 'signup ok'})
+  })
+  .catch(function(err) {
+    res.status(403).json({message: err.message})
+  })
+})
+
+router.post('/validate-otp', function(req, res) {
+  auth.validateOtp(req, res)
+  .then (function(ret) {
+    res.status(200).json({message: 'validate ok'})
   })
   .catch(function(err) {
     res.status(403).json({message: err.message})

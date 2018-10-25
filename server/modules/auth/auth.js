@@ -61,6 +61,27 @@ async function signup (req, res) {
     return result
 }
 
+async function validateOtp (req, res) {
+	var client, result
+	try {
+		client = await db.getClient()
+		var params = req.body
+		params.session = req.session
+		console.log('validate otp:', params)
+		result = await client.query('select validate_otp($1)', [params || {}])
+        result = result.rows[0].validate_otp
+		await client.query('commit')
+	}
+	catch(err) {
+	  throw (err)
+	}
+	finally {
+      await client.end()
+	}
+    return result
+}
+
+
 async function login (req, res) {
     var client, result
     try {
@@ -138,6 +159,7 @@ exports = module.exports = {
   shell: shell,
   invite: invite,
   signup: signup,
+  validateOtp: validateOtp,
   login: login,
   logout: logout,
   //reset: reset
