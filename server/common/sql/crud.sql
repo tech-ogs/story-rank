@@ -47,7 +47,7 @@ CREATE OR REPLACE FUNCTION edit_row(session jsonb,  params jsonb) returns jsonb 
 
 $$ LANGUAGE plv8;
 
-CREATE OR REPLACE FUNCTION set_image_paths ( id bigint,  thumb_url varchar, url varchar) returns jsonb AS $$
+CREATE OR REPLACE FUNCTION set_image_paths ( params jsonb) returns jsonb AS $$
 
 	var mandatoryParams = ['schema', 'table', 'rowId', 'fieldPath', 'thumbPath', 'imageUrl', 'thumbUrl']
 	mandatoryParams.forEach(function(x) {
@@ -56,10 +56,10 @@ CREATE OR REPLACE FUNCTION set_image_paths ( id bigint,  thumb_url varchar, url 
 		}
 	})
 
-	var cmd = 'update ' + params.schema + '.' + params.table + ' set attributes = jsonb_set(attributes, $1, $2) where id = $3'
+	var cmd = 'update ' + params.schema + '.' + params.table + ' set attributes = jsonb_set(attributes, $1, to_jsonb($2::text)) where id = $3'
 
-	plv8.execute(cmd, [[params.thumbPath], to_json(params.thumbUrl), params.rowId])
-	plv8.execute(cmd, [[params.fieldPath], to_json(params.imageUrl), params.rowId])
+	plv8.execute(cmd, [[params.thumbPath], params.thumbUrl, params.rowId])
+	plv8.execute(cmd, [[params.fieldPath], params.imageUrl, params.rowId])
 
 $$ LANGUAGE plv8;
 

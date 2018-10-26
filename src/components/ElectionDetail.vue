@@ -136,7 +136,7 @@ export default {
 		console.log ('StoryDetail fileChange', fileObj, this.row.id)
 		this.$store.dispatch('imageUpload', { 
 			schema : 'application',
-			table : 'stories',
+			table : 'elections',
 			fileObj : fileObj, 
 			rowId : this.row.id, 
 			fieldPath: fieldPath, 

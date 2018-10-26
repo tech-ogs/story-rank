@@ -386,6 +386,7 @@ async function upload (req, res, next) {
 		var ret = await uploadMedia(fileObj, req.body, req.session)
 		console.log ('media.upload ret: ', ret)
 		await patchReferencingRow(req.body, ret)
+		console.log ('done patching referencing row')
 		res.json(ret);
 	}
     catch(err) {

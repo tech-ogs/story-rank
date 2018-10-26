@@ -63,8 +63,8 @@ const actions = {
 		formData.append('schema', params.schema)
 		formData.append('table', params.table)
 		formData.append('rowId', params.rowId)
-		formData.append('fieldPath', params.fileObj.fieldPath)
-		formData.append('thumbPath', params.fileObj.thumbPath)
+		formData.append('fieldPath', params.fieldPath)
+		formData.append('thumbPath', params.thumbPath)
 
 		var headers = new Headers();
 		var result;

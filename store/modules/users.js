@@ -5,6 +5,15 @@ const state = {
   byId: {}
 }
 
+function reindex () { 
+    var byId = {}
+    state.items.forEach( (x, idx) => {
+      byId[x.id] = x
+    })
+    state.byId = byId
+}
+
+
 // helpers
 // getters
 const getters = {
@@ -34,7 +43,7 @@ const mutations = {
 	  state.byId = byId
   },
   usersEditRow: (state, row) => {
-    var idx = state.indexById[row.id]
+    var idx = state.byId[row.id]
     delete state.items[idx]
     Vue.set(state.items, idx, row)
 	reindex()

@@ -6,7 +6,7 @@
         <b-navbar-brand href="#">
           <span class="title-brand">
 		  <span @click="close"><icon name="angle-left" class="back-icon"/> &nbsp;</span>
-          <img src="assets/thumbs/logo.jpg" class="logo-icon" alt="WTF-2">
+          <b-img :src="getImg(election.attributes.image)" class="logo-icon" alt="WTF-2"> </b-img>
           {{ (election.label || election.name).substr(0,15) }}&nbsp; &nbsp;
           </span>
         </b-navbar-brand>
@@ -38,6 +38,10 @@ export default {
   props: ['helpText'],
   data () {
     return {
+      getImg: (url) => { 
+        return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
+      } 
+
     }
   },
   computed: {

@@ -97,7 +97,6 @@ const state = {
   	id: null,
   	login: '', 
  	name: '',
-  	groups: []
   },
   election: {
   	id: null,

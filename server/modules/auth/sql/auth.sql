@@ -2,7 +2,7 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
 
 	var result = {}
 
-	var userDetails = plv8.execute('select id, login, name, attributes->\'groups\' as groups  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
+	var userDetails = plv8.execute('select id, login, name, attributes  from application.users where id = (select user_id from application.sessions where id = $1)', [cookie])[0] || {}
 
 	var elections = plv8.find_function('get_elections')(cookie)
 
@@ -14,10 +14,9 @@ CREATE OR REPLACE FUNCTION shell(cookie bigint) returns jsonb AS $$
     var ranks = plv8.execute('with e as (select id from application.elections), x as (select election_id, story_id from application.ranks, e where election_id = e.id and user_id = (select user_id from application.sessions where id = $1)  order by rank asc) select jsonb_build_object(election_id, jsonb_agg(x.story_id)) as ranks from x group by election_id', [cookie])[0]
 
 	result.user = userDetails
-	result.user.sessionId = cookie
 	result.elections = elections;
 	result.userElections = userElections
-    result.myranks = ranks.ranks != null ? ranks.ranks : []
+    result.myranks = ranks != null && ranks.ranks != null ? ranks.ranks : []
     
     return result
 
@@ -39,15 +38,22 @@ CREATE OR REPLACE FUNCTION get_elections(cookie bigint) returns jsonb AS $$
 
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION delete_login (login text) returns jsonb AS $$
+	plv8.execute('delete from application.sessions  where user_id = ( select id from application.users where login = $1)', ['test']);
+	plv8.execute('delete from application.user_elections  where user_id = ( select id from application.users where login = $1)', ['test']);
+	plv8.execute('delete from application.ranks where user_id = ( select id from application.users where login = $1)', ['test']);
+	plv8.execute('delete from application.users where login = $1', ['test']);
+
+$$ LANGUAGE plv8;
+
 CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
 	plv8.elog(LOG, 'plv8 signup', JSON.stringify(params))
+
+	plv8.find_function('delete_login')('test');
 
 	var emptyRex = /^\s*$/
 	var result = null
 
-	plv8.execute('delete from application.user_elections  where user_id = ( select id from application.users where login = $1)', ['test']);
-	plv8.execute('delete from application.ranks where user_id = ( select id from application.users where login = $1)', ['test']);
-	plv8.execute('delete from application.users where login = $1', ['test']);
 
 	if (emptyRex.test(params.login) || params.login == null) {
 		throw new Error ('Login name is required')
@@ -87,7 +93,7 @@ CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
 		result = { otp : Math.floor(Math.random()*10000) }
 		var cryptedPassword = plv8.execute('select crypt($1, gen_salt(\'md5\')) as cpasswd', [params.password])[0].cpasswd
 
-		plv8.execute('update application.sessions set logged_in = false, last_touched = now(), user_id = null, attributes = $1 where id = $2 returning *', 
+		plv8.execute('update application.sessions set logged_in = false, last_touched = now(), user_id = null, attributes = attributes || $1 where id = $2 returning *', 
 			[{pendingOtp: { task : 'signup', otp : result.otp, login: params.login, mobile: params.mobile, password: cryptedPassword}}, params.session.id])
 	}
 

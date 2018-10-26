@@ -6,7 +6,7 @@
 			</admin-header>
 		</template>
         <template slot="detail-form">
-		  <div>
+		  <div class="width100">
 			<b-form @submit="" @reset="">
 				<b-form-group id="grpLogin"
 							horizontal
