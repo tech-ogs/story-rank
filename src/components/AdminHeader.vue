@@ -5,7 +5,7 @@
         <b-navbar-brand href="#">
           <span class="title-brand">
           <img src="assets/thumbs/rnv-logo.jpg" class="logo-icon" alt="rankNVote" @click="close">
-           <h2>{{ view.title }}&nbsp; &nbsp; </h2>
+           <h3>{{ view.title }}&nbsp; &nbsp; </h3>
           </span>
         </b-navbar-brand>
 
@@ -14,6 +14,17 @@
 			 <b-badge @click="showHelp"><h4> &nbsp; ? &nbsp;</h4> </b-badge>
 		</b-nav-item>
 		</b-navbar-nav>
+
+        <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+
+        <b-collapse is-nav size="small" id="nav_collapse">
+          <b-navbar-nav>
+          </b-navbar-nav>
+          <!-- Right aligned nav items -->
+          <slot name="header-menu">
+          </slot>
+
+        </b-collapse>
 
       </b-navbar>
 </template>

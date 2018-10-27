@@ -2,6 +2,28 @@
   <b-container class="app-container">
     <b-row class="app-header">
 	  <admin-header :helpText="helpText">
+		<template slot="header-menu">
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item>
+              <div>
+
+              <div style="float:left; width: 80%;">
+              <b-form-input type="text" v-model="filterPattern" placeholder="Search text" class="mb-3">
+              </b-form-input>
+              </div>
+              <div style="float:left;">
+              <b-nav-item @click="filterPattern = null">
+              &nbsp;&nbsp;X
+              &nbsp;&nbsp;<!-- <b-badge class="flex-perfect-center"> {{ items(election.id) != null ? items(election.id).length : 0 }} </b-badge> -->
+              </b-nav-item>
+              </div>
+              </div>
+            </b-nav-item>
+			<br>
+            <b-button size="sm" @click="doLogout"> <b>SIGN OUT</b> </b-button>
+          </b-navbar-nav>
+		</template>
+
 	  </admin-header>
 	  <b-nav class="toolbar">
 		<b-nav-item variant="link" @click="newElection"> New </b-nav-item>
@@ -67,6 +89,29 @@ export default {
 
   },
   methods: {
+    doLogout: () => {
+      var headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      window.fetch('/logout', {
+        method: 'post',
+        credentials: 'same-origin',
+        headers: headers,
+        body: JSON.stringify({})
+      })
+      .then( res => {
+        if (!res.ok ) { 
+          throw Error (res.json())
+        }
+        return res.json()
+      })
+      .then( response => {
+        window.location.href = '/'
+      })
+      .catch( err => {
+        alert (err.message)
+      })
+    },
+
 	newElection: function() {
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: {} } )
 		this.$store.commit ('dashSetDetailAction', 'createElection')

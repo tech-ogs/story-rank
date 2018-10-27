@@ -116,6 +116,7 @@ export default {
 	view() { return this.$store.getters.view },
 	moduleName() { return this.$store.getters.moduleName},
 	viewMode() { return (this.$store.getters.view).mode },
+	action() { return this.$store.getters.dashDetailAction },
 	mode() { return this.$store.getters.dashDetailMode }
 
   },
@@ -157,12 +158,10 @@ export default {
 			schema : 'application',
 			table : 'elections',
 			row: editRow,
-			postAction: action === 'createRow' ? 'electionsCreateRow' : 'electionsEditRow'
+			postAction: action === 'createElection' ? 'electionsCreateRow' : 'electionsEditRow'
 		})
 		.then( (result) => {
-            this.$store.commit('dashSetDetailMode', 'view')
-            this.$store.commit('dashSetDetailRow', result)
-			Object.assign(this.editRow, result)
+			this.$store.commit('dashSetView', ['admin', 'election-list', 'view'])
 		})
 		.catch( (err) => {
 			throw err

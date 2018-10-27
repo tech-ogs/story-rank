@@ -38,18 +38,17 @@ CREATE OR REPLACE FUNCTION get_elections(cookie bigint) returns jsonb AS $$
 
 $$ LANGUAGE plv8;
 
-CREATE OR REPLACE FUNCTION delete_login (login text) returns jsonb AS $$
-	plv8.execute('delete from application.sessions  where user_id = ( select id from application.users where login = $1)', ['test']);
-	plv8.execute('delete from application.user_elections  where user_id = ( select id from application.users where login = $1)', ['test']);
-	plv8.execute('delete from application.ranks where user_id = ( select id from application.users where login = $1)', ['test']);
-	plv8.execute('delete from application.users where login = $1', ['test']);
+CREATE OR REPLACE FUNCTION delete_test_logins () returns jsonb AS $$
+	var rex = 'test\d*$'
+	plv8.execute('delete from application.sessions  where user_id = ( select id from application.users where  login ~ $1)', [rex]);
+	plv8.execute('delete from application.user_elections  where user_id = ( select id from application.users where  login ~ $1)', [rex]);
+	plv8.execute('delete from application.ranks where user_id = ( select id from application.users where login ~ $1)', [rex]);
+	plv8.execute('delete from application.users where login ~ $1', [rex]);
 
 $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION signup (params json) returns jsonb AS $$
 	plv8.elog(LOG, 'plv8 signup', JSON.stringify(params))
-
-	plv8.find_function('delete_login')('test');
 
 	var emptyRex = /^\s*$/
 	var result = null
@@ -124,7 +123,7 @@ CREATE OR REPLACE FUNCTION validate_otp (params jsonb) returns jsonb AS $$
 	else if (operation.task === 'signup') {
 		plv8.elog(LOG, 'signup operation', JSON.stringify(operation))
 
-		if (operation.login === 'test') {
+		if (operation.login.match(/test\d*$/)) {
 			params.otp = ''
 			operation.otp = ''
 		}

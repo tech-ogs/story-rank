@@ -2,8 +2,21 @@ import Vue from 'vue'
 // initial state
 const state = {
   items: [],
-  byId: {}
+  byId: {},
+  indexById: {}
 }
+
+function reindex () { 
+    var byId = {}
+    var indexById = {}
+    state.items.forEach( (x, idx) => {
+      byId[x.id] = x
+      indexById[x.id] = idx
+    })
+    state.byId = byId
+    state.indexById = indexById
+}
+
 
 // helpers
 // getters

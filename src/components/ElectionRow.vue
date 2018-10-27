@@ -93,10 +93,12 @@ export default {
 		Once after load for each row
 		Once after a filter is applied for each row
 	 */
+/*
     'row': function(newValue, oldValue)  {
 		//console.log ('row changed:', oldValue.id, newValue.id, this.row.id)
 		this.$refs.trow.setAttribute('id',  "row_" + this.row.id)
     }
+*/
   },
 
 }
