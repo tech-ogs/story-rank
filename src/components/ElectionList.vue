@@ -114,6 +114,7 @@ export default {
 
 	newElection: function() {
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: {} } )
+		this.$store.commit('dashSetElection', {id: null, attributes: {} } )
 		this.$store.commit ('dashSetDetailAction', 'createElection')
 		this.$store.commit ('dashSetDetailMode', 'edit')
 		this.$store.commit('dashSetView', ['profile', 'election-detail', 'edit'])

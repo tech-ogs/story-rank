@@ -38,7 +38,6 @@
 	  </banner>
       <rank-bar @rank-button-click="handleRankBtnClick"> </rank-bar>
 	  <b-nav v-if="isAdmin(election.id) || isEditor(election.id)" class="toolbar">
-		<b-nav-item variant="link" @click="handleAdminClick"> Admin </b-nav-item>
 		<b-nav-item variant="link" @click="newCandidate"> New </b-nav-item>
 	  </b-nav>
 
@@ -285,13 +284,8 @@ export default {
 		this.$store.commit('dashSetDetailRow', {id: null, attributes: { } } )
 		this.$store.commit ('dashSetDetailAction', 'createRow')
 		this.$store.commit('dashSetView', ['admin', 'story-detail', 'edit'])
-	},
-	handleAdminClick: function ()  {
-		this.$store.commit('dashSetBack', ['public', 'dashboard', 'view'])
-		this.$store.commit('dashSetDetailRow', this.election)
-        this.$store.commit ('dashSetDetailAction', 'editRow')
-        this.$store.commit('dashSetView', ['admin', 'election-detail', 'edit'])
 	}
+
   },
   watch: {
     'scrollTop': function(newValue, oldValue)  {

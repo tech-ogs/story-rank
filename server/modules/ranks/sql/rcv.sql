@@ -196,6 +196,22 @@ CREATE OR REPLACE FUNCTION test_random_rcv() returns jsonb AS $$
 	
 $$ LANGUAGE plv8;
 
+CREATE OR REPLACE FUNCTION delete_test_elections (max_id bigint) returns jsonb AS $$
+	/* we know for sure that 3 is a valid election */
+	if (max_id != null && max_id >= 3) {
+		var ids = plv8.execute('select id from application.elections where id > $1', [max_id])
+		ids.forEach( function (election)  {
+			plv8.execute('delete from application.ranks where election_id = $1', [election.id])
+			plv8.execute('delete from application.stories where election_id = $1', [election.id])
+			plv8.execute('delete from application.results where election_id = $1', [election.id])
+			plv8.execute('delete from application.user_elections where election_id = $1', [election.id])
+			plv8.execute('delete from application.elections where id = $1', [election.id])
+		})
+	}
+	else {
+		throw new Error ('max_id not specified or below threshold: ' + max_id)
+	}
+$$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION remove_testdata_rcv() returns jsonb AS $$
 	var ids = plv8.execute('select id from application.elections where name = $1', ['test_random_rcv'])
 	ids.forEach( function (election)  {

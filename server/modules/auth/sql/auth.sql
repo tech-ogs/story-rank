@@ -26,7 +26,7 @@ $$ LANGUAGE plv8;
 CREATE OR REPLACE FUNCTION get_elections(cookie bigint) returns jsonb AS $$
 
 
-	var elections = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections where name not ilike $1 order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y where y.id in (select election_id from application.user_elections where user_id = (select user_id from application.sessions where id = $2)) order by active desc, id desc', ['test%', cookie])
+	var elections = plv8.execute('with y as ( with x as ( select *, (close_date::date - now()::date)::int as days_to_close  from application.elections order by id desc) select id, name, label, attributes,  open_date, close_date, days_to_close, case when x.days_to_close >=0  then true else false end as active from x) select * from y where y.id in (select election_id from application.user_elections where user_id = (select user_id from application.sessions where id = $1)) order by active desc, id desc', [cookie])
 
 	return elections
 
@@ -40,9 +40,9 @@ $$ LANGUAGE plv8;
 
 CREATE OR REPLACE FUNCTION delete_test_logins () returns jsonb AS $$
 	var rex = 'test\d*$'
-	plv8.execute('delete from application.sessions  where user_id = ( select id from application.users where  login ~ $1)', [rex]);
-	plv8.execute('delete from application.user_elections  where user_id = ( select id from application.users where  login ~ $1)', [rex]);
-	plv8.execute('delete from application.ranks where user_id = ( select id from application.users where login ~ $1)', [rex]);
+	plv8.execute('delete from application.sessions  where user_id in ( select id from application.users where  login ~ $1)', [rex]);
+	plv8.execute('delete from application.user_elections  where user_id in ( select id from application.users where  login ~ $1)', [rex]);
+	plv8.execute('delete from application.ranks where user_id in ( select id from application.users where login ~ $1)', [rex]);
 	plv8.execute('delete from application.users where login ~ $1', [rex]);
 
 $$ LANGUAGE plv8;

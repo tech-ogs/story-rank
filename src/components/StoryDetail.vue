@@ -164,15 +164,23 @@ export default {
         return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
 	  },
 	  imageFile: '',
-/*
       editRow: {
-		attributes: {}
-	  }
-*/
-	
+		id: null,
+		name: '',
+		submitter_id: null,
+		election_id: null,
+		creation_date: '',
+		attributes: {
+			title: '',
+			shortTitle: '',
+			excerpt: '',
+			url: '',
+			image: '',
+			full_image: ''
+		}
+	  },
 	  get submitterId () { return this.editRow.submitter_id || (this.user != null ? this.user.id : null)},
 	  set submitterId (x) { this.editRow.submitter_id = x},
-	  editRow: null
     }
   },
   computed: {
@@ -252,13 +260,13 @@ export default {
   },
 
   created() {
-	this.editRow = JSON.parse(JSON.stringify(this.row))
-	this.editRow.submitter_id = this.editRow.submitter_id || this.user.id
-	this.editRow.creation_date = this.editRow.creation_date ? dateString(this.editRow.creation_date) : dateString(this.election.open_date)
-	this.editRow.election_id = this.editRow.election_id || this.election.id
-    var createDefaults = { shortTitle: '', title : '', excerpt: '', url: '', image: '' }
-	Object.keys(createDefaults).forEach( (x) =>  {
-		this.editRow.attributes[x] = this.editRow.attributes[x] || createDefaults[x]
+	this.editRow.id = this.row.id || this.editRow.id
+	this.editRow.name = this.row.name || this.editRow.name
+	this.editRow.submitter_id = this.row.submitter_id || this.user.id
+	this.editRow.election_id = this.row.election_id || this.election.id
+	this.editRow.creation_date = this.row.creation_date ? dateString(this.row.creation_date) : dateString(this.election.open_date)
+	Object.keys(this.editRow.attributes).forEach( (x) =>  {
+		this.editRow.attributes[x] = this.row.attributes[x] || this.editRow.attributes[x]
 	})
   },
   mounted () { 

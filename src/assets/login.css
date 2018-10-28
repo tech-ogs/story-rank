@@ -1,5 +1,5 @@
       body {
-        font-family: "monospace";
+        font-family: "Helvetica";
         font-size: 14px;
         margin: 0;
         padding: 0;
@@ -9,7 +9,7 @@
       }
       /* BACKGROUND */
       .background, .backdrop {
-        background-color: gray;
+        background-color: white;
         position: fixed;
           top: 0;
           left: 0;
@@ -118,6 +118,8 @@
           font-size: large;
         cursor: pointer;
         transition: background .3s;
+		-webkit-appearance: none;
+		border-radius: 0;
       }
       .login-form .button:hover {
         background: #1f6eb7;
@@ -134,6 +136,7 @@
           font-size: large;
           display: block;
           text-align: center;
+		  -webkit-appearance: none;
       }
       .login-form .register:hover	{
         background: #d0d0d0;

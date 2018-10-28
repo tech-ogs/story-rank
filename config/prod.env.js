@@ -1,6 +1,5 @@
 function getIP() { 
   const interfaces = require('os').networkInterfaces();
-    
   const addresses = Object.keys(interfaces)
     .reduce((results, name) => results.concat(interfaces[name]), [])
     .filter((iface) => iface.family === 'IPv4' && !iface.internal)
@@ -9,7 +8,7 @@ function getIP() {
   return addresses[0]
 }
 
-var IP = getIP()
+var IP = getIP() || '127.0.0.1'
 
 if (IP.match(/^192/)) {
 	URL = '"http://' + IP + '"'

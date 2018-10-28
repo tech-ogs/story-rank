@@ -71,6 +71,7 @@ export default {
 	isAdmin () { return this.$store.getters.isAdmin },
 	mode() { return this.$store.getters.dashDetailMode },
 	action() { return this.$store.getters.dashDetailAction },
+	back() { return this.$store.getters.back }
   },
 
   methods: {

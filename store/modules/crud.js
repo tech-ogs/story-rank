@@ -57,7 +57,7 @@ const actions = {
 
 	imageUpload: async function (context, params) {
 		
-		console.log ('imageUpload', params)
+		console.log ('crud imageUpload', params)
 		var formData = new FormData()
 		formData.append('imgfile', params.fileObj)
 		formData.append('schema', params.schema)
@@ -83,6 +83,7 @@ const actions = {
 		catch (err) {
 			throw (new Error ('error uploading image: ' + err.message) )
 		}
+		console.log ('crud imageUpload result ', result)
 		return result
 	}
 }

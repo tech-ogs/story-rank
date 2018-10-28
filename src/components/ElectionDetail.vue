@@ -43,7 +43,7 @@
 							placeholder="Election Icon Image" >
 			   			</b-form-file>
 						<br>
-		  				<b-img thumbnail rounded fluid-grow :src="getImg(editRow.attributes.image)" > </b-img>
+		  				<b-img  rounded fluid-grow :src="getImg(editRow.attributes.image)" > </b-img>
 				</b-form-group>
 
 				<b-form-group id="grpRecalc"
@@ -90,12 +90,25 @@ export default {
   data () {
     return {
 	imageFile: '',
+	editRow: {
+		id: null,
+		name: '',
+		open_date: '',
+		close_date: '',
+		attributes: {
+			algorithm: 'rcv',
+			recalc: true,
+			image: '',
+			full_image: ''
+		}
+	},
 	algorithm: 'rcv',
 	algOptions: [
 		{value: 'rcv', text: 'Ranked Choice'},
 		{value: 'fptp', text: 'First Past The Post'}
 	],
 	getImg: (url) => { 
+		console.log ('electiondetails getImg: ', url) 
 		//return url != null ? require('@/'+url) : require ('@/assets/thumbs/placeholder.jpg')
 		return url != null && url !== '' ? url : '/assets/thumbs/placeholder.jpg'
 	} 
@@ -129,13 +142,13 @@ export default {
 		this.$store.commit('dashSetView', ['public', 'dashboard', 'view'])
     },
 
-	fileChange(fieldPath, thumbPath, fileList) {
+	fileChange: async function (fieldPath, thumbPath, fileList) {
 
 		if (!fileList.length) return;
 
 		var fileObj = fileList[0]
-		console.log ('StoryDetail fileChange', fileObj, this.row.id)
-		this.$store.dispatch('imageUpload', { 
+		console.log ('ElectionDetail fileChange', fileObj, this.row.id)
+		var ret = await this.$store.dispatch('imageUpload', { 
 			schema : 'application',
 			table : 'elections',
 			fileObj : fileObj, 
@@ -144,13 +157,11 @@ export default {
 			thumbPath: thumbPath, 
 			postAction: 'electionsSetImage' 
 		})
-		.then((ret) => {
-			this.editRow.attributes.image = ret.thumbUrl
-			this.editRow.attributes.full_image = ret.url
-		})
-		.catch((err) => {
-			throw (err)
-		})
+		console.log ('ElectionDetail fileChange ret', ret)
+		this.editRow.attributes.image = ret.thumbUrl
+		this.editRow.attributes.full_image = ret.url
+
+		console.log ('ElectionDetail fileChange DONE')
 	},
 
 	saveHandler: function( action, editRow ) {
@@ -172,15 +183,18 @@ export default {
   watch: {
   },
   created () {
-	this.editRow = JSON.parse(JSON.stringify(this.row))
-	this.editRow.attributes = this.editRow.attributes || {} // TODO fix and remove this
-	this.editRow.attributes.algorithm = this.editRow.attributes.algorithm || this.algOptions[0].value
-	this.editRow.attributes.recalc = typeof this.editRow.attributes.recalc !== 'undefined' ?  this.editRow.attributes.recalc : true
+	Object.keys(this.editRow).forEach( (x) => {
+		if ( x !== 'attributes') {
+			this.editRow[x] = this.row[x] != null ? this.row[x] : this.editRow[x]
+		}
+	})
+
+	Object.keys(this.editRow.attributes).forEach( (x) => {
+		this.editRow.attributes[x] = this.row.attributes[x] != null ? this.row.attributes[x] : this.editRow.attributes[x]
+	})
+
 	this.editRow.open_date = this.editRow.open_date ? dateString(this.editRow.open_date) : dateString((new Date()).toString())
 	this.editRow.close_date = this.editRow.close_date ? dateString(this.editRow.close_date) : dateString(new Date((Date.now() + 15*24*60*60*1000)).toString())
-	/* remove computed columns from editRow  */
-	delete this.editRow.active
-	delete this.editRow.days_to_close
   },
   mounted () {
 
