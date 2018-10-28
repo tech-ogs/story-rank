@@ -31,9 +31,12 @@ CREATE OR REPLACE FUNCTION rank_update(session jsonb,  params jsonb) returns jso
 	params.userElectionDetails.locked = true
   }
 
+  plv8.execute ('update application.user_elections set attributes = attributes || $3  where user_id = $1 and election_id = $2', 
+	[session.user_id, params.election.id, params.userElectionDetails])
+/*
   plv8.execute ('delete from application.user_elections where user_id = $1', [session.user_id])
   plv8.execute ('insert into application.user_elections (user_id, election_id, attributes) values ($1, $2, $3)', [session.user_id, params.election.id, params.userElectionDetails])
-
+*/
   /*update the flags to request a recalc*/
 
   plv8.execute('update application.flags set value =  $2, params = $3 where name = $1', ['request_recalc', true, {electionId : params.election.id}])

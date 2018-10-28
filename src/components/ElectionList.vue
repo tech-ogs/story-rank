@@ -31,7 +31,7 @@
     </b-row>
     <b-row class="app-content" ref="list">
       <b-col>
-        <b-table striped small :items="items" :fields="fields" @row-clicked="rowclick">
+        <b-table  small :items="items" :fields="fields" @row-clicked="rowclick">
           <template slot="content" slot-scope="data">
             <election-row :row="data.item" :items="items">
             </election-row>
@@ -207,6 +207,10 @@ body,
   position: relative;/* need this to position inner content */
   overflow-y: scroll; 
   -webkit-overflow-scrolling: touch;
+}
+
+.app-content /deep/ table > thead {
+	display: none !important;
 }
 
 .app-footer {

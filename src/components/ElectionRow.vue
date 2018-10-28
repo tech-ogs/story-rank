@@ -2,7 +2,7 @@
   <b-container small ref="trow">
 		<b-row :class="rowClass(row)" v-touch:swipe.left="swipeHandler"  v-touch:swipe.right="swipeHandler">
 					<b-col cols="4"> 
-						<b-img thumbnail rounded fluid-grow :src="getImg(row.attributes.image)" class="story-image" @click.stop="handleThumbClick(row.attributes.url)"> </b-img>
+						<b-img  :src="getImg(row.attributes.image)" class="story-image logo-icon" @click.stop="handleThumbClick(row.attributes.url)"> </b-img>
 					</b-col>
 					<b-col class="story-title-container">
 						<span class="story-title">
@@ -106,7 +106,8 @@ export default {
 
 <style scoped>
   .story-row {
-    height:100px; 
+    height:75px;
+	border-bottom: 1px gray; 
     overflow: hidden;
   }
   .story-image {
@@ -116,6 +117,16 @@ export default {
   */
     float: left;
   }
+    .logo-icon {
+        height: 50px;
+        width: 50px;
+        margin: 10px;
+        border:1px solid gray;
+        border-radius: 500px;
+        -webkit-border-radius: 500px;
+        -moz-border-radius: 500px;
+    }
+
   .story-title-container {
     text-align: left;
   }

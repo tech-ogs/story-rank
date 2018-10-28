@@ -7,7 +7,7 @@
 		 <span class="width100">
 			Invite Link: &nbsp; <input class="invite-textbox" type="text" ref="linktext" :value="getInviteLink()"> </input> 
 			<!-- <b-badge class="" @click="copyInviteLink">copy</b-badge> --> 
-		<span> 
+		</span> 
 	  </b-nav>
     </b-row>
     <b-row class="app-content" ref="list">

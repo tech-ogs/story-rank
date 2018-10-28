@@ -1,6 +1,6 @@
 
 <template>
-  <b-nav fill pills class="width100">
+  <b-nav fill tabs class="width100">
     <b-nav-item :active="moduleName === 'admin'" @click="elections" > Elections </b-nav-item>
     <b-nav-item :active="moduleName === 'profile'" @click="settings" > Settings </b-nav-item>
   </b-nav>
