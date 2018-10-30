@@ -31,7 +31,9 @@ CREATE OR REPLACE FUNCTION rcv_round() returns jsonb AS $$
 	if (tally[0].percentage === 1.0 && tally[0].tally === 1) { 
 		var ballot = plv8.execute('with x as (select * from ranktable order by user_id asc, rank asc) select user_id, json_agg(story_id) as ballot from x group by user_id')[0].ballot
 		ballot.forEach( function (storyId, idx)  {
-			tally[idx].story_id = storyId
+			if (tally[idx] != null) {
+				tally[idx].story_id = storyId
+			}
 		})
 	}
 	result.tally = tally;
